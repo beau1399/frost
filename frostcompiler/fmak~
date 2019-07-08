@@ -1,0 +1,15 @@
+rm frost.tab.cpp
+rm frost.tab.hpp
+rm lex.yy.c
+flex frost.l
+bison -d frost.ypp
+# After running this script in CYGWIN, 
+# We build the results using MinGW using WINFINALMAKE.BAT.
+#
+# C:\mingw\bin (or equiv) must be in the CMD.EXE path. 
+#
+# The result is a Cygwin-built, but CMD.EXE-hosted, compiler.
+#
+# FROST must be set, e.g. to f:\beau\frost, in the instance of CMD.EXE
+#  under which this compiler is run.
+#

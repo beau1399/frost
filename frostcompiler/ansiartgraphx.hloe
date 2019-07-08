@@ -1,0 +1,73 @@
+;
+; HLOE ANSI Terminal Library
+;
+
+
+ GLOBAL graphx
+
+
+ 
+ansiard CODE
+
+
+HLTHUNK aart,graphx,ansiG,charx
+;Print PARM0 blocks (out of PARM1 possible) 
+; e.g. _graphx[8 _divu[_sample[] 32] 10 10 ]
+ 
+ movlw 0x1b
+ PUSH
+ FAR_CALL graphx,printch
+ movlw '['
+ PUSH
+ FAR_CALL graphx,printch
+ FAR_CALL graphx,printu
+ movlw ';'
+ PUSH
+ FAR_CALL graphx,printch
+ FAR_CALL graphx,printu
+ movlw 'H'
+ PUSH
+ FAR_CALL graphx,printch
+ 
+
+ POP
+ banksel charx
+ movwf charx
+ ;Draw Bar
+ xorlw .0 ;force a test
+ btfsc STATUS,Z
+ goto allgxy
+ banksel ansiG
+ movwf ansiG
+lblgxy22:
+ movlw 0xDB
+ PUSH
+ FAR_CALL graphx,printch
+ banksel ansiG
+ decfsz ansiG,f
+ goto lblgxy22
+ ;Draw remainder as lighter "empty" squares
+allgxy: 
+ banksel charx
+ movf charx,w
+ subwf HLINDF,f
+ POP
+ xorlw .0 ;force a test
+ btfsc STATUS,Z
+ goto retgxy
+ banksel ansiG
+ movwf ansiG
+lblgxy3:
+ movlw 0xB0 
+ PUSH
+ FAR_CALL graphx,printch
+ banksel ansiG
+ decfsz ansiG,f
+ goto lblgxy3
+retgxy:
+
+ 
+ return
+HLEND
+
+  

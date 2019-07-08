@@ -1,0 +1,56 @@
+
+
+
+calls printch,add,parm,eq,start,divu,sample,setbit,clearbit,oru,andu
+
+event 1 is
+ .printch['.'].printch['.'].printch['.']
+;
+
+insert clock
+
+	
+frost115200bps
+
+
+0 > intcon
+.setbit[c1on @cm1con0] > cm1con0
+.setbit[c1on @cm2con0] > cm2con0
+
+
+insert timer
+
+
+.setbit[tmr1ie @pie1] > pie1 /Enable timer1 interrupt
+.setbit[peie @intcon] > intcon /peie peripheral interrupt enable
+
+
+.clearbit[tmr1on @t1con] > t1con /timer off
+0 > tmr1h
+0 > tmr1l
+
+ 
+.setbit[gie @intcon] > intcon
+.setbit[tmr1on @t1con] > t1con /timer on
+
+
+
+.abcs[0] 
+  
+d .abcs * is
+  .build[65] 
+  .pstr[] 
+  .abcs[]
+; 
+  
+  
+d .build * is
+ if .eq[ .parm[0] 90 ], , 
+   .add[ .parm[0]  1] .build[], 
+ ; 
+ 
+ d .pstr * is
+  .printch[]
+  if .eq[.parm[1] 0 ] , , 
+   .pstr[] ,
+ ;

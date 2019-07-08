@@ -1,0 +1,17 @@
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta .printch[13] .printch[10]
+
+
+.printu[.fastdivu[68 8]]
+.printu[.fastdivu[29 3]]
+.printu[.fastdivu[63 22]]
+.printu[.fastdivu[44 22]]
+.printu[.fastdivu[65 22]]
+.printu[.fastdivu[99 11]]
+.printu[.fastdivu[23 11]]

@@ -1,0 +1,88 @@
+calls setbit,clearbit,iszerof,copyf
+calls ftou,divf
+calls addf,parm
+
+d .pwmon is
+  255 > pr2
+  .setbit[2 .setbit[3 0]] > ccp1con		
+  
+
+  /banksel ccpr1l
+  /movlw   .0	
+  /movwf   ccpr1l
+  0 > ccpr1l
+
+  /banksel pir1
+  /bcf     pir1,tmr2if
+  .clearbit[1 @pir1] > pir1
+  
+  /banksel t2con
+  /bcf     t2con,t2ckps0
+  /bcf     t2con,t2ckps1
+  .clearbit[0 .clearbit[1 @t2con]] > t2con
+
+  /banksel t2con
+  /bsf	  t2con,TMR2ON
+  .setbit[2 @t2con] > t2con
+
+  /banksel pir1
+  /bcf	  pir1,tmr2if
+  .clearbit[1 @pir1] > pir1
+  
+  .pwmin[]
+
+  /banksel trisc				
+  /bcf     trisc,5           
+  /bcf     trisc,4           
+  .clearbit[5 .clearbit[4 @trisc]] > trisc
+
+  /banksel portc
+  /clrf portc
+  0 > portc
+ 
+
+
+;
+
+
+d .pwmf 3 0 is /1st parm is channel 0=L/C4 and 1=R/C5
+  
+ if .parm[0], 
+  .setbit[0 .clearbit[1 @pstrcon]] > pstrcon ,
+  .setbit[1 .clearbit[0 @pstrcon]] > pstrcon,
+ 
+ /Make 8-bit high byte
+ 
+ 
+  if .iszerof[parmf`1\],0,
+ 
+   if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err.
+ 
+      .ftou[ .divf[parmf`1\ 4.0]]
+  ,,
+ > ccpr1l
+ 
+ 
+ 
+ 
+ /(parmf0 mod 4)
+ .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
+ 
+ if .gtf[.copyf[] 2.5],
+   .setbit[dc1b1 .setbit[dc1b0 @ccp1con]] > ccp1con
+ ,
+
+ if .gtf[.copyf[] 1.5],
+  .setbit[dc1b1  @ccp1con] > ccp1con
+  ,	  
+      if .gtf[.copyf[] 0.5],
+	  
+	  .setbit[dc1b0  @ccp1con] > ccp1con 
+	  ,,	  
+  ,    
+ , 
+;
+
+d .pwmin is
+ if .andu[@pir1 2],,.pwmin[],
+;

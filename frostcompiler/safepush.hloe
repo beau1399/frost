@@ -1,0 +1,40 @@
+;
+; HLOE Main stack "push" operation w/ bounds checking
+;
+
+
+
+GLOBAL safepush
+
+hllkrn444 CODE    
+safepush: 
+ PUSH
+ ;INTEGRITY CHECK
+ 
+ ;Is HLFSR >= stack (bound)? ; remember, we just pushed
+ movf HLFSR,w
+ sublw stack  ; bound - ptr... must cause carry or zero
+ btfsc STATUS,Z
+ goto kspox5 ;Zero - OK
+ btfsc STATUS,C ;Not equal; carry must occur, or error happened
+ goto sperr11 ;C set, no carry, ergo error happened
+kspox5:
+  
+;Is (stack +HLOE_STACK_SIZE) -1 >= HLFSR ?
+ movf HLFSR,w
+ addlw .1
+ sublw (stack+HLOE_STACK_SIZE)  ; bound - ptr... must not cause carry
+ btfss STATUS,C
+ goto sperr11
+ movf HLINDF,w
+ return
+sperr11:
+ BCF INTCON,GIE ;Generally not OK; acceptable here b/c failing hard  
+ DISCARD ;Return to final valid stack loc.
+dmm445:
+ movlw '!' ;Stack overflow causes emission of ANSI "!" character
+ PUSH
+ FAR_CALL safepush,printch
+ goto dmm445
+ 
+ 

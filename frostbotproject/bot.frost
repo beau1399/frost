@@ -1,0 +1,364 @@
+
+///////////////////// COMPILE-TIME CONSTANTS ///////////////////////////
+
+
+altstack is 80
+
+macro netid is 1 end macro 
+
+/macro k-sub-P is 49.0 end macro
+/macro k-sub-I is 0.078 end macro 
+/macro k-sub-D is 4000.0 end macro 
+
+macro k-sub-P is 60.0 end macro
+macro k-sub-I is 0.125 end macro 
+macro k-sub-D is 4000.0 end macro 
+
+macro pos-max-I is 4000.0 end macro /If too big, SFP "windup" occurs 
+macro neg-min-I is -4000.0 end macro / ("I" stuck, can't be budged back)
+
+macro max-setp is 435.0 end macro
+macro min-setp is 250.0 end macro
+macro init-setp is 302.0 end macro
+
+macro scale-factor is 0.075 end macro
+macro scale-shift is -249.0 end macro
+
+macro joystick-right is 570.0 end macro /TODO is this adequate even with programmer on cpu0? retest
+macro joystick-left is 110.0 end macro
+macro joystick-up is 1000.0 end macro
+macro joystick-down is 30.0 end macro
+
+/136/128 * 16  , M=08 E=04
+macro event-time is 17.0 end macro	    /Expressed as a real averaged difference in TMR1H, based on observation in MPSIM... 
+/ set it (to about 8.0) to reflect the average loop time plus the average ISR time. This results in
+/ integral and derivative approximation code that assumes the values measured near the top of
+/ each iteration of the loop were in place for the whole duration of the loop (including, potentially,
+/ a single timer event). 
+
+macro min-time is 0.5 end macro    /Minimum reasonable (observed in MPSIM) main loop iteration time, expressed as a real difference in TMR1H
+
+//////////////////////// Libraries ///////////////////////////////////
+  
+calls parm,copyf,graphx,graphy,utof
+calls mulf,addf,andu,gtf,andb,add,printch,divf
+calls eq,dispose,setbit,clearbit,cls
+
+insert pwm
+insert smallanalog
+
+///////////////////////////// Event ///////////////////////////////////
+
+/"Setg" and "setg" are used to communicate position and setpoint data fromn the main
+/ task to the comm. event, on a one-way basis. "Ticked" is used to communicate to the
+/ main task (P-I-D loop) that a communications interrupt has ocurred. This forces 
+/ resampling of analog inputs, and also affects the elapsed time calculation for the
+/ integral and differential portion of the calculation.
+var setf,setg,ticked
+
+macro event-body is
+ 1>ticked
+ when= $0 0  
+   .graphy[15 @setf 5 19 ]
+   
+   /Backspace over the to the left of our vertical bar graphs
+   .printch[8]
+   .printch[8]
+   .printch['S'] 
+   .graphy[15 @setg 6 19 ] 
+   .printch['P'] 
+ end=
+ when= $0 1
+  .graphx[15 @setf 60 15 ]  /15-position graph at 60,15
+  
+  /Could use a string types here (e.g. "blurb" from freelib.frost) but this would be
+  / overkill for three characters.
+  .printch['S'].printch['e'].printch['t']
+  .graphx[15 @setg 60 16 ]
+  .printch['P'].printch['o'].printch['s']
+ end=
+end macro
+
+event 1 is /Timer 1 tick
+ event-body(netid)
+;
+
+///////////////////////////// MAIN TASK ////////////////////////////////
+
+.main-setup[]
+
+.clearbit[tmr1on @t1con] > t1con /timer off 
+
+.wait-button[]
+
+0 > tmr1h 
+0 > tmr1l
+0 > ticked /Used to track whether ISR ocurred, in calculating elapsed time (et)
+
+.setbit[gie @intcon] > intcon /GIE on
+
+/#2 stations -> tmr1h e {0,128}    
+/#4 stations -> tmr1h e {0,64,128,192} 
+/#8 stations -> tmr1h e {0,32,64,96,128,160,192,224} 
+/#16 stations -> tmr1h e {0,16,32,48,64...} etc.
+/ Seems to work well for up to 32 stations, assuming UI code no slower than two station
+/   implementation in this file.
+
+/TODO all stations here
+macro maybe-stagger is
+ when= $0 0
+ 0 > tmr1h 
+ end=
+ when= $0 1
+ 8 > tmr1h 		
+ end=
+ when= $0 2
+ 16 > tmr1h 		
+ end=
+ /And so on, for stations 3 through 31; fill in as needed...
+end macro
+maybe-stagger(netid)
+
+.setbit[tmr1on @t1con] > t1con /timer on
+
+.longf[
+   0.0 /Time zero
+   .addf[ 1.0 .samplef[4]]  /Last position... code below assumes at least 1.0 
+   0.0                      /Running I
+   init-setp                /Setpoint (70 assumes 50-90 range)
+] 
+
+
+  
+///////////////////////////// ROUTINES /////////////////////////////////
+
+d .main-setup is
+
+ 0 > setf 
+ 0 > setg
+
+ /Disable all interrupts at first
+ 0 > intcon
+
+ /Everything digitial at start
+ 0 > anselh
+ 0 > ansel
+
+ .pwmon[]
+
+ frost115200bps
+
+ if netid,.cls[],,
+
+ /Slow timer1
+ 
+ .clearbit[tmr1cs .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+ .setbit[tmr1ie @pie1] > pie1 /Enable timer1 interrupt
+
+ .setbit[peie @intcon] > intcon /PEIE peripheral interrupt enable
+
+;
+
+
+/This is for the 16-position bar graph shown in the GUI implementation provided.
+/ It exists to support running with nonsensical configuration values w/o a crash.
+d .ourftou 2 1 is
+  if .gtf[parmf(0) 15.0], 15,  
+   if .gtf[0.0 parmf(0)], 0,
+   .ftou[] 
+  ,,
+;
+
+macro longf-ftime is parmf(6) end macro
+macro longf-last is parmf(4) end macro
+macro longf-runi is parmf(2) end macro
+macro longf-setp is parmf(0) end macro
+
+ d .longf *  is
+
+  .ourftou[.mulf[.addf[scale-shift longf-setp] scale-factor]] > setf
+  .ourftou[.mulf[.addf[scale-shift longf-last] scale-factor]] > setg 
+
+  /Run PID; pass position sample  this iteration. This func. rebuilds our parms.
+	
+  .control[.addf[ 1.0 .samplef[4]]]   /Code below assumes at least 1.0
+  
+  .adjust[ .samplef[0]]  /Handle setpoint change (e.g. joystick in)
+		  
+  /Loop back to start             
+  .longf[]
+ ;   
+
+macro adjust-setp is parmf(2) end macro
+macro adjust-sample is parmf(0) end macro
+
+ d .adjust 4 2  is
+  adjust-body(netid)
+ ;
+
+ macro adjust-body is
+ when= $0 0
+  if .andb[ 
+  .gtf[adjust-sample joystick-up] 
+  
+  .gtf[adjust-setp min-setp]], 
+    .addf[-1.0 adjust-setp] 
+
+	 ,
+	    if .andb[ 
+		.gtf[joystick-down adjust-sample]  
+		
+	.gtf[max-setp adjust-setp]],	
+		
+             .addf[ 1.0 adjust-setp ]
+
+			 , parmf(2)
+
+			 ,
+	  ,
+ end=
+ when= $0 1
+  if .andb[ 
+  .gtf[adjust-sample joystick-right] 
+  .gtf[max-setp adjust-setp]],
+     .addf[1.0 adjust-setp] 
+
+	 ,
+	    if .andb[ 
+		.gtf[joystick-left adjust-sample]  
+		
+		
+		.gtf[adjust-setp min-setp]], 
+             .addf[ -1.0 adjust-setp ]
+
+			 , parmf(2)
+
+			 ,
+	         
+	  ,
+ end=
+end macro
+
+
+macro usrpwm-P is parmf(0) end macro
+macro usrpwm-I is parmf(2) end macro
+macro usrpwm-D is parmf(4) end macro
+d .usrpwm 6 0 is
+ 
+ .mulf[k-sub-P usrpwm-P]  /Kp
+ 
+
+/ Ki=0 causes prob here 
+ .mulf[k-sub-I usrpwm-I] /Ki
+ .mulf[k-sub-D usrpwm-D] /Kd 
+ .addf[] .addf[]
+ .copyf[]
+ .copyf[]
+
+ 
+ 
+if .gtf[0.0],
+/Command>0
+if .gtf[1023.0],.pwmf[1023.0 1] 
+,
+.pwmf[1],                        , 
+
+/Command<0
+if .gtf[-1023.0], 
+.pwmf[.mulf[-1.0] 0],.pwmf[1023.0 0], 
+ ,
+ 
+ ;
+ 
+
+/Mandatory bc of signif digits of type... if I gets so big that no detectable level of
+/  error can influence it (given the limitations of SFP) then this is a problem.
+d .conform-i 2 2 is
+ if .gtf[parmf(0) 0.0],
+   if .gtf[parmf(0) pos-max-I],pos-max-I,,  ,
+   if .gtf[neg-min-I parmf(0)],neg-min-I,,  ,
+ ;  
+ 
+ 
+
+
+
+
+macro control-ftime is parmf(8) end macro
+macro control-prev is parmf(6) end macro
+macro control-I is parmf(4) end macro
+macro control-setp is parmf(2) end macro
+macro control-sample is parmf(0) end macro
+
+d .control 10 8 is /Rebuilds callers parms
+
+ /Timing is strictly based on tmr1h... this relatively minor simplification eliminates
+ /  a host of concurrency issues and also allows for significantly faster throughput.
+   
+  /New time, 1.0= enough time to increment TMR1H by 1
+  macro control-fnewtime is parmf(-2) end macro 
+   .utof[@tmr1h]
+
+  macro control-raw-et is parmf(-4) end macro
+   sfp-sub
+    ( control-fnewtime )
+    ( control-ftime )
+
+  macro control-ticked is .parm[-5]	end macro
+   if @ticked, 1 0 > ticked, 0,
+
+  macro control-et is parmf(-7) end macro 
+   if control-ticked, event-time, control-raw-et,
+
+  /Eliminates any chance we will use a diff or err
+  / calculation that assumes its measuring across an ISR
+  / when it's really not. If we are assuming ticked=1, then 
+  / we will be using values that were taken after the ISR.
+  / If not, then we know that the sample values we are using
+  / were taken while ticked was 0, and that ticked remained
+  / 0 up to the point in time when it was checked. 
+  macro control-resample is parmf(-9) end macro 
+   if control-ticked, .addf[ 1.0 .samplef[4]], control-sample,
+   
+  macro control-diff is parmf(-11) end macro
+   sfp-sub(control-prev)(control-resample)
+
+  macro control-err is parmf(-13) end macro
+   sfp-sub(control-setp)(control-resample) 
+
+  macro control-sigma is parmf(-15) end macro
+   .conform-i[
+    .addf[ 
+      control-I  
+      .mulf[  
+  	    control-err
+        control-et 
+         ] 
+       ]
+   ]  
+  
+   
+  .usrpwm[                                       
+   if .iszerof[control-diff],0.0,.divf[ control-diff  control-et   ]  ,      /D- scaling down from 0-256 tmr1h to 0-4 for speed; purpose it to approximate integral w/o assuming each loop iteration takes a fixed pd. of time   
+   control-sigma                             /I
+   control-err   /P
+  ]
+  
+  /Construct return value structure
+ 
+  /14 Set based on obs to yield a reasonable result.. it is diffic to be more precise e.g. b/c of concurency issues
+  if control-ticked,  14.0, control-fnewtime,
+  
+  control-resample
+  
+  control-sigma 
+ 
+  control-setp
+  
+ ;
+
+d .wait-button is
+ if .andu[@porta 16],.wait-button[],, /Wait  weak pull-up on A4 to get grounded out...
+;
+ 

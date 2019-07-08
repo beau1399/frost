@@ -1,0 +1,191 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Tue Jun 05 21:01:51 2012
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   Resetv       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000002    program   0x000004
+                hllupuser       code   0x000004    program   0x0000c2
+                   hlog1b       code   0x000065    program   0x000076
+                   hlog1a       code   0x0000a0    program   0x000076
+                  hllt450       code   0x0000db    program   0x00005e
+                hllkrna08       code   0x00010a    program   0x00005e
+                hllkrna09       code   0x000139    program   0x000042
+                hllkrna10       code   0x00015a    program   0x00003e
+                hllkrn444       code   0x000179    program   0x00002c
+                hllkrna05       code   0x00018f    program   0x000026
+                hllkrna04       code   0x0001a2    program   0x000026
+                hllkrna00       code   0x0001b5    program   0x000018
+                hllkrna07       code   0x0001c1    program   0x000014
+                hllkrna06       code   0x0001cb    program   0x000014
+                hllkrna03       code   0x0001d5    program   0x000014
+                     main       code   0x0001df    program   0x000010
+                hllkrna01       code   0x0001e7    program   0x00000e
+                hllkrna02       code   0x0001ee    program   0x000006
+                hllkrna11       code   0x0001f1    program   0x000004
+    .config_2007_TARGET.O       code   0x002007    program   0x000002
+                   ukrnl2      udata   0x000020       data   0x000050
+                   ukrshr      udata   0x000070       data   0x000009
+                 mainvars      udata   0x000079       data   0x000002
+                   ukrnl3      udata   0x0000a0       data   0x000014
+                   ukernl      udata   0x0000b4       data   0x000003
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0001f2      
+                            0x002007    0x002007      
+            500 out of 2310 program addresses used, program memory utilization is 21%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          _hllkrna00_0009   0x0001be    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna03_0008   0x0001dd    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna04_000C   0x0001ae    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna04_000E   0x0001b0    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna05_000C   0x00019b    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna05_000E   0x00019d    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna08_0003   0x00010d    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna08_0011   0x00011b    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna09_0003   0x00013c    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna09_0011   0x00014a    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna10_0003   0x00015d    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna10_0010   0x00016a    program     static F:\beau\frostfunctionproject\target.asm
+                      add   0x0001e7    program     static F:\beau\frostfunctionproject\target.asm
+                 clearbit   0x0000a0    program     static F:\beau\frostfunctionproject\target.asm
+                  dispose   0x0001f1    program     static F:\beau\frostfunctionproject\target.asm
+                     divu   0x00018f    program     static F:\beau\frostfunctionproject\target.asm
+                   dmm445   0x00018a    program     static F:\beau\frostfunctionproject\target.asm
+                   dowork   0x0000db    program     static F:\beau\frostfunctionproject\target.asm
+                       eq   0x0001c1    program     static F:\beau\frostfunctionproject\target.asm
+                    getch   0x0001cb    program     static F:\beau\frostfunctionproject\target.asm
+                    geth2   0x0001cd    program     static F:\beau\frostfunctionproject\target.asm
+                 hllAAAAA   0x0000ad    program     static F:\beau\frostfunctionproject\target.asm
+                 hllBAAAA   0x0000b3    program     static F:\beau\frostfunctionproject\target.asm
+                 hllCAAAA   0x0000ba    program     static F:\beau\frostfunctionproject\target.asm
+                 hllDAAAA   0x0000c1    program     static F:\beau\frostfunctionproject\target.asm
+                 hllEAAAA   0x0000c8    program     static F:\beau\frostfunctionproject\target.asm
+                 hllFAAAA   0x0000cf    program     static F:\beau\frostfunctionproject\target.asm
+                 hllGAAAA   0x0000d6    program     static F:\beau\frostfunctionproject\target.asm
+                 hllHAAAA   0x0000d8    program     static F:\beau\frostfunctionproject\target.asm
+                 hllIAAAA   0x000072    program     static F:\beau\frostfunctionproject\target.asm
+                 hllJAAAA   0x000078    program     static F:\beau\frostfunctionproject\target.asm
+                 hllKAAAA   0x00007f    program     static F:\beau\frostfunctionproject\target.asm
+                 hllLAAAA   0x000086    program     static F:\beau\frostfunctionproject\target.asm
+                 hllMAAAA   0x00008d    program     static F:\beau\frostfunctionproject\target.asm
+                 hllNAAAA   0x000094    program     static F:\beau\frostfunctionproject\target.asm
+                 hllOAAAA   0x00009b    program     static F:\beau\frostfunctionproject\target.asm
+                 hllPAAAA   0x00009d    program     static F:\beau\frostfunctionproject\target.asm
+                hllprgen2   0x000109    program     static F:\beau\frostfunctionproject\target.asm
+               hllprogend   0x000064    program     static F:\beau\frostfunctionproject\target.asm
+              hlluserprog   0x000004    program     static F:\beau\frostfunctionproject\target.asm
+                   hloego   0x0001df    program     static F:\beau\frostfunctionproject\target.asm
+                     kpop   0x000139    program     static F:\beau\frostfunctionproject\target.asm
+                    kpush   0x00015a    program     static F:\beau\frostfunctionproject\target.asm
+                   kspox5   0x000181    program     static F:\beau\frostfunctionproject\target.asm
+                     modu   0x0001a2    program     static F:\beau\frostfunctionproject\target.asm
+                      mul   0x0001b5    program     static F:\beau\frostfunctionproject\target.asm
+                    negti   0x0001ee    program     static F:\beau\frostfunctionproject\target.asm
+                     parm   0x00010a    program     static F:\beau\frostfunctionproject\target.asm
+                  printch   0x0001d5    program     static F:\beau\frostfunctionproject\target.asm
+                 safepush   0x000179    program     static F:\beau\frostfunctionproject\target.asm
+                   setbit   0x000065    program     static F:\beau\frostfunctionproject\target.asm
+                  sperr11   0x000188    program     static F:\beau\frostfunctionproject\target.asm
+                 ALT_Save   0x000077       data     static F:\beau\frostfunctionproject\target.asm
+                 FSR_Save   0x000076       data     static F:\beau\frostfunctionproject\target.asm
+                  PC_Save   0x00007a       data     static F:\beau\frostfunctionproject\target.asm
+              STATUS_Save   0x000075       data     static F:\beau\frostfunctionproject\target.asm
+                   W_Save   0x000074       data     static F:\beau\frostfunctionproject\target.asm
+                  alt_fsr   0x000073       data     static F:\beau\frostfunctionproject\target.asm
+                alt_stack   0x0000a0       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss00   0x0000b4       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss01   0x0000b5       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss02   0x0000b6       data     static F:\beau\frostfunctionproject\target.asm
+                   in_isr   0x000078       data     static F:\beau\frostfunctionproject\target.asm
+                    pbase   0x000079       data     static F:\beau\frostfunctionproject\target.asm
+               softstack0   0x000070       data     static F:\beau\frostfunctionproject\target.asm
+               softstack1   0x000071       data     static F:\beau\frostfunctionproject\target.asm
+               softstack2   0x000072       data     static F:\beau\frostfunctionproject\target.asm
+                    stack   0x000020       data     static F:\beau\frostfunctionproject\target.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+              hlluserprog   0x000004    program     static F:\beau\frostfunctionproject\target.asm
+               hllprogend   0x000064    program     static F:\beau\frostfunctionproject\target.asm
+                   setbit   0x000065    program     static F:\beau\frostfunctionproject\target.asm
+                 hllIAAAA   0x000072    program     static F:\beau\frostfunctionproject\target.asm
+                 hllJAAAA   0x000078    program     static F:\beau\frostfunctionproject\target.asm
+                 hllKAAAA   0x00007f    program     static F:\beau\frostfunctionproject\target.asm
+                 hllLAAAA   0x000086    program     static F:\beau\frostfunctionproject\target.asm
+                 hllMAAAA   0x00008d    program     static F:\beau\frostfunctionproject\target.asm
+                 hllNAAAA   0x000094    program     static F:\beau\frostfunctionproject\target.asm
+                 hllOAAAA   0x00009b    program     static F:\beau\frostfunctionproject\target.asm
+                 hllPAAAA   0x00009d    program     static F:\beau\frostfunctionproject\target.asm
+                 clearbit   0x0000a0    program     static F:\beau\frostfunctionproject\target.asm
+                 hllAAAAA   0x0000ad    program     static F:\beau\frostfunctionproject\target.asm
+                 hllBAAAA   0x0000b3    program     static F:\beau\frostfunctionproject\target.asm
+                 hllCAAAA   0x0000ba    program     static F:\beau\frostfunctionproject\target.asm
+                 hllDAAAA   0x0000c1    program     static F:\beau\frostfunctionproject\target.asm
+                 hllEAAAA   0x0000c8    program     static F:\beau\frostfunctionproject\target.asm
+                 hllFAAAA   0x0000cf    program     static F:\beau\frostfunctionproject\target.asm
+                 hllGAAAA   0x0000d6    program     static F:\beau\frostfunctionproject\target.asm
+                 hllHAAAA   0x0000d8    program     static F:\beau\frostfunctionproject\target.asm
+                   dowork   0x0000db    program     static F:\beau\frostfunctionproject\target.asm
+                hllprgen2   0x000109    program     static F:\beau\frostfunctionproject\target.asm
+                     parm   0x00010a    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna08_0003   0x00010d    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna08_0011   0x00011b    program     static F:\beau\frostfunctionproject\target.asm
+                     kpop   0x000139    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna09_0003   0x00013c    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna09_0011   0x00014a    program     static F:\beau\frostfunctionproject\target.asm
+                    kpush   0x00015a    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna10_0003   0x00015d    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna10_0010   0x00016a    program     static F:\beau\frostfunctionproject\target.asm
+                 safepush   0x000179    program     static F:\beau\frostfunctionproject\target.asm
+                   kspox5   0x000181    program     static F:\beau\frostfunctionproject\target.asm
+                  sperr11   0x000188    program     static F:\beau\frostfunctionproject\target.asm
+                   dmm445   0x00018a    program     static F:\beau\frostfunctionproject\target.asm
+                     divu   0x00018f    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna05_000C   0x00019b    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna05_000E   0x00019d    program     static F:\beau\frostfunctionproject\target.asm
+                     modu   0x0001a2    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna04_000C   0x0001ae    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna04_000E   0x0001b0    program     static F:\beau\frostfunctionproject\target.asm
+                      mul   0x0001b5    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna00_0009   0x0001be    program     static F:\beau\frostfunctionproject\target.asm
+                       eq   0x0001c1    program     static F:\beau\frostfunctionproject\target.asm
+                    getch   0x0001cb    program     static F:\beau\frostfunctionproject\target.asm
+                    geth2   0x0001cd    program     static F:\beau\frostfunctionproject\target.asm
+                  printch   0x0001d5    program     static F:\beau\frostfunctionproject\target.asm
+          _hllkrna03_0008   0x0001dd    program     static F:\beau\frostfunctionproject\target.asm
+                   hloego   0x0001df    program     static F:\beau\frostfunctionproject\target.asm
+                      add   0x0001e7    program     static F:\beau\frostfunctionproject\target.asm
+                    negti   0x0001ee    program     static F:\beau\frostfunctionproject\target.asm
+                  dispose   0x0001f1    program     static F:\beau\frostfunctionproject\target.asm
+                    stack   0x000020       data     static F:\beau\frostfunctionproject\target.asm
+               softstack0   0x000070       data     static F:\beau\frostfunctionproject\target.asm
+               softstack1   0x000071       data     static F:\beau\frostfunctionproject\target.asm
+               softstack2   0x000072       data     static F:\beau\frostfunctionproject\target.asm
+                  alt_fsr   0x000073       data     static F:\beau\frostfunctionproject\target.asm
+                   W_Save   0x000074       data     static F:\beau\frostfunctionproject\target.asm
+              STATUS_Save   0x000075       data     static F:\beau\frostfunctionproject\target.asm
+                 FSR_Save   0x000076       data     static F:\beau\frostfunctionproject\target.asm
+                 ALT_Save   0x000077       data     static F:\beau\frostfunctionproject\target.asm
+                   in_isr   0x000078       data     static F:\beau\frostfunctionproject\target.asm
+                    pbase   0x000079       data     static F:\beau\frostfunctionproject\target.asm
+                  PC_Save   0x00007a       data     static F:\beau\frostfunctionproject\target.asm
+                alt_stack   0x0000a0       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss00   0x0000b4       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss01   0x0000b5       data     static F:\beau\frostfunctionproject\target.asm
+                hllblss02   0x0000b6       data     static F:\beau\frostfunctionproject\target.asm
+
+

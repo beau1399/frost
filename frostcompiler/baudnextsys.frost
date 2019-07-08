@@ -1,0 +1,43 @@
+calls setbit,clearbit
+
+macro frost9600bps is
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  68 > spbrg
+  3 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   / B5 is not an input (RS232 TX)
+  .clearbit[5 @anselb] > anselb    / Nor is B5 analog
+  .setbit[txcksel @apfcon1] > apfcon1
+end macro
+
+macro frost57600bps is
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  138 > spbrg
+  0 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   / B5 is not an input (RS232 TX)
+  .clearbit[5 @anselb] > anselb    / Nor is B5 analog
+  .setbit[txcksel @apfcon1] > apfcon1
+end macro
+
+macro frost115200bps is
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  68 > spbrg
+  0 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   / B5 is not an input (RS232 TX)
+  .clearbit[5 @anselb] > anselb    / Nor is B5 analog
+  .setbit[txcksel @apfcon1] > apfcon1
+end macro

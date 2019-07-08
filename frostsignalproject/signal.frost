@@ -1,0 +1,18 @@
+calls graphx,cls,printf,divf,ftou
+
+insert analog
+
+insert clock
+
+frost115200bps
+.cls[]
+.longf[]
+
+d .longf is
+/ .printch['.']
+ /.printf[.samplef[0]]
+ .graphx[8 .ftou[.divf[.samplef[0] 128.0]]  10 10 ]
+ .longf[]
+;  
+
+

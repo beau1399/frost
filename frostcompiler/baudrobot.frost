@@ -1,0 +1,46 @@
+calls setbit,clearbit
+ 
+macro frost9600bps is
+ .clearbit[sync .clearbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 77  > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta
+end macro
+ 
+macro frost57600bps is
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 50  > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta
+end macro
+ 
+macro frost115200bps is
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta
+end macro
+
+/Experimental for now! 
+macro frost230400bps is
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 12  > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta
+end macro

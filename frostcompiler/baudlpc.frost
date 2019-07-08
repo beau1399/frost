@@ -1,0 +1,46 @@
+
+
+
+calls setbit,clearbit
+ 
+macro frost9600bps is
+  207 > spbrg
+  0 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1
+end macro
+
+macro frost57600bps is
+  34 > spbrg
+  0 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1
+end macro
+
+macro frost115200bps is
+  17 > spbrg
+  0 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1
+end macro

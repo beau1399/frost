@@ -1,0 +1,16 @@
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta 0 10 13 'Hello, World!' 
+.stackprint[]
+
+
+.dispose[]
+
+d .stackprint * is
+ if .parm[0],.printch[] .stackprint[],,
+;

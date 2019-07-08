@@ -1,0 +1,87 @@
+;
+; HLOE Logical and Bit Operations
+;
+
+;;;;#include "hloe.inc"
+
+ GLOBAL clearbit 
+
+
+hlog1a CODE
+
+HLTHUNK hllblss,clearbit,margp2
+ POP
+ banksel margp2
+ movwf margp2
+ POP 
+ xorlw .0
+ btfss STATUS,Z
+ goto tff00h
+ ;bit 0 request
+ movfw margp2
+ andlw .255-.1
+ goto tff99h
+tff00h: 
+ ;not necess here xorlw .0
+ xorlw .1
+ btfss STATUS,Z
+ goto tff01h
+ ;bit 1 request
+ movfw margp2
+ andlw .255-.2
+ goto tff99h
+tff01h: 
+ xorlw .1
+ xorlw .2
+ btfss STATUS,Z
+ goto tff02h
+ ;bit 2 request
+ movfw margp2
+ andlw .255-.4
+ goto tff99h
+tff02h: 
+ xorlw .2
+ xorlw .3
+ btfss STATUS,Z
+ goto tff03h
+ ;bit 3 request
+ movfw margp2
+ andlw .255-.8
+ goto tff99h
+tff03h: 
+ xorlw .3
+ xorlw .4
+ btfss STATUS,Z
+ goto tff04h
+ ;bit 4 request
+ movfw margp2
+ andlw .255-.16
+ goto tff99h
+tff04h: 
+ xorlw .4
+ xorlw .5
+ btfss STATUS,Z
+ goto tff05h
+ ;bit 5 request
+ movfw margp2
+ andlw .255-.32
+ goto tff99h
+tff05h: 
+ xorlw .5
+ xorlw .6
+ btfss STATUS,Z
+ goto tff07h
+ ;bit 6 request
+ movfw margp2
+ andlw .255-.64
+ goto tff99h
+tff07h: 
+ ;bit 7 request
+ movfw margp2
+ andlw .255-.128
+tff99h:  
+ PUSH
+ return
+
+HLEND
+ 

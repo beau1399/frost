@@ -1,0 +1,228 @@
+event 1 is 
+ .handler[.addf[1.0 .samplef[4]]]  
+ ; 
+
+
+
+
+
+.setbit[0 .setbit[4 .setbit[1 .setbit[2 @trisa]]]] > trisa
+
+
+.setbit[0 @trisc] > trisc
+
+
+.clearbit[5 @cm1con0] > cm1con0
+
+
+0 > intcon
+0 > gie
+
+
+.setbit[not-rabpu @option-reg] > option-reg
+
+
+0 > anselh
+0 > ansel
+
+.clearbit[rcie .clearbit[txie @pie1]] > pie1
+
+
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta if 0 ,,
+ 1 > wasnight 
+ .night[],
+
+.clearbit[tmr1cs .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+
+if 0 ,,.cls[] ,
+
+
+.wait-button[]
+
+.clearbit[tmr1on @t1con] > t1con 
+
+0 > tmr1h 
+0 > tmr1l
+.setbit[GIE @intcon] > intcon 
+
+if 0 , 128 > tmr1h ,,
+.setbit[tmr1on @t1con] > t1con 
+
+
+
+
+
+
+
+
+d .wait-button is
+ if .andu[@PORTA 16],.wait-button[],, 
+;
+
+d .bigbar 2 0 is
+  .graphx[15 .parm[0] .parm[1] 11 ]
+  .graphx[15 .parm[0] .parm[1] 12 ]
+  .graphx[15 .parm[0] .parm[1] 13 ]
+;
+
+
+t .TextA
+ 
+ 13 10 
+ 'OS-9 6809 ran on Motorola EXORbus systems using the Motorola 6809, SS-50 '
+ 0
+ 0
+;
+
+d .putTextA 0 0 is  
+ .putiTextA[0]
+;
+
+
+d .putiTextA * is 
+ if .eq[ .TextA[.parm[0]] 0 ],, 
+  .printch[.TextA[.parm[0]]]  .add[1] .putiTextA[], 
+ ; 
+t .TextB
+ 
+ 13 10 
+ 'and SS-50C bus systems from companies like Gimix, Midwest Scientific and '
+ 0
+ 0
+;
+
+d .putTextB 0 0 is  
+ .putiTextB[0]
+;
+
+
+d .putiTextB * is 
+ if .eq[ .TextB[.parm[0]] 0 ],, 
+  .printch[.TextB[.parm[0]]]  .add[1] .putiTextB[], 
+ ; 
+t .TextC
+ 
+ 13 10 
+ 'Smoke Signal Broadcasting. Motorola called it an "8-bit Plus" design.    '
+ 0
+ 0
+;
+
+d .putTextC 0 0 is  
+ .putiTextC[0]
+;
+
+
+d .putiTextC * is 
+ if .eq[ .TextC[.parm[0]] 0 ],, 
+  .printch[.TextC[.parm[0]]]  .add[1] .putiTextC[], 
+ ; 
+t .TextE
+ 
+ 13 10 
+ '                                                                         '
+ 0
+ 0
+;
+
+d .putTextE 0 0 is  
+ .putiTextE[0]
+;
+
+
+d .putiTextE * is 
+ if .eq[ .TextE[.parm[0]] 0 ],, 
+  .printch[.TextE[.parm[0]]]  .add[1] .putiTextE[], 
+ ; d .handler 2 0 is
+
+if 0 ,
+
+  .plotat[65 .ftou[.divf[.parm[1].parm[0] 64.0]]]
+
+    .add[1 @cnt] > cnt
+
+	if .geu[8 .modu[@cnt 32] ],.putTextA[],,
+	if .geu[16 .modu[@cnt 32] ],.putTextB[],,
+	if .geu[24 .modu[@cnt 32] ],.putTextC[],,
+	if .geu[8 .modu[@cnt 32] ],,.putTextE[],
+ ,  
+   
+  .plotat[5 .ftou[.divf[.parm[1].parm[0] 64.0]]]   
+  
+  
+  if @wasnight,
+   if .gtf[.parm[1].parm[0] 512.0],.day[] .cls[] 0>wasnight,,,
+   if .gtf[512.0 .parm[1].parm[0] ],.night[] .cls[] 1>wasnight,,,
+ ,  
+;
+
+d .plotat 2 0 is
+ .graphx[15 .parm[0] .parm[1] 7 ]
+ .graphx[15 .parm[0] .parm[1] 8 ]
+ .graphx[15 .parm[0] .parm[1] 9 ]
+
+ .graphx[15 .parm[0] .parm[1] 11 ]
+ .graphx[15 .parm[0] .parm[1] 12 ]
+ .graphx[15 .parm[0] .parm[1] 13 ]
+
+;
+
+d .samplef 1 2 is
+
+ 
+
+ 
+ .setbit[6 .clearbit[5 .setbit[4 @adcon1]]] > adcon1
+ 
+ 
+ 
+   if .eq[.parm[0] 0], .clearbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+    if .eq[.parm[0] 1], .setbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+     if .eq[.parm[0] 2], .clearbit[2 .setbit[3 .clearbit[4 @adcon0]]],
+   
+      if .eq[.parm[0] 3], .setbit[2 .setbit[3 .clearbit[4 @adcon0]]], 
+   
+       if .eq[.parm[0] 4], 
+	   .clearbit[2 .clearbit[3 .setbit[4 @adcon0]]]
+	    ,
+   
+   ,,,,,
+ > adcon0
+ 
+ .dispose[]
+ 
+  
+  .clearbit[1 .setbit[7 .setbit[0 @adcon0]]] > adcon0 
+  
+
+ .setbit[0 @ansel] > ansel	
+ 
+ 
+ .setbit[1 @adcon0] > adcon0
+ 
+ .ourwait[]
+ 
+ 
+ .addf[.mulf[256.0 .utof[.andu[3 @adresh]]] .utof[@adresl]]
+;
+
+
+
+d .ourwait is 
+ if .andu[2 @adcon0],
+  .ourwait[],
+ ,
+; 

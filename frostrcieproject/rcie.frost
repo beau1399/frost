@@ -1,0 +1,45 @@
+
+calls printch,getch,setbit,clearbit
+
+
+event r is
+ .printch[@rcreg] 
+;
+
+
+event 1 is
+ .printch[46]
+;
+
+
+/PIR1 RCIF
+
+
+insert clock
+
+frost57600bps
+
+
+
+insert timer
+
+.setbit[tmr1ie @pie1] > pie1 /Enable timer1 interrupt
+.setbit[peie @intcon] > intcon /peie peripheral interrupt enable
+.clearbit[tmr1on @t1con] > t1con /timer off
+0 > tmr1h 0 > tmr1l
+
+/.setbit[rcif @pir1] > pir1
+/.clearbit[txie @pie1] > pie1
+
+.setbit[peie @intcon] > intcon
+.setbit[rcie @pie1] > pie1
+.setbit[tmr1on @t1con] > t1con /timer on
+.setbit[gie @intcon] > intcon
+
+
+
+/Enters "idle" loop and allows interrupts to occur
+
+/.lf[]
+
+/d .lf is .printch[.getch[]] .lf[];

@@ -1,0 +1,164 @@
+
+/TODO - func. protos.
+
+
+calls printu,printch,add,parm,eq,modu,divu,eq,
+
+
+
+
+
+
+
+ geu,orb,oru,            andu
+calls remove,restore,    safeadd  ,andb,mul
+calls printchxy,cls,night,day
+
+
+
+
+
+insert clock
+
+
+	
+frost115200bps
+
+
+.clearbit[txie .clearbit[RCIE @pie1]] > pie1
+
+
+
+
+
+  
+0 > intcon
+
+.cls[]
+
+/ To test bounds checking:
+/1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+/1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+/1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+ 
+ .longf[] 
+ 
+d .longf * is
+ .wrapstringA[10 10 65]
+
+ .longf[]    /Third passed to next iteration of function
+ 
+;
+
+
+
+
+
+
+
+
+d .makespaces 1 0 is
+ .makespacesi[.add[ -1]]
+;
+
+
+d .makespacesi * is
+ if .parm[0], .printch[32] .makespacesi[.add[ -1]],,
+;
+
+d .wrapstringA 3 0 is
+
+ .printchxy[.stringA[0] .parm[2] .parm[1]] 
+ .wrapstringAi[.parm[2] .parm[0] 1.add[ -1.parm[0]]]
+;
+d .copy 1 2 is .parm[0] .parm[0] ;
+d .wrapstringAi * is
+
+ if .wrapstringAif[.parm[3].parm[2].parm[1].parm[0]],.eat[].parm[2],,
+ 
+ if .eq[.parm[0] 1],
+		 
+		  /isalpha or isdigit
+          if .orb[		     
+		          isdigit`.stringA[.parm[1]]\
+				  isalpha`.stringA[.parm[1]]\
+		  		 ],		  
+						
+			/.printch[45] .printch[13] .printch[10] .makespaces[.parm[3]]
+			
+			.printch[45] .printch[13] .printch[10]
+			if .eq[.stringA[.parm[1]] 32],  /Don't print an initial space on line 
+			  .makespaces[.add[ -1 .parm[3]]],
+			  .makespaces[.parm[3]], 
+			
+			
+			.printch[.stringA[.parm[1]]]
+			
+			.eat[]
+			.add[ -1 .parm[2]],
+
+			.printch[.stringA[.parm[1]]].printch[13] .printch[10]  
+			
+/			.makespaces[.parm[3]] 
+			if .eq[.stringA[.add[1 .parm[1]]] 32], /Don't print an initial space on line 
+			  .makespaces[.add[ -1 .parm[3]]],
+			  .makespaces[.parm[3]], 
+
+			
+			
+			.eat[]
+			.parm[2],
+			
+	,.printch[.stringA[.parm[1]]].add[ -1 ]
+ ,
+
+ if .stringA[.add[1 .parm[1]]],
+
+	.remove[]
+	.add[1]
+	.restore[]
+	
+    .wrapstringAi[],,
+		
+;
+
+d .eat 1 0 is ; 
+
+d .wrapstringAif 4 1 is
+
+ if .mul[  
+      .geu[.wrapstringAifin[.parm[2].parm[1] 0] .add[1 .parm[0]]]
+	  .eq[.stringA[
+	  
+	  
+	   if .eq[0 .parm[1]], 0, .add[ -1 .parm[1]],
+	  
+	  ] 32]
+	  ], 
+	  
+	  .printch[13].printch[10] .makespaces[.parm[3]] 1
+	  ,0,
+;
+
+
+d .wrapstringAifin * is
+ if .add[.eq[.stringA[.add[.parm[0] .parm [1]]] 32] .eq[.stringA[.add[.parm[0] .parm[1]]] 0]   ], /.printch[66]
+ .parm[0],
+ .wrapstringAifin[.add[1]],
+;
+
+d .eqresult 2 1 is .eq[ .geu[.parm[0] 2] .geu[.parm[1] 2] ];
+
+t .stringA
+ 'OS9 ""6809"" ran on Motorola EXORbus systems using the Motorola 6809, SS50 Bus and SS-50C bus systems from companies such as SW'
+ 'TPC, Tano, Gimix, Midwest Scientific, and Smoke Signal Broadcasting, and STD-bus 6809 systems from several suppliers.'
+ 0
+;
+
+
+
+
+
+
+

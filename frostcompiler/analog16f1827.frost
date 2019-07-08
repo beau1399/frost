@@ -1,0 +1,56 @@
+calls utof,eq,mulf,addf,dispose,setbit,clearbit,parm,andu
+d .samplef 1 2 is
+
+ /Sets analog channeland samples it
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+   if .eq[.parm[0] 0], .clearbit[2.clearbit[3.clearbit[4 @adcon0]]],
+   
+    if .eq[.parm[0] 1], .setbit[2.clearbit[3.clearbit[4 @adcon0]]],
+   
+     if .eq[.parm[0] 2], .clearbit[2.setbit[3.clearbit[4 @adcon0]]],
+   
+      if .eq[.parm[0] 3], .setbit[2.setbit[3.clearbit[4 @adcon0]]], 
+   
+       if .eq[.parm[0] 4], .clearbit[2.clearbit[3.setbit[4 @adcon0]]],
+   
+   ,,,,,
+ > adcon0
+ 
+ 
+ .setbit[0 @adcon0] > adcon0 /AD on
+ 
+ 
+ .dispose[]
+ 
+  
+   .clearbit[1.clearbit[2 .clearbit[0 .setbit[7 .setbit[6 .setbit[5 .clearbit[4 @adcon1]]]]]]] > adcon1 /Right-justified return; clock/64 sampling;
+  
+
+ .setbit[0 @ansela] > ansela	/A0 ANALOG
+ 
+
+ /Wait for AD conversion process...
+ .setbit[1 @adcon0] > adcon0
+ 
+ .ourwait[]
+ 
+ /Compute SFP result from adresh,adresl (a 10-bit int)
+ .addf[.mulf[256.0 .utof[.andu[3 @adresh]]] .utof[@adresl]]
+;
+
+
+
+d .ourwait is  
+ if .andu[2 @adcon0],
+  .ourwait[],
+ ,
+; 

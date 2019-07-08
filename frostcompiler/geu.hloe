@@ -1,0 +1,34 @@
+; HLOE 8-bit Comparisons
+;
+
+;;;;#include "hloe.inc"
+ 
+ GLOBAL geu
+
+hllcmppic CODE
+
+HLTHUNK hllblss,geu,mkarg1
+
+ POP
+ banksel mkarg1
+ movwf mkarg1	 
+ POP
+ subwf mkarg1,w
+ btfsc STATUS,Z
+ goto mxhbl
+ btfsc STATUS,C
+ goto mxhbm
+mxhbl:
+ movlw .1
+ PUSH
+ ;
+ return
+mxhbm:
+ movlw .0
+ PUSH
+ ;
+ return
+HLEND
+
+
+

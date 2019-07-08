@@ -1,0 +1,344 @@
+;
+; 16-bit Float Divide
+;
+;  8-bit mantissa w/ sign bit
+;  8-bit exponent expressed in two's complement
+;
+; (Together b/c POWF depends on DIVF)
+;
+
+;;;;#include "hloe.inc"
+
+  
+ GLOBAL divf
+
+sfp_div CODE 
+HLTHUNK sfploc,divf,min,ein,min2,ein2,neg,util,mout,multiplier,exam,term,quotient_lo,subtrahend,min2_lower,run_total,loop_count,a_hi_msb,big_c,rounded
+
+; Domain considerations for DIVF
+;
+;(~Ends of range of type)
+; (just less than) 2^128 = 340282366920938463463374607431760000000 /3.4*10^38 
+; 2^-128 ~= 2.9e-39
+; .0000000000000000000000000000000000000029
+;
+; Any parameters that would give an out-of-range answer are excluded from the domain of 
+; _divf.
+; For example, 2^127 divided by 2^-128 is excluded from the domain along with all other 
+; combinations yielding inexpressibly large or small numbers. The behavior of such calls
+; is not defined for _divf at this time.
+
+ POP
+
+ banksel min
+ movwf ein2 
+ clrf neg 
+; clrf neg2 
+
+ POP
+
+ banksel min
+ movwf min2 
+ btfsc min2,7
+ bsf neg,1
+ bcf min2,7 
+
+ POP
+
+ banksel min
+ movwf ein 
+
+ POP
+
+ banksel min
+ movwf min 
+ btfsc min,7
+ bsf neg,0 
+ bcf min,7 ;got kargs, neg mantissa flags set 
+ movfw ein ;ein is the term parm's exp. 
+ movwf util 
+ movfw ein2 
+ subwf util,f ;eout 
+
+ clrf exam ;serves as LSB of numerator, starts at 0
+
+ ;((min + 128 ) / (min2 + 128)) - 128-> (multiplier|mout)
+ movfw min ;term mantissa 
+ addlw .128 
+ movwf min 
+
+ movfw min2 ;denom mantissa 
+ addlw .128 
+ movwf min2 
+;noqrg6
+ 
+ ; INLINE 16b / 8b => 8b DIV routine 
+
+ ;save denominator to see if roundn necess. after loop
+ movwf term 
+
+; Restoring Division (initially, at least, w/o post-loop rounding)
+
+; Quotient_lo=0;
+ clrf quotient_lo
+
+; subtrahend=0;
+ clrf subtrahend
+
+; min2_lower=0;
+ clrf min2_lower
+
+; run_total=0;
+ clrf run_total
+
+; loop_count=0;
+ clrf loop_count
+
+f4tp:
+; if(loop_count>=16) goto f4dn;
+ movf loop_count,w
+ xorlw .16
+ btfsc STATUS,Z
+ goto f4dn
+
+; A_hi_msb=min&(128); //check top bit
+ movf min,w
+ andlw .128
+ movwf a_hi_msb
+ 
+; min2_lower*=2; 
+ LSHIFT min2_lower
+
+; c1=run_total&128;
+; run_total*=2; 
+ LSHIFT run_total
+
+; if(!c1) goto que4;
+ btfss STATUS,C
+ goto que4
+
+; ++min2_lower;
+ incf min2_lower,f
+
+que4:
+
+; min*=2;
+ LSHIFT min
+
+; c1=Quotient_lo&128;
+; Quotient_lo*=2; 
+ LSHIFT quotient_lo
+
+; if(!c1) goto qu5e;
+ btfsc STATUS,C
+
+; ++min;
+;qu5e
+ incf min,f
+
+; if(!A_hi_msb) goto nry4;
+ movf a_hi_msb,f
+ btfsc STATUS,Z
+ goto nry4
+
+; ++run_total;
+ incf run_total,f
+
+; if(!run_total) ++min2_lower;
+ btfsc STATUS,Z
+ incf min2_lower,f
+
+nry4:
+
+; C=min2>run_total;
+ clrf big_c 
+ movfw min2
+ subwf run_total,w 
+ btfss STATUS,C 
+ bsf big_c,0 ;C==0 means borrow occured
+
+; min2_lower-=subtrahend;
+ movf subtrahend,w
+ subwf min2_lower,f ;f-w i.e. min2_lower-subtrahend
+
+; run_total-=min2;
+ movf min2,w
+ subwf run_total,f
+
+; if(C) --min2_lower;
+ btfsc big_c,0 
+ decf min2_lower,f
+
+; if(!(min2_lower&128)) goto ga4g0;
+ btfss min2_lower,7
+ goto ga4g0
+
+
+; C=((int)min2+(int)run_total)>255;
+ movf min2,w
+ addwf run_total,w
+ clrf big_c
+ btfsc STATUS,C
+ bsf big_c,0
+
+; min2_lower+=subtrahend;
+ movf subtrahend,w
+ addwf min2_lower,f
+
+; run_total+=min2;
+ movf min2,w
+ addwf run_total,f
+
+
+; if(C) ++min2_lower;
+ btfsc big_c,0 
+ incf min2_lower,f
+
+
+; Quotient_lo&=0xFE;
+ movlw .254
+ andwf quotient_lo,f
+
+; goto ga5g0;
+ goto ga5g0
+ga4g0:
+
+; Quotient_lo|=0x01;
+ movlw .1
+ iorwf quotient_lo,f
+ga5g0:
+
+
+; ++loop_count;
+ incf loop_count,f
+
+; goto f4tp;
+ goto f4tp
+
+f4dn:
+
+; *mout= Quotient_lo;
+ movf quotient_lo,w
+ movwf mout
+
+; quot_out_hi = (bool)(min&1);
+ clrf multiplier
+ btfsc min,0
+ bsf multiplier,0
+
+ ; save_denom/=2;
+ RSHIFT term
+ 
+ clrf rounded
+ movfw run_total
+ subwf term,w    ;save_denom-run_total
+ btfsc STATUS,C 
+ goto fr9rh   ;C, no borrow,!(save_denom<runtot)
+ incf mout,f ;borrow, i.e. runtotal>term
+ bsf rounded,0 
+ 
+fr9rh:
+ 
+; if(!quot_out_hi) goto notmult0; //(Just compiled this statement)
+
+ movf multiplier,f
+ btfsc STATUS,Z
+ goto notmult0
+ 
+
+;
+; if(!((*mout)&1 && !rounded)) goto prpgl;
+; i.e. if((mout&1 && !rounded)){
+ ;First - if !mout|0 goto prpg1
+ btfss mout,0
+ goto prpg1
+
+ ;2nd - if rounded goto prpg1
+ btfsc rounded,0
+ goto prpg1
+ 
+ 
+; (*mout)/=2;
+ RSHIFT mout
+ 
+; (*mout)++;
+ incf mout,f
+
+; goto prpgm;
+ goto prpgm
+
+prpg1:
+
+; (*mout)/=2;
+ RSHIFT mout
+ 
+prpgm:
+
+; (*mout)|=128; //This is "quot_out_hi" shifting into top of *mout
+ bsf mout,7
+
+ goto notmult1
+notmult0:
+ decf util,f ;compensates for answer which is expressed in 256ths not 128ths
+notmult1:
+ movfw mout 
+
+retrydvif1: ;will return here rep'ly. as necess. to normalize mantissa 
+
+  addlw -.128 
+  movwf exam ; no neg mantissa 
+  btfss exam,7 
+  goto nodivfcarr2 ;divf carry making mantissa 
+  addlw .128    ; w is mout; exam is mout-128; 
+
+ 
+ decf util,f ;dec eout 
+
+ ;mout*=2
+ LSHIFT mout
+ movfw mout 
+ goto retrydvif1 
+
+nodivfcarr2: 
+
+
+ movwf mout
+
+
+
+ 
+ 
+ btfsc neg,0
+ goto ita33nq ;neg1 set, escape..
+ btfss neg,1
+ goto div_sames ;both clear
+ goto div_dif5 ;(!neg1) && neg2
+ita33nq: ;neg1 set
+ btfsc neg,1
+ goto div_sames ;both set
+
+div_dif5: 
+
+ 
+ 
+ 
+ 
+ movfw mout 
+ iorlw .128 
+ movwf mout 
+ 
+
+div_sames: 
+ movfw mout 
+ PUSH
+ banksel min
+ movfw util ;eout 
+ PUSH
+ 
+ return 
+
+ 
+ HLEND
+ 
+
+

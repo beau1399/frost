@@ -1,0 +1,74 @@
+; HLOE "Safe" unsigned byte add, i.e. overflow yields 255 (max. val.)
+
+;;;;#include "hloe.inc"
+
+ GLOBAL safeaddi
+
+altsthhk CODE
+
+HLTHUNK hllblss,safeaddi,mkarg1,margpi,mterm
+ POP
+ 
+ banksel margpi 
+ movwf margpi 
+ clrf mkarg1
+ andlw .128 ;80 hex
+ btfsc STATUS,Z
+ goto Tmmmy ;runs if 0 set, ie. if pos
+ bsf mkarg1,0 ; means arg0 is neg
+Tmmmy:
+ banksel stack
+ ;peek at stack top 
+ movlw .128
+ andwf HLINDF,w
+ banksel mkarg1
+ btfsc STATUS,Z
+ goto Tmnny
+ bsf mkarg1,1 ; means mkarg1 is neg
+Tmnny:
+ 
+ banksel margpi
+ movf margpi,w ;get 1st arg to add w/ 2nd
+ banksel stack 
+ addwf HLINDF,w 
+ decf HLFSR,f ;done peeking
+ banksel mterm
+ movwf mterm
+ btfsc mkarg1,0
+ goto ar3neg
+ ;arg0 was pos
+ btfsc mkarg1,1
+ goto ok00
+ ;both pos
+ 
+ btfss mterm,7
+ goto ok00
+ ;result negative - not good
+ goto toob31
+ ;goto ok00
+ 
+ar3neg:
+ btfss mkarg1,1
+ goto ok00
+ ;both neg
+ btfsc mterm,7
+ goto ok00
+ ;result pos - not good
+ goto toob32
+ok00:
+ 
+ PUSH
+ return
+ 
+toob31:
+ 
+ movlw .127 
+ PUSH
+ return
+toob32:
+ 
+ movlw -.128 
+ PUSH
+ return
+
+ HLEND

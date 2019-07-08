@@ -1,0 +1,182 @@
+MPLINK 4.14, Linker
+Linker Map File - Created Sun Jul 07 20:18:53 2019
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   Resetv       code   0x000000    program   0x000006
+                   .cinit    romdata   0x000003    program   0x000004
+                hllupuser       code   0x000005    program   0x0001d0
+                   hlog1b       code   0x0000ed    program   0x000076
+                   hlog1a       code   0x000128    program   0x000076
+                hllkrna08       code   0x000163    program   0x000060
+                hllkrna09       code   0x000193    program   0x000042
+                hllkrna10       code   0x0001b4    program   0x00003e
+                hllkrna05       code   0x0001d3    program   0x000026
+                hllkrna04       code   0x0001e6    program   0x000026
+                hllkrna00       code   0x0001f9    program   0x000018
+                hllkrna07       code   0x000205    program   0x000014
+                hllkrna06       code   0x00020f    program   0x000014
+                hllkrna03       code   0x000219    program   0x000014
+                     main       code   0x000223    program   0x000012
+                   hlog1d       code   0x00022c    program   0x00000e
+                hllkrna01       code   0x000233    program   0x00000e
+                hllkrna02       code   0x00023a    program   0x000006
+                hllkrna11       code   0x00023d    program   0x000004
+                  .config       code   0x002007    program   0x000002
+                   ukrnl2      udata   0x000020       data   0x000050
+                   ukrshr      udata   0x000070       data   0x000009
+                 mainvars      udata   0x000079       data   0x000002
+                   ukrnl3      udata   0x0000a0       data   0x000014
+                   ukernl      udata   0x0000b4       data   0x000003
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00023e      
+                            0x002007    0x002007      
+            576 out of 4358 program addresses used, program memory utilization is 13%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          _hllkrna00_0009   0x000202    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna03_0008   0x000221    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna04_000C   0x0001f2    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna04_000E   0x0001f4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna05_000C   0x0001df    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna05_000E   0x0001e1    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna08_0003   0x000166    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna08_0011   0x000174    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna09_0003   0x000196    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna09_0011   0x0001a4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna10_0003   0x0001b7    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna10_0010   0x0001c4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      add   0x000233    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 clearbit   0x000128    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  dispose   0x00023d    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     divu   0x0001d3    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                       eq   0x000205    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    getch   0x00020f    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    geth2   0x000211    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllAAAAA   0x000135    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllBAAAA   0x00013b    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllCAAAA   0x000142    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllDAAAA   0x000149    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllEAAAA   0x000150    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllFAAAA   0x000157    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllGAAAA   0x00015e    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllHAAAA   0x000160    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllIAAAA   0x0000fa    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllJAAAA   0x000100    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllKAAAA   0x000107    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllLAAAA   0x00010e    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllMAAAA   0x000115    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllNAAAA   0x00011c    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllOAAAA   0x000123    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllPAAAA   0x000125    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllprgen2   0x0000ec    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+               hllprogend   0x0000eb    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+              hlluserprog   0x000005    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   hloego   0x000223    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     kpop   0x000193    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    kpush   0x0001b4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     modu   0x0001e6    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      mul   0x0001f9    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    negti   0x00023a    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      oru   0x00022c    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     parm   0x000163    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  printch   0x000219    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   setbit   0x0000ed    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 ALT_Save   0x000077       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 FSR_Save   0x000076       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  PC_Save   0x00007a       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+              STATUS_Save   0x000075       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   W_Save   0x000074       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  alt_fsr   0x000073       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                alt_stack   0x0000a0       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss00   0x0000b4       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss01   0x0000b5       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss02   0x0000b6       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   in_isr   0x000078       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    pbase   0x000079       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack0   0x000070       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack1   0x000071       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack2   0x000072       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    stack   0x000020       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+              hlluserprog   0x000005    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+               hllprogend   0x0000eb    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllprgen2   0x0000ec    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   setbit   0x0000ed    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllIAAAA   0x0000fa    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllJAAAA   0x000100    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllKAAAA   0x000107    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllLAAAA   0x00010e    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllMAAAA   0x000115    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllNAAAA   0x00011c    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllOAAAA   0x000123    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllPAAAA   0x000125    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 clearbit   0x000128    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllAAAAA   0x000135    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllBAAAA   0x00013b    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllCAAAA   0x000142    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllDAAAA   0x000149    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllEAAAA   0x000150    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllFAAAA   0x000157    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllGAAAA   0x00015e    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 hllHAAAA   0x000160    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     parm   0x000163    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna08_0003   0x000166    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna08_0011   0x000174    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     kpop   0x000193    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna09_0003   0x000196    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna09_0011   0x0001a4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    kpush   0x0001b4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna10_0003   0x0001b7    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna10_0010   0x0001c4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     divu   0x0001d3    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna05_000C   0x0001df    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna05_000E   0x0001e1    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                     modu   0x0001e6    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna04_000C   0x0001f2    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna04_000E   0x0001f4    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      mul   0x0001f9    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna00_0009   0x000202    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                       eq   0x000205    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    getch   0x00020f    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    geth2   0x000211    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  printch   0x000219    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+          _hllkrna03_0008   0x000221    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   hloego   0x000223    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      oru   0x00022c    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                      add   0x000233    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    negti   0x00023a    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  dispose   0x00023d    program     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    stack   0x000020       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack0   0x000070       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack1   0x000071       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+               softstack2   0x000072       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  alt_fsr   0x000073       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   W_Save   0x000074       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+              STATUS_Save   0x000075       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 FSR_Save   0x000076       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                 ALT_Save   0x000077       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                   in_isr   0x000078       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                    pbase   0x000079       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                  PC_Save   0x00007a       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                alt_stack   0x0000a0       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss00   0x0000b4       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss01   0x0000b5       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+                hllblss02   0x0000b6       data     static Z:\home\dell\frost\frostunrollproject\target.asm
+
+

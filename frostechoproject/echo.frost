@@ -1,0 +1,14 @@
+calls printch,getch
+
+
+
+
+insert clock
+frost57600bps
+
+.dofunc[]
+
+d .dofunc is
+ .printch[.getch[]] 
+ .dofunc[] 
+;

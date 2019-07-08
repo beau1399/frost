@@ -1,0 +1,14 @@
+calls printch
+
+insert clock
+
+frost115200bps
+
+.many-Bs[]
+    
+d .many-Bs is
+  .printch['B']
+  .many-Bs[] 
+; 
+  
+ 

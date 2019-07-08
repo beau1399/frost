@@ -1,0 +1,4 @@
+calls setbit,clearbit
+
+/"Slow" 16-bit timer... this is the ~5.8 hertz "Scrapnet" rate
+.clearbit[tmr1cs .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con

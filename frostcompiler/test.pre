@@ -1,0 +1,59 @@
+event 1 is
+ .printch[13].printch[10]
+;
+
+
+
+
+	
+
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta 0 > intcon
+.setbit[c1on @cm1con0] > cm1con0
+.setbit[c1on @cm2con0] > cm2con0
+
+
+
+.clearbit[tmr1cs .clearbit[tmr1ge .clearbit[t1ckps1 .clearbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+
+
+.clearbit[tmr1on @t1con] > t1con 
+0 > tmr1h
+0 > tmr1l
+
+ 
+.setbit[gie @intcon] > intcon
+.setbit[tmr1on @t1con] > t1con 
+
+
+
+.abcs[0] 
+  
+d .abcs * is
+  .build[65] 
+  .pstr[] 
+  .abcs[]
+; 
+  
+  
+d .build * is
+ if .eq[ .parm[0] 90 ], , 
+   .add[ .parm[0]  1] .build[], 
+ ; 
+ 
+ d .pstr * is
+  .printch[]
+  if .eq[.parm[1] 0 ] , , 
+   .pstr[] ,
+ ;

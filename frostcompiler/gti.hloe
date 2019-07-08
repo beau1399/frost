@@ -1,0 +1,59 @@
+; HLOE 8-bit Comparisons
+;
+
+;;;;#include "hloe.inc"
+ 
+ GLOBAL gti
+
+hllcmppdd CODE
+
+HLTHUNK hllblss,gti,mkarg1,mkarg2
+
+ ;if argr > 0
+ ;  if argl<0 return false
+ ;  else stdlogic
+ ;else 
+ ;  if argl>=0 return true
+ ;  else stdlogic
+ POP 
+ banksel mkarg1
+ 
+ movwf mkarg1		;mkarg1 is right arg (argr)
+ btfsc mkarg1,7
+ goto $+15
+ POP
+ ;
+ movwf mkarg2 
+ btfss mkarg2,7
+ ;goto $+5
+ goto bdlbl
+ movlw .0
+ PUSH
+ ;
+ return
+ bdlbl: subwf mkarg1,w ;mkarg1-mkarg2  right - left
+ btfsc STATUS,C    ;C==0 means borrow occured, ie. mkarg2>mkarg1, i.e. left > rt
+ goto $+5
+ movlw .1
+ PUSH
+ ;
+ return
+ movlw .0
+ PUSH
+ ;
+ return
+ POP
+ ;
+ movwf mkarg2
+ btfsc mkarg2,7
+ goto $-0F
+ movlw .1
+ PUSH
+ ;
+ return
+ HLEND
+ 
+
+
+
+ 

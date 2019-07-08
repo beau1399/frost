@@ -1,0 +1,597 @@
+
+%{
+#define YYSTYPE char*
+#include<iostream>
+#include<fstream>
+#include<vector> 
+#include<set>
+#include<string>
+#include<map>
+#include<sstream>
+#include<stack>
+#include<ctime>
+#include<cstdio> //Actual flex generation of C++ parser is experimental, so we need this
+#include<cstring>
+#include<algorithm>
+ //Often too broad, here it avoids about a dozen "using" statments
+ using namespace std;
+#define NULL_ARGS -1 //Placeholder for "program did not supply an argument count"
+#include "state.h"
+ //From (F)lex 
+ extern "C"
+ {
+  void yyset_in ( FILE *  in_str  );
+  int yyparse(void);
+  int yylex(void);  
+  int yywrap()
+  {
+   return 1;
+  }
+ }
+#include "frostcore.h"
+#include "nonbison.h"
+ static compilerstate c;
+ //The output stream
+ ofstream target_s("target.tmp");  //Generated assembly language output
+ ofstream inc_file_s("hloe.inc");  //Included by libraries, allow portability
+ ofstream make_file_s("make.bat"); //Build script for target
+ int yyerror(const char * str)
+ {
+  cout<<"^"<<str<<endl;
+  exit(0);
+  return 0;
+ }
+ %}
+%token DOTTOK LPARENTOK RPARENTOK SEMITOK IDENTTOK NUMBERTOK DEETOK ISTOK ATTOK IFTOK 
+%token ASSIGNTOK COMMATOK STARTOK EVENTTOK QUOTTOK TTETOK NATNUMTOK
+%%
+// BNF GRAMMAR SECTION /////////////////////////////////////////////////////// 
+prog : vents {c.in_isr=0;} unity
+{
+ insert_file(get_module_name(("header"),(".inc"),0,1),target_s);
+ target_s<<$3; //UNITY
+ free($3);
+ emit_inclusion("progend",".inc","","",target_s); //
+} 
+defs;
+vents: | vents{
+ c.multitask=1;
+ c.in_isr=1;
+}  ventit;
+ventit: EVENTTOK proc ISTOK unity SEMITOK 
+{
+ string fname_procno("process");//Get snippet from .inc, to reset this event's interrupt
+ fname_procno.append(1,$2[0]); 
+ ostringstream osproc; 
+ osproc<<((int)(fname_procno.substr(fname_procno.length()-1).c_str())[0]);
+ emit_inclusion(
+ fname_procno,(".inc"),osproc.str().c_str(),osproc.str().c_str(),target_s); // //
+ target_s<<$4; //UNITY
+ free($4);
+ emit_inclusion("isrjump",".inc",((int)$2[0]),((int)$2[0]),target_s);    
+};
+proc:   NATNUMTOK | IDENTTOK;   
+defs: | defs{
+ c.nofparms=NULL_ARGS;
+ c.nofrets=NULL_ARGS; 
+}  defit;
+defit:  
+// FUNCTION DEFINITION ///////////////////////////////////////////////////////  
+DEETOK DOTTOK IDENTTOK {c.in_function=$3;
+ transform(c.in_function.begin(), c.in_function.end(), c.in_function.begin(), makefunctionname);       
+ //HAVING this intermediate rule somehow breaks our ability to use $6 later
+ // but the rule is nececcsarry to set "in_function"
+} signature
+ISTOK unity SEMITOK {
+ //If put here, then we get actual code for the funciont implementation TODO, but in_function is wrong
+ //c.in_function=$3; 
+ emit_inclusion(("startfunc"),(".inc"),c.labels,c.labels,target_s);  //
+ ++c.labels;
+ target_s<<c.in_function<<":\n"; //
+ if((c.nofparms!=NULL_ARGS)||(c.nofrets!=NULL_ARGS)||c.star)
+ {//Push new base ptr. for this call 
+  insert_file(get_module_name(("getptr"),(".inc"),0,1),target_s);
+  emit_inclusion(("invokeb"),(".inc"),c.in_function,c.in_function,target_s);
+ }
+ target_s<<    $7; //UNITY object code
+ free($7);
+ // FUNCTION DEFINITION WRAP-UP //////////////////////////////////////////////
+ if((c.nofparms!=NULL_ARGS)||(c.nofrets!=NULL_ARGS)) 
+ emit_inclusion(("invokec"),(".inc"),c.in_function,c.in_function,target_s);
+ else if(c.star)
+ emit_inclusion(("hlkdiscard"),(".inc"),"","",target_s);
+ if((c.nofparms!=NULL_ARGS)||(c.nofrets!=NULL_ARGS)) //Function cleanup routine
+ {   
+  if(c.nofrets>0) 
+  insert_file(get_module_name(("savetemp"),(".inc"),0,1),target_s); //Base ptr.     
+  for(int np=0; np<c.nofrets; ++np) //Pop retvals to kernel stack; return values will...
+  emit_inclusion(("transfer"),(".inc"),c.in_function,c.in_function,target_s);
+  if(c.nofrets>0) //Return to this function's BP
+  insert_file(get_module_name(("gettemp"),(".inc"),0,1),target_s);  
+  insert_file(get_module_name(("loadptr"),(".inc"),0,1),target_s);    
+  for(int np=0; np<c.nofparms; ++np) 
+  emit_inclusion(("hldiscard"),(".inc"),"","",target_s); //Clean up args this call
+  for(int np=0; np<c.nofrets; ++np)//Get retval(s) back from stack
+  {
+   emit_inclusion(("invoked"),(".inc"),c.in_function,c.in_function,target_s);
+   if(c.checks)
+   emit_inclusion(("invokee"),(".inc"),c.in_function,c.in_function,target_s);
+   else
+   target_s<<"\n PUSH \n";
+  }
+ }
+ emit_inclusion(("return"),(".inc"),"","",target_s);
+}|
+// TABLE DEFINITION /////////////////////////////////////////////////////////    
+TTETOK DOTTOK IDENTTOK{
+ emit_inclusion(("starttbl"),(".inc"),c.labels,c.labels,target_s); 
+ ++c.labels;   
+ string intbl=$3;
+ transform(intbl.begin(), intbl.end(), intbl.begin(), makefunctionname);          
+ target_s<<" "<<intbl<<endl;
+}   tcollect  SEMITOK ;
+tcollect: | tcollect tabit ;
+numbv: NUMBERTOK|  NATNUMTOK;  
+tabit : numbv
+{
+ string thenum($1);
+ if(thenum.find(".")==string::npos)
+ {
+  int ix;
+  istringstream realsr(thenum);
+  realsr>>ix; 
+  emit_inclusion(("retbegin"),(".inc"),"","",target_s);
+  target_s<<ix;
+ }else{
+  float f;
+  unsigned char m,e;
+  istringstream realsr(thenum);
+  realsr>>f; 
+  make_real(f,m,e);
+  emit_inclusion(("retbegin"),(".inc"),"","",target_s);
+  target_s<<((int)m);
+  emit_inclusion(("retbegin"),(".inc"),"","",target_s);
+  target_s<<((int)e);  
+ }
+}
+| QUOTTOK {
+ string fscbuffer=$1;
+ do{
+  fscbuffer.erase(0,1);
+  //Translate " to ' to allow ' in frost strings
+  if(fscbuffer[0]!='\"') emit_inclusion(("rettbl"),(".inc"),((int)(unsigned char)fscbuffer[0]),((int)(unsigned char)fscbuffer[0]),
+  target_s);
+  else 
+  emit_inclusion(("rettbl"),(".inc"),((int)('\'')),((int)('\'')),target_s);
+ }while(fscbuffer[1]!='\'' && fscbuffer[0]!='\'');
+};
+// FUNCTION SIGNATURES ///////////////////////////////////////////////////////
+signature: {c.star=0;}| STARTOK{c.star=1;
+}
+| NATNUMTOK NATNUMTOK{
+ istringstream realsr($1);
+ realsr>>c.nofparms;
+ istringstream realtr($2);
+ realtr>>c.nofrets; 
+ c.star=0;  
+}; 
+unity : {
+ char * buffer=(char*)malloc(strlen("")+1); //Leex TODO
+ sprintf(buffer,"");
+ $$=buffer;
+} | unity unit {
+ char * buffer=(char*)malloc(strlen($1)+strlen($2)+1);
+ sprintf(buffer,$1); 
+ strcat(buffer,$2);
+ $$=buffer; 
+};
+unit : fcall |
+// CHAR LITERAL ///////////////////////////////////////////////////////////  
+QUOTTOK
+{
+ ostringstream os1; 
+ for(int multich=strlen($1)-2;multich>=1;--multich)
+ {
+  os1<<endl<<" ; char "<<$1<<"\n";
+  emit_inclusion(("posmov2"),(".inc"),"","",os1); //     
+  os1<<((int)(unsigned char)($1[multich]))<<endl; 
+  if(c.checks)
+  emit_inclusion(("safep2"),(".inc"),c.memzone,c.memzone,os1);
+  else
+  os1<<"\n PUSH \n";
+ }
+ //TODO abstract over this repetitive crap
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+}
+| 
+// NUMERIC LITERAL ///////////////////////////////////////////////////////////
+numbv{
+ ostringstream os1; 
+ string thenum($1);
+ //This is repeated ... is there a better way TODO
+ if(c.in_function.length()) c.memzone=c.in_function; 
+ else c.memzone=(c.in_isr)?"ISR":"hlluserprog"; //Allows proper paging for "far" return
+ if(thenum.find(".")==string::npos)
+ {
+  //INTEGER
+  if($1[0]=='-')
+  {
+   emit_inclusion(("negmove"),(".inc"),"","",os1);  
+   os1<<$1+1; 
+  }
+  else
+  {
+   emit_inclusion(("posmove"),(".inc"),"","",os1); //
+   os1<<$1; //NEW STREAM
+  }
+  if(c.checks)
+  emit_inclusion(("wdsp"),(".inc"),c.memzone,c.memzone,os1);  
+  else
+  os1<<"\n PUSH \n";  //
+ }else{
+  //FLOAT
+  float f;
+  int pointFound=0;
+  unsigned char m,e;
+  istringstream realsr($1);
+  realsr>>f; 
+  make_real(f,m,e);
+  emit_inclusion(("loadm"),(".inc"),(int)m,(int)m,os1);  
+  if(c.checks)
+  emit_inclusion(("wrsp1"),(".inc"),c.memzone,c.memzone,os1);  
+  else
+  os1<<"\n PUSH \n"; 
+  emit_inclusion(("loade"),(".inc"),(int)e,(int)e,os1);
+  if(c.checks)
+  emit_inclusion(("wrsp2"),(".inc"),c.memzone,c.memzone,os1);
+  else
+  os1<<"\n PUSH \n";
+ }
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+} | 
+ATTOK IDENTTOK {
+ // DEREFERENCE //////////////////////////////////////////////////////////
+ bool is_var=0;
+ set<string>::iterator pstats=c.statics.begin();   
+ string slot=$2;
+ ostringstream os1;
+ while(pstats!=c.statics.end())                
+ {
+  if(!(pstats->compare(slot))){ is_var=1; break;}
+  ++pstats;
+ }
+ if(!is_var)
+ { 
+  //Variable dereference of MPASM constant reg. file name... we must
+  // force this to uppercase and also make - into _
+  transform(slot.begin(), slot.end(), slot.begin(), makempasmid);
+ }
+ if(c.in_function.length()) c.memzone=c.in_function; 
+ else c.memzone=(c.in_isr)?"ISR":"hlluserprog"; //Allows proper paging for "far" return
+ emit_inclusion(("at"),(".inc"),slot,slot,os1);
+ if(c.checks)
+ emit_inclusion(("at2"),(".inc"),c.memzone,c.memzone,os1);
+ else
+ os1<<"\n PUSH \n";
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+}
+| 
+ASSIGNTOK IDENTTOK {
+ ostringstream os1;
+ bool is_var=0;
+ set<string>::iterator pstats=c.statics.begin();   
+ while(pstats!=c.statics.end())                
+ {
+  if(!(pstats->compare($2))){ is_var=1; break;}
+  ++pstats;
+ }
+ string dollar2($2);
+ if(!is_var)
+ {
+  //Force this to ucase since it's an MPASM literal
+  transform(dollar2.begin(), dollar2.end(), dollar2.begin(), makempasmid); 
+ }
+ //Assgt.; In both cases, must build RHS
+ emit_inclusion(("assign"),(".inc"),dollar2.c_str(),dollar2.c_str(),os1);
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+} | 
+conditi |
+// BIT NAME ///////////////////////////////////////////////////////////////////  
+IDENTTOK{
+ ostringstream os1;
+ //TODO repeated
+ if(c.in_function.length()) c.memzone=c.in_function; 
+ else c.memzone=(c.in_isr)?"ISR":"hlluserprog"; //Allows proper paging for "far" return
+ string dollar1($1);
+ transform(dollar1.begin(), dollar1.end(), dollar1.begin(), makempasmid);    
+ emit_inclusion(("movelit"),(".inc"),dollar1.c_str(),dollar1.c_str(),os1);  
+ if(c.checks)
+ emit_inclusion(("inwsp"),(".inc"),c.memzone,c.memzone,os1);
+ else
+ os1<<"\n PUSH \n";
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+}
+;   
+conditi: IFTOK unity COMMATOK unity COMMATOK unity COMMATOK
+{   
+ ostringstream os1;
+ os1<<$2;  //Emit condition to be tested
+ free($2);
+ int baselabel=c.labels;
+ c.labels+=2;  
+ emit_inclusion(("if1"),(".inc"),baselabel,baselabel,os1); //the test... goto 0
+ os1<<$4; //Emit "true" actions
+ free($4);
+ emit_inclusion(("jump1"),(".inc"),baselabel+1,baselabel+1,os1);   //goto 1
+ emit_inclusion(("label1"),(".inc"),baselabel,baselabel,os1); //0
+ os1<<$6; //Emit "false" actions
+ free($6);
+ emit_inclusion(("label2"),(".inc"),baselabel+1,baselabel+1,os1); //1    
+ char * buffer=(char*)malloc(strlen(os1.str().c_str())+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+}
+;
+// FUNCTION CALL /////////////////////////////////////////////////////////////
+fcall : DOTTOK IDENTTOK LPARENTOK unity RPARENTOK {
+ ostringstream os1;  
+ os1<<$4; //All of the parameters
+ free($4);
+ if(c.in_function.length()) c.memzone=c.in_function; 
+ else c.memzone=(c.in_isr)?"ISR":"hlluserprog"; //Allows proper paging for "far" return
+ transform(c.memzone.begin(), c.memzone.end(), c.memzone.begin(), makefunctionname);   
+ bool tr;//Pre-selection for potential tail recursion...
+ string dollars2($2);
+ transform(dollars2.begin(), dollars2.end(), dollars2.begin(), makefunctionname);   
+ //Some aspects of the tail recursion check are done here. Others - in 
+ // particular those that relate to whether or not any code is present 
+ // after the recursive call in question - are deferred until a 
+ // postprocessing step.
+ tr=(!(c.in_function.compare(dollars2)));
+ tr&=(!(c.in_isr))&& // Not possible from ISR (must return, clean up)
+ c.in_function.length();   //fs.c.funcs w/ neither numbers nor a star (can't use "parm")
+ tr&=(c.nofparms==NULL_ARGS); tr&=(c.nofrets==NULL_ARGS);//Need to run cleanup routines? 
+ if(tr)
+ {
+  cout<<"TAIL RECURSION FOUND for "<<dollars2<<" STAR="<<c.star<<endl;
+  if(c.star) os1<<"\n ;~IFTR~KDISCARD \n"; //TODO refactor - string constant?
+  else os1<<"\n ;~IFTR~ \n";
+ }
+ //Here is the actual function invocation, after the parameters and preliminaries
+ emit_inclusion("invoke",".inc",c.memzone,dollars2,os1); 
+ //Tables, necessarily, use a different calling convention. Since tables consist
+ // purely of RETLW calls into which an indexed jump is made,the return value
+ // arrives in W, not atop the stack, and must be placed atop the stack.
+ if(istable(dollars2,c.text))    
+ { 
+  if(c.checks)
+  {
+   emit_inclusion(("invsp"),(".inc"),c.memzone,c.memzone,os1);
+  }
+  else
+  {
+   os1<<"\n PUSH \n";
+  }
+ }
+ //TODO WHY NOT?? 
+ char * buffer=(char*)malloc(os1.str().length()+1);//Oops! leaks... TODO!
+ sprintf(buffer,os1.str().c_str()); 
+ $$=buffer; 
+ //Some bookkeeping follows
+ if(c.in_function.length())
+ {
+  (c.ds_to_calls[c.in_function]).insert(c.ds_to_calls[c.in_function].end(),dollars2);
+ }
+ if(!(c.in_isr))
+ {
+  if(!(c.in_function.length()))
+  {
+   if(c.thunks[dollars2].length())
+   c.maincalls.insert(c.maincalls.end(),c.thunks[dollars2]); //bottom-level HLOE call
+   else
+   c.maincalls.insert(c.maincalls.end(),dollars2); //call into "d" function
+  }
+ }else{
+  if(c.thunks[dollars2].length())
+  c.eventcalls.insert(c.eventcalls.end(),c.thunks[dollars2]); //bottom-level HLOE call
+  else
+  c.eventcalls.insert(c.eventcalls.end(),dollars2); //call into "d" function
+ }
+};
+%%  
+int main(const int argc, const char *argv[]) 
+{
+ cout<<"WORKING...\n";
+ //TODO should these not all be in c? OR can things from "c" be here?
+ static map<string,string> macromap;
+ static map<string,vector<string> > ds_to_thunks; 
+ static string argproc(""),argboard("");//Set at command line or in source; source wins
+ static vector<string> libs,macroorder; 
+ static set<string> guards;
+ static string usercode2; //Handy for string manipulation
+ clock_t dcloc,ccloc; //For performance profiling   
+ c.in_function=""; 
+ c.checks=true; //Check stack bounds by default
+ c.canonize=false; //Don't canonize spacing in TARGET.ASM by default
+ for(int garg=1; garg<argc; ++garg)
+ {
+  if(!(string(argv[garg]).compare(("file")))) 
+  c.buffer=read_file(string(argv[garg+1]));
+  if(!(string(argv[garg]).compare(("board")))) argboard=string(argv[garg+1]);
+  if(!(string(argv[garg]).compare(("proc")))) argproc=string(argv[garg+1]);
+  if(!(string(argv[garg]).compare(("nobounds")))) c.checks=0;
+  if(!(string(argv[garg]).compare(("canonize")))) c.canonize=1;
+ }
+ if(!c.buffer.length()) c.buffer=string(argv[argc-1]); //Code must be last arg if on cmd.
+ if(argboard.length()) set_header_value(("board is"),argboard);
+ if(argproc.length()) set_header_value(("proc is"),argproc);
+ string ausercopy(c.buffer); //Process file insertions present in insertions 
+ remove_comments(c.buffer,"/");
+ //BAUD frost macro library is automatic
+ static string bbuf=c.buffer;
+ c.buffer=read_file(get_module_name("baud",".frost",0,1));  
+ c.buffer.append(" "); c.buffer.append(bbuf);
+ //FREELIB frost macro library is automatic(FREELIB and BAUD are independently versioned)
+ static string bbuf2=c.buffer;
+ c.buffer=read_file(get_module_name("freelib",".frost",0,1));  
+ c.buffer.append(" "); c.buffer.append(bbuf2);
+ while( c.buffer.find("insert")>=0 && c.buffer.find("insert")<c.buffer.length() )
+ { 
+  usercode2=c.buffer.substr(0,c.buffer.find("insert"));
+  c.buffer=c.buffer.substr(c.buffer.find("insert"));
+  c.buffer=c.buffer.substr(string("insert").length()); //eat "insert"
+  whitespace(c.buffer);
+  string to_inc_file;
+  istringstream iiter(c.buffer);
+  iiter>>to_inc_file;
+  ifstream seeifexists(get_module_name(to_inc_file,".frost",0,0).c_str());
+  string insertion;
+  if(seeifexists.fail())
+  {
+   //Search system folder instead. Allows for reusable .frost code (other than
+   //  "freelib" and "baud"
+   insertion=read_file(get_module_name(to_inc_file,".frost",0,1));
+  }else{
+   insertion=read_file(get_module_name(to_inc_file,".frost",0,0));  
+  }
+  remove_comments(insertion,"/"); 
+  if(is_definition(insertion))
+  {
+   //Force to end... means that frost programmer can group all frost library-related
+   // "insert" directives at the top of the .frost file.
+   usercode2.append(c.buffer.substr(to_inc_file.length()));
+   usercode2.append("\n");     
+   usercode2.append(insertion);     
+  }else{  
+   //Insert in place
+   usercode2.append(insertion);
+   usercode2.append(c.buffer.substr(to_inc_file.length()));   
+  }
+  c.buffer=usercode2;
+ } 
+ compile_time_language(c.buffer,c.funcs,macromap,macroorder,c.statics);
+ int reserve1,reserve2;
+ if(get_header_value("stack is").length())
+ {
+  istringstream iiter(get_header_value("stack is"));
+  iiter>>reserve1;
+ }
+ else reserve1=80; //The optimal val for 16f690 and others
+ if(get_header_value("altstack is").length())
+ {
+  istringstream iiter(get_header_value("altstack is"));
+  iiter>>reserve2;
+ }
+ else reserve2=20; //The optimal val for 16f690 and others
+ emit_inclusion(("hllinclude"),(".inc"),"","",target_s);
+ target_s<<endl;
+ insert_file(get_module_name(("config"),(".inc"),0,1),target_s);
+ target_s<<endl;
+ set<string>::iterator pstats=c.statics.begin();   
+ while(pstats!=c.statics.end())                
+ {
+  emit_inclusion(("static"),(".inc"),pstats->c_str(),pstats->c_str(),target_s);
+  ++pstats;  
+ } 
+ insert_file(get_module_name(("prefix"),(".inc"),0,1),target_s);
+ whitespace(c.buffer);
+ remove_comments(c.buffer,"/"); //Don't want to invoke macro names in comments
+ ccloc=clock();
+ expand_macros(c.buffer,macromap,macroorder,0); 
+ dcloc=clock();
+ cout<<"\nEXPANDED in "<<((float)(dcloc-ccloc))<<"ticks...";
+ remove_comments(c.buffer,"/"); //Get rid of any comments introduced by macros
+ ccloc=clock();
+ canonizeintegers(c.buffer);//Allow things like .add[-1.parm[0]] (it adds space)
+ dcloc=clock();
+ cout<<"\nINTEGRATED in "<<((float)(dcloc-ccloc))<<" ticks...";
+ c.text=c.buffer; 
+ ofstream tout("o.tmp");
+ tout<<c.buffer;
+ tout.close();
+ FILE * cotmp=fopen("o.tmp","r");
+ yyset_in(cotmp);
+ ccloc=clock();
+ yyparse();
+ dcloc=clock();
+ cout<<"\nPARSED in "<<((float)(dcloc-ccloc))<<" ticks...\n";
+ list_bottom_level_calls(c);
+ libs=find_libs(c.funcs,c.checks); //Will be repeated later w/ smaller c.funcs list
+ vector<string>::iterator plibs;
+ ccloc=clock();
+ compile_hloe(libs,c.thunks);
+ dcloc=clock();
+ cout<<"COMPILED in "<<((float)(dcloc-ccloc))<<" ticks...\n";
+ list_function_thunks(c,ds_to_thunks);
+ libs=find_libs(c.funcs,c.checks);
+ build("target",make_file_s); //Output build script
+ emit_inclusion(("make"),(".inc"),getenv("FROST"),
+ get_header_value("proc is"),make_file_s);
+ link(("target"),make_file_s);
+ make_file_s<<" /o\"hloe.hex\" /M\"hloe.map\" /W\n";
+ target_s.close();
+ target_s.open("target.asm");
+ insert_file("target.tmp",target_s); //Must end w/ newline if desired by maker of INC file!
+ //TRANSLATE remaining D-CALLS in c.maincalls and c.eventcalls into THUNK-LEVEL LISTINGS
+ list_task_thunks(c,ds_to_thunks);
+ guards.insert("hllblss"); //Always guard the kernel; other libs can assume it.
+ set<string>::iterator ssiter_out=c.eventcalls.begin(); //Make a GUARD wherever c.maincalls and
+ while(ssiter_out!=c.eventcalls.end())                     //  c.eventcalls contain same thing.
+ {
+  if(!(ssiter_out->compare(""))) {++ssiter_out; continue;}
+  set<string>::iterator ssiter=c.maincalls.begin(); 
+  while(ssiter!=c.maincalls.end())
+  {
+   if(!(ssiter_out->compare(*ssiter++))) guards.insert(*ssiter_out);
+  } 
+  ++ssiter_out;
+ }
+ std::for_each(guards.begin(), guards.end(), guard); 
+ emit_inclusion("defstack",".inc",reserve1,reserve2,inc_file_s);
+ emit_inclusion("baselibs",".inc",get_header_value("proc is"),
+ get_module_name(("kernel"),(".inc"),0,1).
+ substr(0,get_module_name(("kernel"),(".inc"),0,1).length()-4),inc_file_s);
+ if(c.multitask) 
+ emit_inclusion("deftask",".inc","","",inc_file_s);
+ emit_inclusion(("progendc"),(".inc"),"","",target_s);
+ make_file_s.close();
+ inc_file_s.close();
+ //Add libraries to bottom of target.asm, for faster build
+ plibs=libs.begin(); 
+ while(plibs!=libs.end())                
+ {
+  insert_file((string(getenv("FROST"))+(*plibs++)+".asm").c_str(),target_s);
+ }
+ target_s<<endl<<" end"<<endl;
+ target_s.close();
+ ccloc=clock();
+ //Post-processing step... get rid of any PUSH POP pairs
+ pushpopoptimize();
+ farcalloptimize();
+ dcloc=clock();
+ cout<<"OPTIMIZED in "<<((float)(dcloc-ccloc))<<" ticks...\n";
+ ccloc=clock();
+ tailrecursion();
+ dcloc=clock();
+ cout<<"RECURSED in "<<((float)(dcloc-ccloc))<<" ticks...\n";
+ if(c.canonize)
+ {
+  ccloc=clock();
+  //Post-processing step... standardize use of whitespace in target.asm
+  canonicalspacing(); 
+  dcloc=clock();
+  cout<<"CANONIZED in "<<((float)(dcloc-ccloc))<<" ticks...\n";
+ }
+ system("chmod a+x ./make.bat");
+ system("./make.bat");
+} 

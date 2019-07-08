@@ -1,0 +1,18 @@
+in checking the primality of any given number C, 
+ one can check 2 through the last integer < (C/2)
+ one can check 2,3 through the last integer < (C/3)
+ one can check 2,3,4 through the last integer < (C/4)
+ ...
+ in general, one need only check the first N integers >=2, plus any other integers less than (C/(N+1))
+ as long as (C/(N+1))> (N+1), we can simply check up to C/N
+ for a given C, the highest value of N that's valid is 
+
+
+ 
+
+
+
+
+TRASH
+ checking 2 through (C/3) is invalid for numbers <3... if checking 3, we're OK; we check 2 only, but we wouldn't check 3 (the candidate itself) anyway
+ checking 2 through (C/4) is invalid for numbers <4... if checking 4, w

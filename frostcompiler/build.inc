@@ -1,0 +1,3 @@
+echo ASSEMBLING TARGET...
+wine 'c:/Program Files (x86)/Microchip/MPASM Suite/MPASMWIN.exe' /w2 /q /p%s "%s.asm" /l"%s.lst" /e"%s.err" /o%s.o
+cat %s.err

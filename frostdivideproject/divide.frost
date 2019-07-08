@@ -1,0 +1,16 @@
+calls printu,fastdivu,printch
+
+insert clock
+
+frost115200bps
+
+/008 009 002 002 002 009 002 is the correct output (C-style integer division)
+
+.printu[.fastdivu[68 8]]
+.printu[.fastdivu[29 3]]
+.printu[.fastdivu[63 22]]
+.printu[.fastdivu[44 22]]
+.printu[.fastdivu[65 22]]
+.printu[.fastdivu[99 11]]
+.printu[.fastdivu[23 11]]
+

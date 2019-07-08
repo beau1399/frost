@@ -1,0 +1,18 @@
+;
+; HLOE Logical and Bit Operations
+;
+
+
+
+ GLOBAL xoru
+
+ 
+hlog1c CODE
+
+xoru: 
+ POP
+ xorwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+

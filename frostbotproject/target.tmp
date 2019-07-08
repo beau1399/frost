@@ -1,0 +1,3539 @@
+
+#include "hloe.inc"
+
+
+;
+; R O B O T
+;
+; C O N F I G
+;
+
+
+ __config (_EXTRC_OSC_NOCLKOUT& _WDT_OFF  & _MCLRE_OFF & _IESO_OFF & _FCMEN_OFF  & _PWRTE_ON & _BOR_OFF)
+
+
+hllv2setf UDATA
+hllsetfl RES .1
+
+#define setf hllsetfl
+
+hllv2setg UDATA
+hllsetgl RES .1
+
+#define setg hllsetgl
+
+hllv2ticked UDATA
+hlltickedl RES .1
+
+#define ticked hlltickedl
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+ banksel PIR1
+ btfss PIR1,TMR1IF
+ goto hllnotisr49	
+ bcf PIR1,TMR1IF
+
+
+ movlw .1
+ PUSH 
+
+ POP
+ banksel ticked
+ movwf ticked
+ 
+
+
+ movlw .15 
+ PUSH 
+
+   banksel setf
+   movfw setf
+   
+   
+ PUSH 
+
+
+ movlw .60 
+ PUSH 
+
+
+ movlw .15 
+ PUSH 
+
+
+ FAR_CALL ISR,graphx
+
+ ; char 'S'
+
+
+ movlw .83
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+ ; char 'e'
+
+
+ movlw .101
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+ ; char 't'
+
+
+ movlw .116
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+
+ movlw .15 
+ PUSH 
+
+   banksel setg
+   movfw setg
+   
+   
+ PUSH 
+
+
+ movlw .60 
+ PUSH 
+
+
+ movlw .16 
+ PUSH 
+
+
+ FAR_CALL ISR,graphx
+
+ ; char 'P'
+
+
+ movlw .80
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+ ; char 'o'
+
+
+ movlw .111
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+ ; char 's'
+
+
+ movlw .115
+
+ PUSH 
+
+
+ FAR_CALL ISR,printch
+
+
+hllnotisr49:
+
+
+;
+; R O B O T
+;
+; H E A D E R
+;
+
+#ifdef HLLMULTITASK
+ExitISR:    
+ RESUME 
+ 
+  retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+PC_Save res .1
+
+main code
+hloego:
+
+ 
+
+  
+  clrf in_isr
+ 
+  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR 
+  movlw alt_stack-1
+  movwf alt_fsr 
+ 
+ 
+ clrf softstack0 
+ 
+ bankisel stack
+ pagesel hlluserprog
+ goto hlluserprog
+hllupuser CODE
+hlluserprog: 
+ 
+
+ FAR_CALL hlluserprog,main_setup
+
+
+ movlw TMR1ON
+
+ PUSH 
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ FAR_CALL hlluserprog,wait_button
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel TMR1H
+ movwf TMR1H
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel TMR1L
+ movwf TMR1L
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ticked
+ movwf ticked
+ 
+
+
+ movlw GIE
+
+ PUSH 
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ movlw .8 
+ PUSH 
+
+ POP
+ banksel TMR1H
+ movwf TMR1H
+ 
+
+
+ movlw TMR1ON
+
+ PUSH 
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL hlluserprog,samplef
+
+
+ FAR_CALL hlluserprog,addf
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+
+ movlw .23
+ 
+
+
+ PUSH 
+
+
+ movlw .8
+ 
+
+ PUSH 
+
+
+ FAR_CALL hlluserprog,longf
+
+    
+hllprogend:
+ goto hllprogend
+ 
+
+hllt452 CODE
+main_setup:
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel setf
+ movwf setf
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel setg
+ movwf setg
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ANSELH
+ movwf ANSELH
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ANSEL
+ movwf ANSEL
+ 
+
+
+ FAR_CALL main_setup,pwmon
+
+
+ movlw SYNC
+
+ PUSH 
+
+
+ movlw BRGH
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+
+ FAR_CALL main_setup,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+ PUSH 
+
+
+ movlw SCKP
+
+ PUSH 
+
+   banksel BAUDCTL
+   movfw BAUDCTL
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel BAUDCTL
+ movwf BAUDCTL
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,clearbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw .25 
+ PUSH 
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .0  
+ PUSH 
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw TXEN
+
+ PUSH 
+
+
+ movlw TX9
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,clearbit
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw SPEN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw .1 
+ PUSH 
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J0 
+ 
+
+ FAR_CALL main_setup,cls
+
+ 
+ goto hlllb51J1
+ 
+
+hlllb51J0:
+
+
+hlllb51J1:
+
+
+ movlw TMR1CS
+
+ PUSH 
+
+
+ movlw TMR1GE
+
+ PUSH 
+
+
+ movlw T1CKPS1
+
+ PUSH 
+
+
+ movlw T1CKPS0
+
+ PUSH 
+
+
+ movlw NOT_T1SYNC
+
+ PUSH 
+
+
+ movlw T1OSCEN
+
+ PUSH 
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,clearbit
+
+
+ FAR_CALL main_setup,clearbit
+
+
+ FAR_CALL main_setup,setbit
+
+
+ FAR_CALL main_setup,setbit
+
+
+ FAR_CALL main_setup,clearbit
+
+
+ FAR_CALL main_setup,clearbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw TMR1IE
+
+ PUSH 
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw PEIE
+
+ PUSH 
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+ PUSH 
+
+
+ FAR_CALL main_setup,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ return
+ 
+
+hllt457 CODE
+ourftou:
+ movf FSR,w
+ 
+
+ FAR_CALL ourftou , kpush
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL ourftou,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL ourftou,parm
+
+
+ movlw .112
+ 
+
+
+ PUSH 
+
+
+ movlw .3
+ 
+
+ PUSH 
+
+
+ FAR_CALL ourftou,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J5 
+ 
+
+ movlw .15
+ PUSH 
+
+ 
+ goto hlllb51J6
+ 
+
+hlllb51J5:
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL ourftou,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL ourftou,parm
+
+
+ FAR_CALL ourftou,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J3 
+ 
+
+ movlw .0
+ PUSH 
+
+ 
+ goto hlllb51J4
+ 
+
+hlllb51J3:
+
+
+ FAR_CALL ourftou,ftou
+
+
+hlllb51J4:
+
+
+hlllb51J6:
+
+
+ FAR_CALL ourftou,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL ourftou , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL ourftou , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt458 CODE
+longf:
+ movf FSR,w
+ 
+
+ FAR_CALL longf , kpush
+
+
+ movlw .249
+ 
+
+
+ PUSH 
+
+
+ movlw .7
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL longf,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL longf,parm
+
+
+ FAR_CALL longf,addf
+
+
+ movlw .26
+ 
+
+
+ PUSH 
+
+
+ movlw .252
+ 
+
+ PUSH 
+
+
+ FAR_CALL longf,mulf
+
+
+ FAR_CALL longf,ourftou
+
+ POP
+ banksel setf
+ movwf setf
+ 
+
+
+ movlw .249
+ 
+
+
+ PUSH 
+
+
+ movlw .7
+ 
+
+ PUSH 
+
+
+ movlw .5
+ PUSH 
+
+
+ FAR_CALL longf,parm
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL longf,parm
+
+
+ FAR_CALL longf,addf
+
+
+ movlw .26
+ 
+
+
+ PUSH 
+
+
+ movlw .252
+ 
+
+ PUSH 
+
+
+ FAR_CALL longf,mulf
+
+
+ FAR_CALL longf,ourftou
+
+ POP
+ banksel setg
+ movwf setg
+ 
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL longf,samplef
+
+
+ FAR_CALL longf,addf
+
+
+ FAR_CALL longf,control
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL longf,samplef
+
+
+ FAR_CALL longf,adjust
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL longf,longf
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt4513 CODE
+adjust:
+ movf FSR,w
+ 
+
+ FAR_CALL adjust , kpush
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .15
+ 
+
+
+ PUSH 
+
+
+ movlw .9
+ 
+
+ PUSH 
+
+
+ FAR_CALL adjust,gtf
+
+
+ movlw .90
+ 
+
+
+ PUSH 
+
+
+ movlw .8
+ 
+
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ FAR_CALL adjust,gtf
+
+
+ FAR_CALL adjust,andb
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J11 
+ 
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ FAR_CALL adjust,addf
+
+ 
+ goto hlllb51J12
+ 
+
+hlllb51J11:
+
+
+ movlw .92
+ 
+
+
+ PUSH 
+
+
+ movlw .6
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ FAR_CALL adjust,gtf
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .122
+ 
+
+
+ PUSH 
+
+
+ movlw .7
+ 
+
+ PUSH 
+
+
+ FAR_CALL adjust,gtf
+
+
+ FAR_CALL adjust,andb
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J9 
+ 
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ FAR_CALL adjust,addf
+
+ 
+ goto hlllb51J10
+ 
+
+hlllb51J9:
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL adjust,parm
+
+
+hlllb51J10:
+
+
+hlllb51J12:
+
+
+ FAR_CALL adjust,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL adjust , kpush
+ 
+
+ POP
+ FAR_CALL adjust , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL adjust , kpop
+
+ PUSH 
+
+
+ FAR_CALL adjust , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4520 CODE
+usrpwm:
+ movf FSR,w
+ 
+
+ FAR_CALL usrpwm , kpush
+
+
+ movlw .112
+ 
+
+
+ PUSH 
+
+
+ movlw .5
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ FAR_CALL usrpwm,mulf
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .253
+ 
+
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ FAR_CALL usrpwm,mulf
+
+
+ movlw .122
+ 
+
+
+ PUSH 
+
+
+ movlw .11
+ 
+
+ PUSH 
+
+
+ movlw .5
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL usrpwm,parm
+
+
+ FAR_CALL usrpwm,mulf
+
+
+ FAR_CALL usrpwm,addf
+
+
+ FAR_CALL usrpwm,addf
+
+
+ FAR_CALL usrpwm,copyf
+
+
+ FAR_CALL usrpwm,copyf
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+
+ FAR_CALL usrpwm,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J18 
+ 
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .10
+ 
+
+ PUSH 
+
+
+ FAR_CALL usrpwm,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J14 
+ 
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .10
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL usrpwm,pwmf
+
+ 
+ goto hlllb51J15
+ 
+
+hlllb51J14:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL usrpwm,pwmf
+
+
+hlllb51J15:
+
+ 
+ goto hlllb51J19
+ 
+
+hlllb51J18:
+
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .10
+ 
+
+ PUSH 
+
+
+ FAR_CALL usrpwm,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J16 
+ 
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ FAR_CALL usrpwm,mulf
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL usrpwm,pwmf
+
+ 
+ goto hlllb51J17
+ 
+
+hlllb51J16:
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .10
+ 
+
+ PUSH 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL usrpwm,pwmf
+
+
+hlllb51J17:
+
+
+hlllb51J19:
+
+
+ FAR_CALL usrpwm,kpop
+
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ return
+ 
+
+hllt4527 CODE
+conform_i:
+ movf FSR,w
+ 
+
+ FAR_CALL conform_i , kpush
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+
+ FAR_CALL conform_i,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J25 
+ 
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ movlw .122
+ 
+
+
+ PUSH 
+
+
+ movlw .11
+ 
+
+ PUSH 
+
+
+ FAR_CALL conform_i,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J21 
+ 
+
+ movlw .122
+ 
+
+
+ PUSH 
+
+
+ movlw .11
+ 
+
+ PUSH 
+
+ 
+ goto hlllb51J22
+ 
+
+hlllb51J21:
+
+
+hlllb51J22:
+
+ 
+ goto hlllb51J26
+ 
+
+hlllb51J25:
+
+
+ movlw .250
+ 
+
+
+ PUSH 
+
+
+ movlw .11
+ 
+
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL conform_i,parm
+
+
+ FAR_CALL conform_i,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J23 
+ 
+
+ movlw .250
+ 
+
+
+ PUSH 
+
+
+ movlw .11
+ 
+
+ PUSH 
+
+ 
+ goto hlllb51J24
+ 
+
+hlllb51J23:
+
+
+hlllb51J24:
+
+
+hlllb51J26:
+
+
+ FAR_CALL conform_i,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL conform_i , kpush
+ 
+
+ POP
+ FAR_CALL conform_i , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL conform_i , kpop
+
+ PUSH 
+
+
+ FAR_CALL conform_i , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4538 CODE
+control:
+ movf FSR,w
+ 
+
+ FAR_CALL control , kpush
+
+   banksel TMR1H
+   movfw TMR1H
+   
+   
+ PUSH 
+
+
+ FAR_CALL control,utof
+
+
+ movlw -.1
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.2
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .9
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .8
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,mulf
+
+
+ FAR_CALL control,addf
+
+   banksel ticked
+   movfw ticked
+   
+   
+ PUSH 
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J28 
+ 
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ticked
+ movwf ticked
+ 
+
+ 
+ goto hlllb51J29
+ 
+
+hlllb51J28:
+
+
+ movlw .0
+ PUSH 
+
+
+hlllb51J29:
+
+
+ movlw -.5
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J30 
+ 
+
+ movlw .8
+ 
+
+
+ PUSH 
+
+
+ movlw .4
+ 
+
+ PUSH 
+
+ 
+ goto hlllb51J31
+ 
+
+hlllb51J30:
+
+
+ movlw -.3
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.4
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+hlllb51J31:
+
+
+ movlw -.5
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J32 
+ 
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL control,samplef
+
+
+ FAR_CALL control,addf
+
+ 
+ goto hlllb51J33
+ 
+
+hlllb51J32:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+hlllb51J33:
+
+
+ movlw .7
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .6
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw -.8
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.9
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,mulf
+
+
+ FAR_CALL control,addf
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw -.8
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.9
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,mulf
+
+
+ FAR_CALL control,addf
+
+
+ movlw .5
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .4
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.12
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.13
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.6
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.7
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,mulf
+
+
+ FAR_CALL control,addf
+
+
+ FAR_CALL control,conform_i
+
+
+ movlw -.10
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.11
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,iszerof
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J34 
+ 
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .128
+ 
+
+ PUSH 
+
+ 
+ goto hlllb51J35
+ 
+
+hlllb51J34:
+
+
+ movlw -.10
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.11
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.6
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.7
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,divf
+
+
+hlllb51J35:
+
+
+ movlw -.14
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.15
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.12
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.13
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,usrpwm
+
+
+ movlw -.5
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J36 
+ 
+
+ movlw .96
+ 
+
+
+ PUSH 
+
+
+ movlw .3
+ 
+
+ PUSH 
+
+ 
+ goto hlllb51J37
+ 
+
+hlllb51J36:
+
+
+ movlw -.1
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.2
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+hlllb51J37:
+
+
+ movlw -.8
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.9
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.14
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw -.15
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL control,parm
+
+
+ FAR_CALL control,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+
+ POP
+ FAR_CALL control , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ FAR_CALL control , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4541 CODE
+wait_button:
+
+   banksel PORTA
+   movfw PORTA
+   
+   
+ PUSH 
+
+
+ movlw .16
+ PUSH 
+
+
+ FAR_CALL wait_button,andu
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J39 
+ 
+ ;~IFTR~ 
+
+
+ FAR_CALL wait_button,wait_button
+
+ 
+ goto hlllb51J40
+ 
+
+hlllb51J39:
+
+
+hlllb51J40:
+
+
+ return
+ 
+
+hllt4542 CODE
+pwmon:
+
+
+ movlw .255 
+ PUSH 
+
+ POP
+ banksel PR2
+ movwf PR2
+ 
+
+
+ movlw .2 
+ PUSH 
+
+
+ movlw .3 
+ PUSH 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL pwmon,setbit
+
+
+ FAR_CALL pwmon,setbit
+
+ POP
+ banksel CCP1CON
+ movwf CCP1CON
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel CCPR1L
+ movwf CCPR1L
+ 
+
+
+ movlw .1 
+ PUSH 
+
+   banksel PIR1
+   movfw PIR1
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmon,clearbit
+
+ POP
+ banksel PIR1
+ movwf PIR1
+ 
+
+
+ movlw .0 
+ PUSH 
+
+
+ movlw .1 
+ PUSH 
+
+   banksel T2CON
+   movfw T2CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmon,clearbit
+
+
+ FAR_CALL pwmon,clearbit
+
+ POP
+ banksel T2CON
+ movwf T2CON
+ 
+
+
+ movlw .2 
+ PUSH 
+
+   banksel T2CON
+   movfw T2CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmon,setbit
+
+ POP
+ banksel T2CON
+ movwf T2CON
+ 
+
+
+ movlw .1 
+ PUSH 
+
+   banksel PIR1
+   movfw PIR1
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmon,clearbit
+
+ POP
+ banksel PIR1
+ movwf PIR1
+ 
+
+
+ FAR_CALL pwmon,pwmin
+
+
+ movlw .5 
+ PUSH 
+
+
+ movlw .4 
+ PUSH 
+
+   banksel TRISC
+   movfw TRISC
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmon,clearbit
+
+
+ FAR_CALL pwmon,clearbit
+
+ POP
+ banksel TRISC
+ movwf TRISC
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel PORTC
+ movwf PORTC
+ 
+
+
+ return
+ 
+
+hllt4555 CODE
+pwmf:
+ movf FSR,w
+ 
+
+ FAR_CALL pwmf , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J43 
+ 
+
+ movlw .0 
+ PUSH 
+
+
+ movlw .1 
+ PUSH 
+
+   banksel PSTRCON
+   movfw PSTRCON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,clearbit
+
+
+ FAR_CALL pwmf,setbit
+
+ POP
+ banksel PSTRCON
+ movwf PSTRCON
+ 
+
+ 
+ goto hlllb51J44
+ 
+
+hlllb51J43:
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .0 
+ PUSH 
+
+   banksel PSTRCON
+   movfw PSTRCON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,clearbit
+
+
+ FAR_CALL pwmf,setbit
+
+ POP
+ banksel PSTRCON
+ movwf PSTRCON
+ 
+
+
+hlllb51J44:
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ FAR_CALL pwmf,iszerof
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J47 
+ 
+
+ movlw .0
+ PUSH 
+
+ 
+ goto hlllb51J48
+ 
+
+hlllb51J47:
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .122
+ 
+
+
+ PUSH 
+
+
+ movlw .9
+ 
+
+ PUSH 
+
+
+ FAR_CALL pwmf,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J45 
+ 
+
+ movlw .255
+ PUSH 
+
+ 
+ goto hlllb51J46
+ 
+
+hlllb51J45:
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .2
+ 
+
+ PUSH 
+
+
+ FAR_CALL pwmf,divf
+
+
+ FAR_CALL pwmf,ftou
+
+
+hlllb51J46:
+
+
+hlllb51J48:
+
+ POP
+ banksel CCPR1L
+ movwf CCPR1L
+ 
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL pwmf,parm
+
+
+ movlw .128
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .2
+ 
+
+ PUSH 
+
+   banksel CCPR1L
+   movfw CCPR1L
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,utof
+
+
+ FAR_CALL pwmf,mulf
+
+
+ FAR_CALL pwmf,mulf
+
+
+ FAR_CALL pwmf,addf
+
+
+ FAR_CALL pwmf,copyf
+
+
+ movlw .32
+ 
+
+
+ PUSH 
+
+
+ movlw .1
+ 
+
+ PUSH 
+
+
+ FAR_CALL pwmf,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J53 
+ 
+
+ movlw DC1B1
+
+ PUSH 
+
+
+ movlw DC1B0
+
+ PUSH 
+
+   banksel CCP1CON
+   movfw CCP1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,setbit
+
+
+ FAR_CALL pwmf,setbit
+
+ POP
+ banksel CCP1CON
+ movwf CCP1CON
+ 
+
+ 
+ goto hlllb51J54
+ 
+
+hlllb51J53:
+
+
+ FAR_CALL pwmf,copyf
+
+
+ movlw .64
+ 
+
+
+ PUSH 
+
+
+ movlw .0
+ 
+
+ PUSH 
+
+
+ FAR_CALL pwmf,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J51 
+ 
+
+ movlw DC1B1
+
+ PUSH 
+
+   banksel CCP1CON
+   movfw CCP1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,setbit
+
+ POP
+ banksel CCP1CON
+ movwf CCP1CON
+ 
+
+ 
+ goto hlllb51J52
+ 
+
+hlllb51J51:
+
+
+ FAR_CALL pwmf,copyf
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .255
+ 
+
+ PUSH 
+
+
+ FAR_CALL pwmf,gtf
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J49 
+ 
+
+ movlw DC1B0
+
+ PUSH 
+
+   banksel CCP1CON
+   movfw CCP1CON
+   
+   
+ PUSH 
+
+
+ FAR_CALL pwmf,setbit
+
+ POP
+ banksel CCP1CON
+ movwf CCP1CON
+ 
+
+ 
+ goto hlllb51J50
+ 
+
+hlllb51J49:
+
+
+hlllb51J50:
+
+
+hlllb51J52:
+
+
+hlllb51J54:
+
+
+ FAR_CALL pwmf,kpop
+
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ return
+ 
+
+hllt4558 CODE
+pwmin:
+
+   banksel PIR1
+   movfw PIR1
+   
+   
+ PUSH 
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL pwmin,andu
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J56 
+ 
+ 
+ goto hlllb51J57
+ 
+
+hlllb51J56:
+
+ ;~IFTR~ 
+
+
+ FAR_CALL pwmin,pwmin
+
+
+hlllb51J57:
+
+
+ return
+ 
+
+hllt4561 CODE
+samplef:
+ movf FSR,w
+ 
+
+ FAR_CALL samplef , kpush
+
+
+ movlw .6 
+ PUSH 
+
+
+ movlw .5 
+ PUSH 
+
+
+ movlw .4 
+ PUSH 
+
+   banksel ADCON1
+   movfw ADCON1
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,setbit
+
+
+ FAR_CALL samplef,clearbit
+
+
+ FAR_CALL samplef,setbit
+
+ POP
+ banksel ADCON1
+ movwf ADCON1
+ 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL samplef,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL samplef,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J59 
+ 
+
+ movlw .2 
+ PUSH 
+
+
+ movlw .3 
+ PUSH 
+
+
+ movlw .4 
+ PUSH 
+
+   banksel ADCON0
+   movfw ADCON0
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,clearbit
+
+
+ FAR_CALL samplef,clearbit
+
+
+ FAR_CALL samplef,clearbit
+
+ 
+ goto hlllb51J60
+ 
+
+hlllb51J59:
+
+
+ movlw .2 
+ PUSH 
+
+
+ movlw .3 
+ PUSH 
+
+
+ movlw .4 
+ PUSH 
+
+   banksel ADCON0
+   movfw ADCON0
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,setbit
+
+
+ FAR_CALL samplef,clearbit
+
+
+ FAR_CALL samplef,clearbit
+
+
+hlllb51J60:
+
+ POP
+ banksel ADCON0
+ movwf ADCON0
+ 
+
+
+ FAR_CALL samplef,dispose
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .7 
+ PUSH 
+
+
+ movlw .0 
+ PUSH 
+
+   banksel ADCON0
+   movfw ADCON0
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,setbit
+
+
+ FAR_CALL samplef,setbit
+
+
+ FAR_CALL samplef,clearbit
+
+ POP
+ banksel ADCON0
+ movwf ADCON0
+ 
+
+
+ movlw .0 
+ PUSH 
+
+   banksel ANSEL
+   movfw ANSEL
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,setbit
+
+ POP
+ banksel ANSEL
+ movwf ANSEL
+ 
+
+
+ movlw .1 
+ PUSH 
+
+   banksel ADCON0
+   movfw ADCON0
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,setbit
+
+ POP
+ banksel ADCON0
+ movwf ADCON0
+ 
+
+
+ FAR_CALL samplef,ourwait
+
+
+ movlw .0
+ 
+
+
+ PUSH 
+
+
+ movlw .8
+ 
+
+ PUSH 
+
+
+ movlw .3 
+ PUSH 
+
+   banksel ADRESH
+   movfw ADRESH
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,andu
+
+
+ FAR_CALL samplef,utof
+
+
+ FAR_CALL samplef,mulf
+
+   banksel ADRESL
+   movfw ADRESL
+   
+   
+ PUSH 
+
+
+ FAR_CALL samplef,utof
+
+
+ FAR_CALL samplef,addf
+
+
+ FAR_CALL samplef,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL samplef , kpush
+ 
+
+ POP
+ FAR_CALL samplef , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ FAR_CALL samplef , kpop
+
+ PUSH 
+
+
+ FAR_CALL samplef , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4564 CODE
+ourwait:
+
+
+ movlw .2 
+ PUSH 
+
+   banksel ADCON0
+   movfw ADCON0
+   
+   
+ PUSH 
+
+
+ FAR_CALL ourwait,andu
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J62 
+ 
+ ;~IFTR~ 
+
+
+ FAR_CALL ourwait,ourwait
+
+ 
+ goto hlllb51J63
+ 
+
+hlllb51J62:
+
+
+hlllb51J63:
+
+
+ return
+ 

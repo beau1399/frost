@@ -1,0 +1,1352 @@
+2^2.321928095=5.0=160,4
+2^-2.321928095=0.2 =204,-3 
+
+149/128*2^1=2.328125
+
+
+
+
+
+
+
+1/5th i.e. 
+205÷128×2^-8=0.2 2^
+
+2.3219
+
+138/128 * 2^-10=
+
+
+192/128 * 65,536 = 98304
+
+
+  43  -1
+
+171/128*0.5=
+
+
+m=32 e=9
+
+(160/128) * 512 = 640
+
+
+127= 01111111
+
+-127=10000001
+-128=0x80
+
+m=0xfe          e=0x7
+1 111 1110      
+-, val 7e
+-[(128+126)/128] X 128 = 
+
+/****************************************************************************************
+Exponentiation
+****************************************************************************************/
+byte fpcorelk2[]=
+{
+ 0 ,//((2^(0/256))-1)*128 = 0.000000 These are unadjusted rounded values, in contrast to 
+ 0 ,//((2^(1/256))-1)*128 = 0.347046 values in the logarithm table, which are manually 
+ 1 ,//etc.                           tuned to help yield expected results (one "corner 
+ 1 ,//                               case" is still hard-coded around, even there).
+ 1 ,//
+ 2 ,//                               In the case of POW, we don't use the table to tweak 
+ 2 ,//                               our way to 100% correctness; rather, a post-lookup
+ 2 ,//                               lattice of conditionals (if / gotos) is used.
+ 3 ,//
+ 3 ,//                               In the case of LOG, the 2nd lookup table allows a
+ 4 ,//                               more precise result, and is warranted. After all, 
+ 4 ,//                               it eliminates all corner cases but one. As for
+ 4 ,//                               POW, a second (256-entry) table would be more
+ 5 ,//                               costly than simply having ~70 conditional jumps, 
+ 5 ,//                               and might, as seen with LOG, still require corner
+ 5 ,//                               case logic. So, it is anticipated that the 
+ 6 ,//                               implementation currently provided is optimal.
+ 6 ,//
+ 6 ,//
+ 7 ,//
+ 7 ,//
+ 7 ,//
+ 8 ,//
+ 8 ,//
+ 9 ,//
+ 9 ,//
+ 9 ,//
+ 10 ,
+ 10 ,
+ 10 ,
+ 11 ,
+ 11 ,
+ 12 ,
+ 12 ,
+ 12 ,
+ 13 ,
+ 13 ,
+ 13 ,
+ 14 ,
+ 14 ,
+ 15 ,
+ 15 ,
+ 15 ,
+ 16 ,
+ 16 ,
+ 17 ,
+ 17 ,
+ 17 ,
+ 18 ,
+ 18 ,
+ 19 ,
+ 19 ,
+ 19 ,
+ 20 ,
+ 20 ,
+ 21 ,
+ 21 ,
+ 21 ,
+ 22 ,
+ 22 ,
+ 23 ,
+ 23 ,
+ 23 ,
+ 24 ,
+ 24 ,
+ 25 ,
+ 25 ,
+ 25 ,
+ 26 ,
+ 26 ,
+ 27 ,
+ 27 ,
+ 28 ,
+ 28 ,
+ 28 ,
+ 29 ,
+ 29 ,
+ 30 ,
+ 30 ,
+ 31 ,
+ 31 ,
+ 31 ,
+ 32 ,
+ 32 ,
+ 33 ,
+ 33 ,
+ 34 ,
+ 34 ,
+ 34 ,
+ 35 ,
+ 35 ,
+ 36 ,
+ 36 ,
+ 37 ,
+ 37 ,
+ 38 ,
+ 38 ,
+ 38 ,
+ 39 ,
+ 39 ,
+ 40 ,
+ 40 ,
+ 41 ,
+ 41 ,
+ 42 ,
+ 42 ,
+ 43 ,
+ 43 ,
+ 43 ,
+ 44 ,
+ 44 ,
+ 45 ,
+ 45 ,
+ 46 ,
+ 46 ,
+ 47 ,
+ 47 ,
+ 48 ,
+ 48 ,
+ 49 ,
+ 49 ,
+ 50 ,
+ 50 ,
+ 51 ,
+ 51 ,
+ 52 ,
+ 52 ,
+ 53 ,
+ 53 ,
+ 54 ,
+ 54 ,
+ 54 ,
+ 55 ,
+ 55 ,
+ 56 ,
+ 56 ,
+ 57 ,
+ 57 ,
+ 58 ,
+ 58 ,
+ 59 ,
+ 60 ,
+ 60 ,
+ 61 ,
+ 61 ,
+ 62 ,
+ 62 ,
+ 63 ,
+ 63 ,
+ 64 ,
+ 64 ,
+ 65 ,
+ 65 ,
+ 66 ,
+ 66 ,
+ 67 ,
+ 67 ,
+ 68 ,
+ 68 ,
+ 69 ,
+ 69 ,
+ 70 ,
+ 70 ,
+ 71 ,
+ 72 ,
+ 72 ,
+ 73 ,
+ 73 ,
+ 74 ,
+ 74 ,
+ 75 ,
+ 75 ,
+ 76 ,
+ 76 ,
+ 77 ,
+ 78 ,
+ 78 ,
+ 79 ,
+ 79 ,
+ 80 ,
+ 80 ,
+ 81 ,
+ 82 ,
+ 82 ,
+ 83 ,
+ 83 ,
+ 84 ,
+ 84 ,
+ 85 ,
+ 86 ,
+ 86 ,
+ 87 ,
+ 87 ,
+ 88 ,
+ 88 ,
+ 89 ,
+ 90 ,
+ 90 ,
+ 91 ,
+ 91 ,
+ 92 ,
+ 93 ,
+ 93 ,
+ 94 ,
+ 94 ,
+ 95 ,
+ 96 ,
+ 96 ,
+ 97 ,
+ 97 ,
+ 98 ,
+ 99 ,
+ 99 ,
+ 100 ,
+ 100 ,
+ 101 ,
+ 102 ,
+ 102 ,
+ 103 ,
+ 104 ,
+ 104 ,
+ 105 ,
+ 105 ,
+ 106 ,
+ 107 ,
+ 107 ,
+ 108 ,
+ 109 ,
+ 109 ,
+ 110 ,
+ 111 ,
+ 111 ,
+ 112 ,
+ 113 ,
+ 113 ,
+ 114 ,
+ 115 ,
+ 115 ,
+ 116 ,
+ 116 ,
+ 117 ,
+ 118 ,
+ 118 ,
+ 119 ,
+ 120 ,
+ 120 ,
+ 121 ,
+ 122 ,
+ 123 ,
+ 123 ,
+ 124 ,
+ 125 ,
+ 125 ,
+ 126 ,
+ 127 ,
+ 127
+};
+/*Define POW16 mem. map*/
+#define karg1 loc000
+#define karg2 loc001
+#define exam loc002
+#define util loc003
+#define neg loc004
+#ifndef FASTMATH
+#define minproxy loc007
+#endif
+void sfp_pow
+(
+byte min, int8_t ein, 
+byte *mout, int8_t *eout
+)
+{
+ karg2=ein;
+ if(karg2!=128) goto nonzpow;
+ *mout=0;
+ *eout=0;
+ return;
+nonzpow:
+ karg1=min;
+ neg=0;
+ if(!(min&128)) goto n87m7x;
+ neg=1;
+n87m7x:
+ karg1&=127;
+ //Discard sign bit of mantissa... b/c our floating point
+ // ;format uses a pure sign bit, vs. complementation, this
+ // ;is all that is necessary
+ karg1|=128;
+ if(ein<7) goto gjjm44;
+ if(neg)goto gjkm44; 
+ *mout=*eout=127;
+ return;
+gjkm44:
+ *mout=0;
+ *eout=-128;
+ return;
+gjjm44:
+ if(ein>=-8)goto gjjm45;
+ *mout=0;
+ *eout=0;
+ return;
+gjjm45:
+ util=0; //karg1 = real mantissa (signless); karg2= ein
+ exam=7-karg2;
+ if(exam==0)goto shift0b;
+ if(exam==1)goto shift1b;
+ if(exam==2)goto shift2b;
+ if(exam==3)goto shift3b;
+ if(exam==4)goto shift4b;
+ if(exam==5)goto shift5b;
+ if(exam==6)goto shift6b;
+ if(exam==7)goto shift7b;
+ if(exam==8)goto shift8b; 
+ if(exam==9)goto shift9b; 
+ if(exam==10)goto shift10b; 
+ if(exam==11)goto shift11b; 
+ if(exam==12)goto shift12b; 
+ if(exam==13)goto shift13b; 
+ if(exam==14)goto shift14b; 
+shift15b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift14b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift13b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift12b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift11b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift10b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift9b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift8b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift7b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift6b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift5b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift4b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift3b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift2b:
+ C=karg1&1;
+ karg1/=2;
+ util/=2;
+ if(C)util|=128;
+shift1b:
+ C=karg1&1;
+ karg1/=2;
+ c1=util&1;
+ util/=2;
+ if(C)util|=128;
+ if(!c1) goto shift0b;
+ util++; 
+shift0b:
+ util=fpcorelk2[util];
+#ifndef FASTMATH //FASTMATH allows one-bit errors
+ minproxy=min&127;
+ if(ein!=-8)goto kpr0y0;
+ if(minproxy==185) goto kpr0y1;
+ if(minproxy==57) goto kpr0y1; 
+ if(minproxy==58) goto kpr0y1; 
+ if(minproxy==59) goto kpr0y1; 
+ if(minproxy==60) goto kpr0y1; 
+ if(minproxy==61) goto kpr0y1; 
+ if(minproxy==62) goto kpr0y1; 
+ if(minproxy==63) goto kpr0y1; 
+ goto thepr0;
+kpr0y1:
+ ++util;
+ goto thepr0;
+kpr0y0:
+ if(ein!=-6)goto kpr0y2;
+ if(minproxy==10) goto kpr0y3; 
+ if(minproxy==11) goto kpr0y3; 
+ if(minproxy==12) goto kpr0y3; 
+ if(minproxy==13) goto kpr0y3; 
+ if(minproxy==14) goto kpr0y3; 
+ if(minproxy==15) goto kpr0y3; 
+ if(minproxy==101) goto kpr0y3; 
+ if(minproxy==102) goto kpr0y3; 
+ if(minproxy==103) goto kpr0y3; 
+ if(minproxy==104) goto kpr0y3; 
+ if(minproxy==105) goto kpr0y3; 
+ if(minproxy==106) goto kpr0y3; 
+ if(minproxy==107) goto kpr0y3; 
+ if(minproxy==108) goto kpr0y3; 
+ if(minproxy==109) goto kpr0y3; 
+ if(minproxy==110) goto kpr0y3; 
+ if(minproxy==111) goto kpr0y3; 
+ goto thepr0;
+kpr0y3:
+ ++util;
+ goto thepr0;
+kpr0y2:
+ if(ein!=-5)goto kpr0y4;
+ if(minproxy==24) goto kpr0y5; 
+ if(minproxy==25) goto kpr0y5; 
+ if(minproxy==26) goto kpr0y5; 
+ if(minproxy==27) goto kpr0y5; 
+ if(minproxy==28) goto kpr0y5; 
+ if(minproxy==29) goto kpr0y5; 
+ if(minproxy==30) goto kpr0y5; 
+ if(minproxy==31) goto kpr0y5; 
+ if(minproxy==72) goto kpr0y5; 
+ if(minproxy==73) goto kpr0y5; 
+ if(minproxy==74) goto kpr0y5; 
+ if(minproxy==75) goto kpr0y5; 
+ if(minproxy==76) goto kpr0y5; 
+ if(minproxy==120) goto kpr0y5; 
+ goto thepr0;
+kpr0y5:
+ --util;
+ goto thepr0;
+kpr0y4:
+ if(ein!=-4)goto kpr0y6;
+ if(minproxy==60) goto kpr0y7; 
+ if(minproxy==61) goto kpr0y7; 
+ if(minproxy==124) goto kpr0y7; 
+ if(minproxy==125) goto kpr0y7; 
+ if(minproxy==126) goto kpr0y7; 
+ if(minproxy==19) goto kpr0y8; 
+ if(minproxy==41) goto kpr0y8; 
+ if(minproxy==42) goto kpr0y8; 
+ if(minproxy==43) goto kpr0y8; 
+ if(minproxy==105) goto kpr0y8; 
+ if(minproxy==106) goto kpr0y8; 
+ if(minproxy==107) goto kpr0y8; 
+ goto thepr0;
+kpr0y7:
+ --util;
+ goto thepr0;
+kpr0y8:
+ ++util;
+ goto thepr0;
+kpr0y6:
+ if(ein!=-3)goto kpr0y9;
+ if(minproxy==30) goto kpr0y10; 
+ if(minproxy==50) goto kpr0y10; 
+ if(minproxy==51) goto kpr0y10; 
+ if(minproxy==70) goto kpr0y10; 
+ if(minproxy==71) goto kpr0y10; 
+ if(minproxy==90) goto kpr0y10; 
+ if(minproxy==91) goto kpr0y10; 
+ if(minproxy==110) goto kpr0y10; 
+ if(minproxy==111) goto kpr0y10; 
+ if(minproxy==21) goto kpr0y11; 
+ if(minproxy==41) goto kpr0y11; 
+ goto thepr0;
+kpr0y10:
+ --util;
+ goto thepr0;
+kpr0y11:
+ ++util;
+ goto thepr0;
+kpr0y9:
+ if(ein!=-2)goto kpr0y12;
+ if(minproxy==1) goto kpr0y13; 
+ if(minproxy==15) goto kpr0y13; 
+ if(minproxy==25) goto kpr0y13; 
+ if(minproxy==29) goto kpr0y13; 
+ if(minproxy==39) goto kpr0y13; 
+ if(minproxy==43) goto kpr0y13; 
+ if(minproxy==57) goto kpr0y13; 
+ if(minproxy==61) goto kpr0y13; 
+ if(minproxy==75) goto kpr0y13; 
+ if(minproxy==79) goto kpr0y13; 
+ if(minproxy==83) goto kpr0y13; 
+ if(minproxy==105) goto kpr0y13; 
+ if(minproxy==109) goto kpr0y13; 
+ if(minproxy==113) goto kpr0y13; 
+ if(minproxy==117) goto kpr0y13; 
+ if(minproxy==121) goto kpr0y13; 
+ if(minproxy==125) goto kpr0y13; 
+ goto thepr0;
+kpr0y13:
+ --util;
+ goto thepr0;
+kpr0y12:
+thepr0:
+#endif
+ //
+ // karg1 will be return exp, 2nd parm pushed
+ //
+ // Lookup 2^(util/256), expressed in mantissa form (i.e. 0 means 128), to be ret. 
+ // mantissa this will be a single unsigned byte; values less than 128 will have to be 
+ // normalized by increasing karg1
+ //
+ // call FPCoreLook2 
+ // banksel karg1
+ // movwf util
+ *mout=util; 
+ *eout=karg1;
+ // If the mantissa was negative, this has been denoted by
+ // setting neg:0 to 1. Currently, this is handled by pushing
+ // #1.0 here and then later calling divf (again based on an
+ // examination of neg.)
+ //
+ // Although expressed as a call here, this is really not 
+ // necessarily a 1 call in any given optimization. Because
+ // we've nothing left to do here, we can simply set up the 
+ // stack correctly and then execute a GOTO into sfp_divf().
+ // It will pop of our caller's return address an return to it
+ // naturally.
+ if(!neg) goto ycurx5;
+ sfp_div(0,0,util,karg1,mout,eout); 
+ycurx5:
+ ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************************************
+Logarithms
+****************************************************************************************/
+byte lookcore[128]={
+ 0,
+ 224,
+ 186,
+ 142,
+ 93, 
+ 39,
+ 235,
+ 170,
+ 100,
+ 25,
+ 200,
+ 115,
+ 25, 
+ 186,
+ 86,
+ 237,
+ 129,
+ 15,
+ 152,
+ 30,
+ 159,
+ 27,
+ 148,
+ 8,
+ 120,
+ 228,
+ 76,
+ 176,
+ 16,
+ 108,
+ 197,
+ 32,
+ 106,
+ 183,
+ 2,
+ 70,
+ 137,
+ 199,
+ 32,
+ 58,
+ 111,
+ 160,
+ 206,
+ 248,
+ 32,
+ 68,
+ 101,
+ 131,
+ 157,
+ 181,
+ 202,
+ 219,
+ 234,
+ 246,
+ 200,
+ 8,
+ 8,
+ 16,
+ 6,
+ 8,
+ 250,
+ 239,
+ 226,
+ 210,
+ 193,
+ 171,
+ 148,
+ 122,
+ 94,
+ 63,
+ 30,
+ 250,
+ 212,
+ 171,
+ 129,
+ 83,
+ 36,
+ 242,
+ 190,
+ 136,
+ 80,
+ 21,
+ 217,
+ 154,
+ 89,
+ 22,
+ 209,
+ 138,
+ 64,
+ 245,
+ 168,
+ 88,
+ 16,
+ 180,
+ 95,
+ 8,
+ 175,
+ 84,
+ 247,
+ 153,
+ 56,
+ 214,
+ 114,
+ 12,
+ 165,
+ 59,
+ 208,
+ 99,
+ 245,
+ 133,
+ 19,
+ 159,
+ 42,
+ 179,
+ 59,
+ 193,
+ 69,
+ 200,
+ 73,
+ 201,
+ 70,
+ 195,
+ 62,
+ 183,
+ 47,
+ 165,
+ 27,
+ 142 
+};
+byte lookcoreh[128]={
+ 0,
+ 2,
+ 5,
+ 8,
+ 11,
+ 14,
+ 16,
+ 19,
+ 22,
+ 25,
+ 27,
+ 30,
+ 33,
+ 35,
+ 38,
+ 40,
+ 43,
+ 46,
+ 48,
+ 51,
+ 53,
+ 56,
+ 58,
+ 61,
+ 63,
+ 65,
+ 68,
+ 70,
+ 73,
+ 75,
+ 77,
+ 80,
+ 82,
+ 84,
+ 87,
+ 89,
+ 91,
+ 93,
+ 96,
+ 98,
+ 100,
+ 102,
+ 104,
+ 106,
+ 109,
+ 111,
+ 113,
+ 115,
+ 117,
+ 119,
+ 121,
+ 123,
+ 125,
+ 127,
+ 129,
+ 132,
+ 134,
+ 136,
+ 138,
+ 140,
+ 141,
+ 143,
+ 145,
+ 147,
+ 149,
+ 151,
+ 153,
+ 155,
+ 157,
+ 159,
+ 161,
+ 162,
+ 164,
+ 166,
+ 168,
+ 170,
+ 172,
+ 173,
+ 175,
+ 177,
+ 179,
+ 181,
+ 182,
+ 184,
+ 186,
+ 188,
+ 189,
+ 191,
+ 193,
+ 194,
+ 196,
+ 198,
+ 200,
+ 201,
+ 203,
+ 205,
+ 206,
+ 208,
+ 209,
+ 211,
+ 213,
+ 214,
+ 216,
+ 218,
+ 219,
+ 221,
+ 222,
+ 224,
+ 225,
+ 227,
+ 229,
+ 230,
+ 232,
+ 233,
+ 235,
+ 236,
+ 238,
+ 239,
+ 241,
+ 242,
+ 244,
+ 245,
+ 247,
+ 248,
+ 250,
+ 251,
+ 253,
+ 254
+};
+/*Define LOG16 mem. map*/
+#define arg1 loc000
+#define karg1 loc001
+#define util loc002
+#define exam loc003
+#define neg loc004
+#define rev loc005
+#define moutL loc006
+#define moutH loc007
+#define tmputil loc008
+void sfp_log 
+(
+byte min, int8_t ein, 
+byte *mout, int8_t *eout
+)
+{
+ util=ein; 
+ *mout=min;
+ // If passed 1 (0 and 0) then return log(1) i.e. 0
+ if(*mout) goto nzmdss;
+ if(util) goto nzmdss;
+ *mout=128;
+ *eout=-128;
+ return;
+nzmdss:
+ moutL=lookcore[*mout];
+ moutH=lookcoreh[*mout];
+ neg=0;
+ if(!(util&128)) goto nonegtlog;
+ neg|=1;
+ util=~util;
+ util++;
+nonegtlog: 
+ if(util>=128) goto fi5tt2;
+ if(util>=64) goto fi5tt3;
+ if(util>=32) goto fi5tt4;
+ if(util>=16) goto fi5tt5;
+ if(util>=8) goto fi5tt6;
+ if(util>=4) goto fi5tt7;
+ if(util>=2) goto fi5tt8;
+ if(util>=1) goto fi5tt9;
+ goto fi5ttz;
+fi5tt2:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt3:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt4:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt5:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt6:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt7:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt8:
+ C=moutH&1;
+ moutH/=2;
+ moutL/=2;
+ if(C) moutL|=128;
+fi5tt9:
+ C=moutH&1; 
+ moutH/=2;
+ c1=moutL&1;
+ moutL/=2;
+ if(C)moutL|=128;
+ if(!c1)goto fi5ttz;
+ ++moutL;
+ if(moutL)goto fi5ttz;
+ ++moutH;
+fi5ttz:
+ //If neg, moutH:L should have opposite sign as well
+ if(!neg) goto m1gd6;
+ moutH=~moutH;
+ moutL=~moutL;
+ ++moutL;
+ if(moutL) goto m1gd6;
+ ++moutH;
+m1gd6:
+ if(util<128) goto gkbb11;
+ rev=(byte)-1;
+ moutH+=util; //256ths
+ goto kkbbg3;
+gkbb11:
+ if(util<64) goto gkbb22;
+ rev=(byte)-2;
+ //Effect moutH+=util*2; //256ths
+ tmputil=util;  //If FASTMATH is defined, it's OK to trash util and tmputil!=necess.
+ tmputil*=2;        // (here and elsewhere) 
+ moutH+=tmputil;
+ goto kkbbg3;
+gkbb22:
+ if(util<32) goto gkbb33;
+ rev=(byte)-3;
+ // Effect moutH+=util*4; //256ths
+ tmputil=util;  //If FASTMATH is defined, it's OK to trash util and tmputil!=necess.
+ tmputil*=2;        // (here and elsewhere) 
+ tmputil*=2;
+ moutH+=tmputil;
+ goto kkbbg3;
+gkbb33:
+ if(util<16) goto gkbb44;
+ rev=(byte)-4;
+ //Effect moutH+=util*8; //256ths
+ tmputil=util;  //If FASTMATH is defined, it's OK to trash util and tmputil!=necess.
+ tmputil*=2;        // (here and elsewhere) 
+ tmputil*=2;
+ tmputil*=2;
+ moutH+=tmputil;
+ goto kkbbg3;
+gkbb44:
+ if(util<8) goto gkbb55;
+ rev=(byte)-5;
+ //256ths
+ // Effect moutH+=util*16; 
+ tmputil=util;
+ tmputil*=2;
+ tmputil*=2;
+ tmputil*=2;
+ tmputil*=2;
+ moutH+=tmputil;
+ goto kkbbg3;
+gkbb55:
+ if(util<4) goto gkbb66;
+ rev=(byte)-6;
+ //Effect moutH+=util*32; //256ths
+ if(!(util&4)) goto ncrrf;
+ moutH+=128;
+ncrrf: 
+ if(!(util&2)) goto ncrrg;
+ moutH+=64;
+ncrrg:
+ if(!(util&1)) goto kkbbg3;
+ moutH+=32;
+ goto kkbbg3;
+gkbb66:
+ if(util<2) goto gkbb77;
+ rev=(byte)-7; //256ths
+ //Next 2 "ifs" effect 
+ // "moutH+=util*64;" for this range of "util"
+ if(!(util&2)) goto ncrre;
+ moutH+=128;
+ncrre:
+ if(!(util&1)) goto kkbbg3;
+ moutH+=64;
+ goto kkbbg3;
+gkbb77:
+ if(util<1) goto gkbb88;
+ rev=(byte)-8;
+ //Next stmt. tantamount to moutH+=util*128; //256ths
+ moutH+=128;
+ goto kkbbg3;
+gkbb88:
+ rev=(byte)-9;
+ // moutH+=util*256; //256ths
+kkbbg3:
+ // Return number is now present in moutH/L pair as
+ // a 16-bit fixed point number 
+ if(!moutH) goto nrndmg00;
+normaa:
+ if(!moutH) goto normaout;
+ C=moutH&1;
+ moutH/=2;
+ c1=moutL&1; //Implicit on many CPUs, where c1 will not actually require storage
+ moutL/=2;
+ if(C)moutL|=128;
+ ++rev;
+ goto normaa;
+normaout:
+ if(!c1) goto nrndmg00;
+#ifndef FASTMATH 
+ //Hardcoding around one situation... interplay of rounding in table 
+ //construction, plus 2x rounding here, is difficult to predict 
+ // w/o resorting to this corner-case handler.
+ if(moutH!=0) goto frwks4;
+ if(moutL!=254) goto frwks4;
+ if(rev!=5) goto frwks4;
+ if(util!=64) goto frwks4;
+ if(!neg) goto frwks4;
+ if(*mout!=38) goto frwks4;
+ //goto frwks5;
+ goto nrndmg00;
+#endif 
+frwks4:
+ ++moutL; 
+ //frwks5:
+ if(moutL) goto nrndmg00;
+ //The rounding put moutL up to 0, which is really 256;
+ // We effect an overall right shift putting the bottom
+ // bit of moutH back into the top bit of mouL. Exponent
+ // rev is incremented to compensate.
+ ++moutH; 
+ ++rev;
+ moutL=128;
+nrndmg00:
+ // moutL now holds an 8-bit integral version of the 
+ // correct return mantissa
+ //ncmoul:
+ moutL&=127;
+ if(neg) moutL|=128;
+ *mout=moutL;
+ *eout=rev;
+}
+/*Undef. LOG16 mem. map*/
+#undef arg1 
+#undef karg1 
+#undef util 
+#undef exam 
+#undef neg 
+#undef rev 
+#undef moutL 
+#undef moutH 
+#undef tmputil
+
+
+
+
+
+
+
+
+
+/****************************************************************************************
+Multiplication
+****************************************************************************************/
+#define eout_tmp loc000
+#define hi_byte loc001
+#define real_min2 loc002
+#define real_min loc003
+#define make_mout loc004
+#define mout_hi loc005
+#define neg loc006
+#define neg2 loc007
+#define b129 loc008
+#define b128 loc009
+void sfp_mul
+(
+byte min, int8_t ein, 
+byte min2, int8_t ein2, 
+byte *mout, int8_t *eout
+)
+{
+ neg=0; /*Check for negs, */
+ neg2=0; 
+ if(!(min2&0x80)) goto ftfs1;
+ neg2=1;
+ftfs1:
+ min2&=0x7F; /*Make parms absval */
+ if(!(min&0x80)) goto ftfs2;
+ neg=1;
+ftfs2:
+ min&=0x7F;
+#ifndef BOUNDSCHECK
+ //Check for 0 parm... this is mandatory to allow mul-by-0 with bounds
+ // checking disabled.
+ if(ein2==-128 && !min2 )goto mzee1; //Handle 0 in 2nd parm
+ if(ein==-128 && !min )goto mzee2; //Handle 0 in 1st parm
+#endif
+ //Exponents get added, these are int8_t b/c 
+ // this should happen using 2's complem.
+ eout_tmp=ein;
+#ifdef BOUNDSCHECK
+ b128=0;
+ if(!((int)ein+(int)ein2 > 127)) goto ydhtn;
+ *eout=127; 
+ if(neg!=neg2) goto ybbaa;
+ *mout=127;
+ goto ybbab;
+ybbaa:
+ *mout=255;
+ybbab:
+ return; 
+ydhtn:
+ if(!((int)ein+(int)ein2 <-129) ) goto sue5c;
+ *eout=-128;
+ if(neg!=neg2) goto sue5d;
+ *mout=0;
+ goto sue5e;
+sue5d:
+ *mout=128;
+sue5e:
+ return; 
+sue5c:
+ if((int)ein+(int)ein2 !=-129) goto matr5;
+ eout_tmp=0x80;//-128; 
+ b129=1;
+ goto matr6;
+matr5:
+ b129=0;
+ eout_tmp+=ein2;//Using W...
+matr6:
+#else
+ eout_tmp+=ein2; //W
+#endif
+ //Make real mantissae,i.e. add in hidden
+ // bit; put in "real_min" and "real_min2" 
+ real_min=min+128; //W
+ real_min2=min2+128; //W
+ //MUL16
+ // (real number of 128ths min) * 
+ // (real number of 128ths min2) -> 
+ // mulhi:discarded
+ //
+ // This yields the (real mantissa out)
+ // times 128; this is scaled down first
+ // by taking the MSB and treating it 
+ // as if it were an LSB (a net /256).
+ // Also, eout_tmp is either incremented,
+ // or mout is mult. by two, to yield
+ // a net *2. The selection b/w these 
+ // two options is made such that mout
+ // ends up normalized.
+
+ // Not a full implem. of "Booth's Algoritm" b/c 
+ // it operates on unsigned numbers. Definitely 
+ // similar, though, and resulted in a 5x performance 
+ // improvement vs. repeated addition
+ hi_byte=0;
+ make_mout=0; 
+ mout_hi=0; //Iterative loop counter 0...7
+ // See this URL for details about the shift-based multiply
+ // http://www.cs.rpi.edu/~hollingd/comporg.2000/Notes/Mult.PDF 
+bptz2:
+ if(!(real_min&1)) goto nyyu11;
+ C=((int)make_mout+(int)real_min2>255);
+ make_mout+=real_min2;
+ if(C) ++hi_byte;
+nyyu11:
+ real_min/=2;
+ c1=hi_byte&1;
+ hi_byte/=2;
+ C=make_mout&1;
+ make_mout/=2;
+ if(!c1) goto chri8;
+ make_mout|=128;
+chri8:
+ //Carries out of make_mout (result hi byte) go into
+ // to top of real_min (the determiner).
+ if(!C) goto bbybm; 
+ real_min|=128;
+bbybm:
+ mout_hi++;
+ if(mout_hi<8) goto bptz2;
+ real_min2=real_min; 
+ *mout=make_mout;
+ //Needs to be at least 128 b/c we are dealing with
+ // "real" mantissae here and Hidden Bit will soon be subtracted
+ // back out
+ if(!(*mout&0x80)) goto nmfcar ;
+ /*Increment eout, to scale mulhi */
+ /* per comment above MUL16*/
+ ++eout_tmp; 
+#ifdef BOUNDSCHECK
+ if((((int8_t)eout_tmp))!=-128) goto a5crm;
+ eout_tmp=127;
+ b128=1;
+a5crm:
+#endif
+ //ROUNDING - MARKED
+ if(!(real_min2&128)) goto dv40e;
+ ++*mout; 
+dv40e:
+ goto if1done;
+nmfcar:
+ *mout*=2;
+ //Other part of this scaling is simply fact that exp.
+ // incrementation prior to nmfcar label was skipped.
+ //ROUNDING (Really just restoring correct bit of data)
+ if(!(real_min2&64 )) goto iqt10;
+ ++*mout;
+iqt10:
+ //ROUNDING - OK
+ if(real_min2&128) ++*mout;
+ if(*mout) goto cnc44;
+ *mout=128;
+ ++eout_tmp;
+#ifdef BOUNDSCHECK
+ if((((int8_t)eout_tmp))!=-128) goto cnc45;
+ if(!b128) goto cnc46;
+ *eout=127; 
+ *mout=127;
+ if(neg==neg2) goto caaa0;
+ *mout|=128;
+caaa0:
+ return;
+cnc46:
+ eout_tmp=127;
+ b128=1;
+cnc45:
+#endif
+cnc44:
+if1done:
+ (*mout)-=128;
+ //Handle negation
+ if(neg2==neg)goto msames;
+ (*mout)|=128;
+msames:
+ *eout=eout_tmp;
+#ifdef BOUNDSCHECK
+ if(!b128) goto meew0;
+ ++*eout;
+ if(*eout>=0) goto meew0;
+ *eout=127; 
+ *mout=127;
+ if(neg==neg2) goto meew1;
+ *mout|=128;
+meew1:
+ return; 
+meew0:
+ if(!b129) goto meew2;
+ --*eout;
+ if(*eout<=0) goto meew2;
+ *eout=-128; 
+ *mout=0;
+ if(neg==neg2) goto meew2;
+ *mout|=128;
+meew2:
+#endif
+ return;
+#ifndef BOUNDSCHECK
+mzee1:
+mzee2:
+#endif
+ //return + or - zero
+ *eout=-128;
+ *mout=0;
+ return;
+}
+/*Undef. MUL16 mem. map*/
+#undef eout_tmp 
+#undef hi_byte 
+#undef real_min2 
+#undef real_min 
+#undef make_mout 
+#undef mout_hi 
+#undef neg 
+#undef neg2 
+#undef b129 
+#undef b128 
+/*Define NEXT mem. map*/
+/*NEXT Returns next largest SFP number in magnitude. Useful for 
+  establishing error bounds, etc.*/
+#define scratch loc000
+void sfp_next
+(
+byte min, int8_t ein, 
+byte *mout, int8_t *eout
+)
+{ 
+ *eout=ein;
+ *mout=min; 
+ if(((*mout)&127)!=127) goto m0r33n; 
+ (*mout)&=0x80;
+ (*eout)++;
+ goto m0r34d;
+ m0r33n:
+ (*mout)++;
+ m0r34d:;
+}
+/*Undef. NEXT mem. map*/
+#undef scratch

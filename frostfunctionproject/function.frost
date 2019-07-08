@@ -1,0 +1,12 @@
+calls printch
+
+insert clock
+frost115200bps
+.dowork[]
+ 
+d .dowork is
+.printch[13].printch[10]
+.printch['H'].printch['e'].printch['l'].printch['l'].printch['o'].printch[',']
+.printch[' ']
+.printch['w'].printch['o'].printch['r'].printch['l'].printch['d'].printch['!'] 
+;

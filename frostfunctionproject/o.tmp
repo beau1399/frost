@@ -1,0 +1,15 @@
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta .dowork[]
+ 
+d .dowork is
+.printch[13].printch[10]
+.printch['H'].printch['e'].printch['l'].printch['l'].printch['o'].printch[',']
+.printch[' ']
+.printch['w'].printch['o'].printch['r'].printch['l'].printch['d'].printch['!'] 
+;

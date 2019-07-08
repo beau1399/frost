@@ -1,0 +1,20 @@
+.oru[112 @osccon] > osccon
+
+
+
+  17 > spbrg
+  0 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1 .printch['.']
+.some-As[10]
+  
+d .some-As * is
+  if .parm[0],.printch['A'] .add[-1] .some-As[],,
+; 

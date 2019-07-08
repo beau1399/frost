@@ -1,0 +1,2545 @@
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+                      00002 #include "hloe.inc"
+                      00001 
+                      00002 
+                      00003 #define HLLGUARDhllblss
+                      00004 
+                      00005 
+                      00006 #define HLOE_STACK_SIZE .80
+                      00007 #define HLOE_STACK2_SIZE .20
+                      00008 
+                      00009 
+                      00010 #include <p16f687.inc>
+                      00001         LIST
+                      00002 ; P16F687.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                      00553         LIST
+                      00011 #include <f:\beau\frostcompiler\kernel.inc>
+                      00001 PUSH macro ;Push to the main stack for the programmer's parms and dyn. data;
+                      00002  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+                      00003  movwf INDF ; code of any sort will not overwrite the data. 
+                      00004  endm 
+                      00005  
+                      00006 POP macro ;Pop from main stack; "decf" is the de-allocator and thus happens last to 
+                      00007  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+                      00008  decf FSR,f 
+                      00009  endm
+                      00010  
+                      00011 DISCARD macro ;Remove items from the main stack and throw them away w/o affecting W
+                      00012  decf FSR,f 
+                      00013  endm
+                      00014  
+                      00015 KDISCARD macro ;Remove items from stack 2 and throw them away w/o affecting W
+                      00016  decf alt_fsr,f 
+                      00017  endm
+                      00018 
+                      00019 COPY macro ;Duplicate stack top
+                      00020  movfw INDF
+                      00021  incf FSR,f 
+                      00022  movwf INDF 
+                      00023  endm
+                      00024 
+                      00025 #define HLFSR FSR
+                      00026  
+                      00027 #define HLINDF INDF
+                      00028 
+                      00029   
+                      00030 FAR_CALL macro caller_os,func_os ;Call destination residing within a different code page
+                      00031  pagesel func_os
+                      00032  call func_os
+                      00033  pagesel caller_os ;This one restores the caller's code page
+                      00034  endm
+                      00035 
+                      00036 ;Call destination residing within a different code page... does not restore the caller's
+                      00037 ; code page after return, which may be OK (e.g. if the next operation is another 'Far'
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00038 ; function call). 
+                      00039 HALF_FAR_CALL macro func_os 
+                      00040  pagesel func_os        
+                      00041  call func_os
+                      00042  endm
+                      00043  
+                      00044 KPOP macro
+                      00045  bankisel alt_stack ;This is OK for interrupts... part of STATUS 
+                      00046  movf in_isr,f ;In shared RAM, no need for BANKSEL
+                      00047  btfsc STATUS,Z
+                      00048  goto $+0F
+                      00049  movfw FSR 
+                      00050  movwf softstack0+1 ;Save user stack ptr 
+                      00051  movfw alt_fsr ;Get second stack ptr 
+                      00052  movwf FSR 
+                      00053  movfw INDF ;Dereference it 
+                      00054  decf FSR,f ;Decrement it 
+                      00055  movwf softstack1+1  ;Save popped value for ret urn 
+                      00056  movfw FSR ;Save second stack ptr 
+                      00057  movwf alt_fsr 
+                      00058  movfw softstack0+1  ;Restore user stack ptr 
+                      00059  movwf FSR 
+                      00060  clrf softstack0+1
+                      00061  movfw softstack1+1  ;Bring back popped value for ret urn 
+                      00062  goto $+0E
+                      00063  movfw FSR 
+                      00064  movwf softstack0 ;Save user stack ptr 
+                      00065  movfw alt_fsr ;Get second stack ptr 
+                      00066  movwf FSR 
+                      00067  movfw INDF ;Dereference it 
+                      00068  decf FSR,f ;Decrement it 
+                      00069  movwf softstack1  ;Save popped value for ret urn 
+                      00070  movfw FSR ;Save second stack ptr 
+                      00071  movwf alt_fsr 
+                      00072  movfw softstack0  ;Restore user stack ptr 
+                      00073  movwf FSR 
+                      00074  clrf softstack0
+                      00075  movfw softstack1  ;Bring back popped value for ret urn 
+                      00076  bankisel stack
+                      00077  endm 
+                      00078 
+                      00079 KPUSH macro
+                      00080  bankisel alt_stack ;This is OK for interrupts... part of STATUS 
+                      00081  movf in_isr,f ;In shared RAM, no need for BANKSEL
+                      00082  btfsc STATUS,Z
+                      00083  goto $+0E
+                      00084  movwf softstack1+1 ;softstack1 holds parm value being pushed
+                      00085  movfw FSR  
+                      00086  movwf softstack0+1  ;softstack0 holds FSR
+                      00087  movfw alt_fsr 
+                      00088  movwf FSR 
+                      00089  movfw softstack1+1
+                      00090  incf alt_fsr,f 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00091  incf FSR,f ;The actual kernel push... preincrement for interrupt safety
+                      00092  movwf INDF 
+                      00093  movfw softstack0+1
+                      00094  movwf FSR 
+                      00095  clrf softstack0+1 
+                      00096  goto $+0D
+                      00097  movwf softstack1 ;softstack1 holds parm value being pushed
+                      00098  movfw FSR  
+                      00099  movwf softstack0  ;softstack0 holds FSR
+                      00100  movfw alt_fsr 
+                      00101  movwf FSR 
+                      00102  movfw softstack1
+                      00103  incf alt_fsr,f 
+                      00104  incf FSR,f ;The actual kernel push... preincrement for interrupt safety
+                      00105  movwf INDF 
+                      00106  movfw softstack0
+                      00107  movwf FSR 
+                      00108  clrf softstack0
+                      00109  bankisel stack
+                      00110  endm
+                      00111  
+                      00112 PREEMPT macro
+                      00113 #ifdef HLLMULTITASK 
+                      00114  movwf W_Save ; save context- save W in "W_save" file reg.
+                      00115  ;From datasheet... save STATUS properly
+                      00116  swapf STATUS,W 
+                      00117  movwf STATUS_Save 
+                      00118  movf FSR,w 
+                      00119  movwf FSR_Save 
+                      00120  movf PCLATH,w ; save status in "STATUS_Save" file reg.
+                      00121  movwf PC_Save 
+                      00122  movf alt_fsr,w 
+                      00123  movwf ALT_Save
+                      00124  incf in_isr,f
+                      00125  pagesel ISR
+                      00126  bankisel stack 
+                      00127  movf FSR,w           ;Restore "softstack" if main thread was using 2nd stack
+                      00128  movf softstack0,f        ; (coded to preserve constant interrupt latency)
+                      00129  btfss STATUS,Z       
+                      00130  movf softstack0,w  
+                      00131  movwf FSR          
+                      00132 #endif 
+                      00133  endm
+                      00134  
+                      00135 RESUME macro
+                      00136  
+                      00137 #ifdef HLLMULTITASK 
+                      00138  clrf in_isr
+                      00139  movf ALT_Save,w
+                      00140  movwf alt_fsr 
+                      00141  movf PC_Save,w ; restore context (W and STATUS)
+                      00142  movwf PCLATH
+                      00143  movf FSR_Save,w 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00144  movwf FSR
+                      00145  ;Per the datasheet...
+                      00146  swapf STATUS_Save,W
+                      00147  movwf STATUS ;Move W into Status reg
+                      00148  swapf W_Save,F ;Swap W_TEMP
+                      00149  swapf W_Save,W ;Swap W_TEMP into W
+                      00150 #endif
+                      00151 
+                      00152  endm
+                      00153  
+                      00154 ; Table macro.. this followed by any series of RETLW calls
+                      00155 ; transforms said call list into a function that takes an offset
+                      00156 ; and returns that entry in the table (takes 1 byte, returns 1
+                      00157 ; byte... this goes atop the HLL feature which allows generation 
+                      00158 ; of tables. It can also go atop RETLW tables entered into assembly 
+                      00159 ; files in a very basic fashion when doing assembly programming. In 
+                      00160 ; either case, the overall result can be called exactly as if it were any 
+                      00161 ; other HLOE function
+                      00162 HLTABLE macro mmnme
+                      00163 mmnme:
+                      00164  movlw high mmnme#v(2) ; Necess. b/c writes to PCL take 5 bits fr. PCLATH
+                      00165  movwf PCLATH ; and PAGESEL doesn't take care of all 5
+                      00166  movlw low mmnme#v(2) ; Perform pointer arithmetic
+                      00167  addwf INDF,w 
+                      00168  decf FSR,f
+                      00169  btfsc STATUS,C ; Necess. b/c writes to PCL take 5 bits fr. PCLATH
+                      00170  incf PCLATH,f 
+                      00171  movwf PCL 
+                      00172 mmnme#v(2): 
+                      00173  ;retlw K, retlw K, etc. go here
+                      00174  endm
+                      00175  
+                      00003 
+                      00004 
+                      00005 ;
+                      00006 ; R O B O T
+                      00007 ;
+                      00008 ; C O N F I G
+                      00009 ;
+                      00010 
+                      00011 
+2007   30C6           00012  __config (_EXTRC_OSC_NOCLKOUT& _WDT_OFF  & _MCLRE_OFF & _IESO_OFF & _FCMEN_OFF  & _PWRTE_ON & _BOR_OFF)
+                      00013 
+                      00014 
+                      00015 
+                      00016 
+                      00017 Resetv code 0 
+0000   138B           00018  bcf INTCON,GIE
+                      00019  pagesel hloego
+0001   2???           00020  goto hloego
+                      00021  
+                      00022 #ifdef HLLMULTITASK
+                      00023 vectr code 4     ;Device specific
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00024 ISR:
+                      00025 
+                      00026 
+                      00027  PREEMPT
+                      00028 #endif
+                      00029 
+                      00030 ;
+                      00031 ; R O B O T
+                      00032 ;
+                      00033 ; H E A D E R
+                      00034 ;
+                      00035 
+                      00036 #ifdef HLLMULTITASK
+                      00037 ExitISR:    
+                      00038  RESUME 
+                      00039  
+                      00040   retfie
+                      00041 #endif
+                      00042 
+                      00043 mainvars udata_shr      
+                      00044 #ifdef HLLMULTITASK
+                      00045 pbase res .1                    ; Used for functions w/ numbered pass/return, to clean up parms/push arg
+                            s
+                      00046 pbaseisr res .1 
+                      00047 #else
+0000                  00048 pbase res .1
+                      00049 #endif
+0001                  00050 PC_Save res .1
+                      00051 
+                      00052 main code
+0000                  00053 hloego:
+                      00054 
+                      00055  
+                      00056 
+                      00057   
+0000   01??           00058   clrf in_isr
+                      00059  
+0001   30??           00060   movlw stack-1         ;Set up stack starting position based on literals det. by incremental linker
+0002   0084           00061   movwf FSR 
+0003   30??           00062   movlw alt_stack-1
+0004   00??           00063   movwf alt_fsr 
+                      00064  
+                      00065  
+0005   01??           00066  clrf softstack0 
+                      00067  
+0006   ????           00068  bankisel stack
+                      00069  pagesel hlluserprog
+0007   2???           00070  goto hlluserprog
+                      00071 hllupuser CODE
+0000                  00072 hlluserprog: 
+                      00073  
+                      00074 
+0000   3004           00075  movlw SYNC
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00076 
+                      00077 
+                      00078    
+                      00079  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0001   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00080 
+                      00081 
+0002   3002           00082  movlw BRGH
+                      00083 
+                      00084 
+                      00085    
+                      00086  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0003   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00087 
+0004   1683 1303      00088    banksel TXSTA
+0006   0818           00089    movfw TXSTA
+                      00090    
+                      00091    
+                      00092 
+                      00093    
+                      00094  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0007   2???               M  call safepush
+                      00095 
+                      00096 
+                      00097  
+                      00098  HALF_FAR_CALL setbit
+                          M  pagesel setbit         
+0008   2???               M  call setbit
+                      00099 
+                      00100 
+                      00101  
+                      00102  FAR_CALL hlluserprog,clearbit
+                          M  pagesel clearbit
+0009   2???               M  call clearbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00103 
+                      00104  POP
+000A   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+000B   0384               M  decf FSR,f 
+000C   1683 1303      00105  banksel TXSTA
+000E   0098           00106  movwf TXSTA
+                      00107  
+                      00108 
+                      00109 
+000F   3003           00110  movlw BRG16
+                      00111 
+                      00112 
+                      00113    
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00114  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0010   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00115 
+                      00116 
+0011   3004           00117  movlw SCKP
+                      00118 
+                      00119 
+                      00120    
+                      00121  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0012   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00122 
+0013   1683 1303      00123    banksel BAUDCTL
+0015   081B           00124    movfw BAUDCTL
+                      00125    
+                      00126    
+                      00127 
+                      00128    
+                      00129  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0016   2???               M  call safepush
+                      00130 
+                      00131 
+                      00132  
+                      00133  HALF_FAR_CALL setbit
+                          M  pagesel setbit         
+0017   2???               M  call setbit
+                      00134 
+                      00135 
+                      00136  
+                      00137  FAR_CALL hlluserprog,setbit
+                          M  pagesel setbit
+0018   2???               M  call setbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00138 
+                      00139  POP
+0019   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+001A   0384               M  decf FSR,f 
+001B   1683 1303      00140  banksel BAUDCTL
+001D   009B           00141  movwf BAUDCTL
+                      00142  
+                      00143 
+                      00144 
+001E   3004           00145  movlw CREN
+                      00146 
+                      00147 
+                      00148    
+                      00149  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+001F   2???               M  call safepush
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00150 
+0020   1283 1303      00151    banksel RCSTA
+0022   0818           00152    movfw RCSTA
+                      00153    
+                      00154    
+                      00155 
+                      00156    
+                      00157  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0023   2???               M  call safepush
+                      00158 
+                      00159 
+                      00160  
+                      00161  FAR_CALL hlluserprog,clearbit
+                          M  pagesel clearbit
+0024   2???               M  call clearbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00162 
+                      00163  POP
+0025   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0026   0384               M  decf FSR,f 
+0027   1283 1303      00164  banksel RCSTA
+0029   0098           00165  movwf RCSTA
+                      00166  
+                      00167 
+                      00168 
+002A   3004           00169  movlw CREN
+                      00170 
+                      00171 
+                      00172    
+                      00173  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+002B   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00174 
+002C   1283 1303      00175    banksel RCSTA
+002E   0818           00176    movfw RCSTA
+                      00177    
+                      00178    
+                      00179 
+                      00180    
+                      00181  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+002F   2???               M  call safepush
+                      00182 
+                      00183 
+                      00184  
+                      00185  FAR_CALL hlluserprog,setbit
+                          M  pagesel setbit
+0030   2???               M  call setbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00186 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00187  POP
+0031   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0032   0384               M  decf FSR,f 
+0033   1283 1303      00188  banksel RCSTA
+0035   0098           00189  movwf RCSTA
+                      00190  
+                      00191 
+                      00192 
+0036   3019           00193  movlw .25
+                      00194 
+                      00195    
+                      00196  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0037   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00197 
+                      00198  POP
+0038   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0039   0384               M  decf FSR,f 
+003A   1683 1303      00199  banksel SPBRG
+003C   0099           00200  movwf SPBRG
+                      00201  
+                      00202 
+                      00203 
+003D   3000           00204  movlw .0
+                      00205 
+                      00206    
+                      00207  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+003E   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00208 
+                      00209  POP
+003F   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0040   0384               M  decf FSR,f 
+0041   1683 1303      00210  banksel SPBRGH
+0043   009A           00211  movwf SPBRGH
+                      00212  
+                      00213 
+                      00214 
+0044   3005           00215  movlw TXEN
+                      00216 
+                      00217 
+                      00218    
+                      00219  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0045   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00220 
+                      00221 
+0046   3006           00222  movlw TX9
+                      00223 
+                      00224 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00225    
+                      00226  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0047   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00227 
+0048   1683 1303      00228    banksel TXSTA
+004A   0818           00229    movfw TXSTA
+                      00230    
+                      00231    
+                      00232 
+                      00233    
+                      00234  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+004B   2???               M  call safepush
+                      00235 
+                      00236 
+                      00237  
+                      00238  HALF_FAR_CALL clearbit
+                          M  pagesel clearbit       
+004C   2???               M  call clearbit
+                      00239 
+                      00240 
+                      00241  
+                      00242  FAR_CALL hlluserprog,setbit
+                          M  pagesel setbit
+004D   2???               M  call setbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00243 
+                      00244  POP
+004E   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+004F   0384               M  decf FSR,f 
+0050   1683 1303      00245  banksel TXSTA
+0052   0098           00246  movwf TXSTA
+                      00247  
+                      00248 
+                      00249 
+0053   3007           00250  movlw SPEN
+                      00251 
+                      00252 
+                      00253    
+                      00254  FAR_CALL hlluserprog ,safepush
+                          M  pagesel safepush
+0054   2???               M  call safepush
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00255 
+0055   1283 1303      00256    banksel RCSTA
+0057   0818           00257    movfw RCSTA
+                      00258    
+                      00259    
+                      00260 
+                      00261    
+                      00262  HALF_FAR_CALL safepush
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M  pagesel safepush       
+0058   2???               M  call safepush
+                      00263 
+                      00264 
+                      00265  
+                      00266  FAR_CALL hlluserprog,setbit
+                          M  pagesel setbit
+0059   2???               M  call setbit
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00267 
+                      00268  POP
+005A   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+005B   0384               M  decf FSR,f 
+005C   1283 1303      00269  banksel RCSTA
+005E   0098           00270  movwf RCSTA
+                      00271  
+                      00272 
+                      00273 
+                      00274  
+                      00275  FAR_CALL hlluserprog,dowork
+                          M  pagesel dowork
+005F   2???               M  call dowork
+                          M  pagesel hlluserprog ;This one restores the caller's code page
+                      00276 
+                      00277     
+0060                  00278 hllprogend:
+0060   2???           00279  goto hllprogend
+                      00280  
+                      00281 
+                      00282 hllt450 CODE
+0000                  00283 dowork:
+                      00284 
+                      00285 
+0000   300D           00286  movlw .13
+                      00287 
+                      00288    
+                      00289  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0001   2???               M  call safepush
+                      00290 
+                      00291 
+                      00292  
+                      00293  FAR_CALL dowork,printch
+                          M  pagesel printch
+0002   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00294 
+                      00295 
+0003   300A           00296  movlw .10
+                      00297 
+                      00298    
+                      00299  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0004   2???               M  call safepush
+                      00300 
+                      00301 
+                      00302  
+                      00303  FAR_CALL dowork,printch
+                          M  pagesel printch
+0005   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00304 
+                      00305  ; char 'H'
+                      00306 
+                      00307 
+0006   3048           00308  movlw .72
+                      00309 
+                      00310 
+                      00311    
+                      00312  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0007   2???               M  call safepush
+                      00313 
+                      00314 
+                      00315  
+                      00316  FAR_CALL dowork,printch
+                          M  pagesel printch
+0008   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00317 
+                      00318  ; char 'e'
+                      00319 
+                      00320 
+0009   3065           00321  movlw .101
+                      00322 
+                      00323 
+                      00324    
+                      00325  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+000A   2???               M  call safepush
+                      00326 
+                      00327 
+                      00328  
+                      00329  FAR_CALL dowork,printch
+                          M  pagesel printch
+000B   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00330 
+                      00331  ; char 'l'
+                      00332 
+                      00333 
+000C   306C           00334  movlw .108
+                      00335 
+                      00336 
+                      00337    
+                      00338  HALF_FAR_CALL safepush
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                          M  pagesel safepush       
+000D   2???               M  call safepush
+                      00339 
+                      00340 
+                      00341  
+                      00342  FAR_CALL dowork,printch
+                          M  pagesel printch
+000E   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00343 
+                      00344  ; char 'l'
+                      00345 
+                      00346 
+000F   306C           00347  movlw .108
+                      00348 
+                      00349 
+                      00350    
+                      00351  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0010   2???               M  call safepush
+                      00352 
+                      00353 
+                      00354  
+                      00355  FAR_CALL dowork,printch
+                          M  pagesel printch
+0011   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00356 
+                      00357  ; char 'o'
+                      00358 
+                      00359 
+0012   306F           00360  movlw .111
+                      00361 
+                      00362 
+                      00363    
+                      00364  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0013   2???               M  call safepush
+                      00365 
+                      00366 
+                      00367  
+                      00368  FAR_CALL dowork,printch
+                          M  pagesel printch
+0014   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00369 
+                      00370  ; char ','
+                      00371 
+                      00372 
+0015   302C           00373  movlw .44
+                      00374 
+                      00375 
+                      00376    
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00377  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0016   2???               M  call safepush
+                      00378 
+                      00379 
+                      00380  
+                      00381  FAR_CALL dowork,printch
+                          M  pagesel printch
+0017   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00382 
+                      00383  ; char ' '
+                      00384 
+                      00385 
+0018   3020           00386  movlw .32
+                      00387 
+                      00388 
+                      00389    
+                      00390  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0019   2???               M  call safepush
+                      00391 
+                      00392 
+                      00393  
+                      00394  FAR_CALL dowork,printch
+                          M  pagesel printch
+001A   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00395 
+                      00396  ; char 'w'
+                      00397 
+                      00398 
+001B   3077           00399  movlw .119
+                      00400 
+                      00401 
+                      00402    
+                      00403  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+001C   2???               M  call safepush
+                      00404 
+                      00405 
+                      00406  
+                      00407  FAR_CALL dowork,printch
+                          M  pagesel printch
+001D   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00408 
+                      00409  ; char 'o'
+                      00410 
+                      00411 
+001E   306F           00412  movlw .111
+                      00413 
+                      00414 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00415    
+                      00416  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+001F   2???               M  call safepush
+                      00417 
+                      00418 
+                      00419  
+                      00420  FAR_CALL dowork,printch
+                          M  pagesel printch
+0020   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00421 
+                      00422  ; char 'r'
+                      00423 
+                      00424 
+0021   3072           00425  movlw .114
+                      00426 
+                      00427 
+                      00428    
+                      00429  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0022   2???               M  call safepush
+                      00430 
+                      00431 
+                      00432  
+                      00433  FAR_CALL dowork,printch
+                          M  pagesel printch
+0023   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00434 
+                      00435  ; char 'l'
+                      00436 
+                      00437 
+0024   306C           00438  movlw .108
+                      00439 
+                      00440 
+                      00441    
+                      00442  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0025   2???               M  call safepush
+                      00443 
+                      00444 
+                      00445  
+                      00446  FAR_CALL dowork,printch
+                          M  pagesel printch
+0026   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00447 
+                      00448  ; char 'd'
+                      00449 
+                      00450 
+0027   3064           00451  movlw .100
+                      00452 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00453 
+                      00454    
+                      00455  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+0028   2???               M  call safepush
+                      00456 
+                      00457 
+                      00458  
+                      00459  FAR_CALL dowork,printch
+                          M  pagesel printch
+0029   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00460 
+                      00461  ; char '!'
+                      00462 
+                      00463 
+002A   3021           00464  movlw .33
+                      00465 
+                      00466 
+                      00467    
+                      00468  HALF_FAR_CALL safepush
+                          M  pagesel safepush       
+002B   2???               M  call safepush
+                      00469 
+                      00470 
+                      00471  
+                      00472  FAR_CALL dowork,printch
+                          M  pagesel printch
+002C   2???               M  call printch
+                          M  pagesel dowork    ;This one restores the caller's code page
+                      00473 
+                      00474 
+002D   0008           00475  return
+                      00476  
+002E                  00477 hllprgen2:
+002E   2???           00478  goto hllprgen2
+                      00479  
+                      00480 
+                      00481 
+                      00482 
+                      00483 
+                      00484 
+                      00485  
+                      00486 
+                      00487 
+                      00488 hlog1a CODE
+                      00489 
+                      00490 
+                      00491 
+                      00492 #define margp2 hllblss00
+                      00493 
+                      00494 
+0000                  00495 clearbit:  
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00496 #ifdef HLLMULTITASK
+                      00497 #ifdef HLLGUARDhllblss 
+                      00498  movf in_isr,f  
+                      00499  btfsc STATUS,Z
+                      00500  
+                      00501 
+                      00502 
+                      00503  goto clearbit0
+                      00504 
+                      00505  POP
+                      00506  banksel margp2
+                      00507  movwf margp2
+                      00508  POP 
+                      00509  xorlw .0
+                      00510  btfss STATUS,Z
+                      00511  goto tff00h
+                      00512  
+                      00513  movfw margp2
+                      00514  andlw .255-.1
+                      00515  goto tff99h
+                      00516 tff00h: 
+                      00517  
+                      00518  xorlw .1
+                      00519  btfss STATUS,Z
+                      00520  goto tff01h
+                      00521  
+                      00522  movfw margp2
+                      00523  andlw .255-.2
+                      00524  goto tff99h
+                      00525 tff01h: 
+                      00526  xorlw .1
+                      00527  xorlw .2
+                      00528  btfss STATUS,Z
+                      00529  goto tff02h
+                      00530  
+                      00531  movfw margp2
+                      00532  andlw .255-.4
+                      00533  goto tff99h
+                      00534 tff02h: 
+                      00535  xorlw .2
+                      00536  xorlw .3
+                      00537  btfss STATUS,Z
+                      00538  goto tff03h
+                      00539  
+                      00540  movfw margp2
+                      00541  andlw .255-.8
+                      00542  goto tff99h
+                      00543 tff03h: 
+                      00544  xorlw .3
+                      00545  xorlw .4
+                      00546  btfss STATUS,Z
+                      00547  goto tff04h
+                      00548  
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00549  movfw margp2
+                      00550  andlw .255-.16
+                      00551  goto tff99h
+                      00552 tff04h: 
+                      00553  xorlw .4
+                      00554  xorlw .5
+                      00555  btfss STATUS,Z
+                      00556  goto tff05h
+                      00557  
+                      00558  movfw margp2
+                      00559  andlw .255-.32
+                      00560  goto tff99h
+                      00561 tff05h: 
+                      00562  xorlw .5
+                      00563  xorlw .6
+                      00564  btfss STATUS,Z
+                      00565  goto tff07h
+                      00566  
+                      00567  movfw margp2
+                      00568  andlw .255-.64
+                      00569  goto tff99h
+                      00570 tff07h: 
+                      00571  
+                      00572  movfw margp2
+                      00573  andlw .255-.128
+                      00574 tff99h:  
+                      00575  PUSH
+                      00576  return
+                      00577 
+                      00578 
+                      00579 
+                      00580 
+                      00581 #undefine margp2
+                      00582 
+                      00583 
+                      00584 #define margp2 hllblss00+1
+                      00585 
+                      00586 
+                      00587 clearbit0:
+                      00588 #endif
+                      00589 #endif
+                      00590 
+                      00591  POP
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+0002   ???? ????      00592  banksel margp2
+0004   00??           00593  movwf margp2
+                      00594  POP 
+0005   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0006   0384               M  decf FSR,f 
+0007   3A00           00595  xorlw .0
+0008   1D03           00596  btfss STATUS,Z
+0009   2???           00597  goto hllAAAAA
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00598  
+000A   08??           00599  movfw margp2
+000B   39FE           00600  andlw .255-.1
+000C   2???           00601  goto hllHAAAA
+000D                  00602 hllAAAAA: 
+                      00603  
+000D   3A01           00604  xorlw .1
+000E   1D03           00605  btfss STATUS,Z
+000F   2???           00606  goto hllBAAAA
+                      00607  
+0010   08??           00608  movfw margp2
+0011   39FD           00609  andlw .255-.2
+0012   2???           00610  goto hllHAAAA
+0013                  00611 hllBAAAA: 
+0013   3A01           00612  xorlw .1
+0014   3A02           00613  xorlw .2
+0015   1D03           00614  btfss STATUS,Z
+0016   2???           00615  goto hllCAAAA
+                      00616  
+0017   08??           00617  movfw margp2
+0018   39FB           00618  andlw .255-.4
+0019   2???           00619  goto hllHAAAA
+001A                  00620 hllCAAAA: 
+001A   3A02           00621  xorlw .2
+001B   3A03           00622  xorlw .3
+001C   1D03           00623  btfss STATUS,Z
+001D   2???           00624  goto hllDAAAA
+                      00625  
+001E   08??           00626  movfw margp2
+001F   39F7           00627  andlw .255-.8
+0020   2???           00628  goto hllHAAAA
+0021                  00629 hllDAAAA: 
+0021   3A03           00630  xorlw .3
+0022   3A04           00631  xorlw .4
+0023   1D03           00632  btfss STATUS,Z
+0024   2???           00633  goto hllEAAAA
+                      00634  
+0025   08??           00635  movfw margp2
+0026   39EF           00636  andlw .255-.16
+0027   2???           00637  goto hllHAAAA
+0028                  00638 hllEAAAA: 
+0028   3A04           00639  xorlw .4
+0029   3A05           00640  xorlw .5
+002A   1D03           00641  btfss STATUS,Z
+002B   2???           00642  goto hllFAAAA
+                      00643  
+002C   08??           00644  movfw margp2
+002D   39DF           00645  andlw .255-.32
+002E   2???           00646  goto hllHAAAA
+002F                  00647 hllFAAAA: 
+002F   3A05           00648  xorlw .5
+0030   3A06           00649  xorlw .6
+0031   1D03           00650  btfss STATUS,Z
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0032   2???           00651  goto hllGAAAA
+                      00652  
+0033   08??           00653  movfw margp2
+0034   39BF           00654  andlw .255-.64
+0035   2???           00655  goto hllHAAAA
+0036                  00656 hllGAAAA: 
+                      00657  
+0036   08??           00658  movfw margp2
+0037   397F           00659  andlw .255-.128
+0038                  00660 hllHAAAA:  
+                      00661  PUSH
+0038   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0039   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+003A   0008           00662  return
+                      00663 
+                      00664 
+                      00665 
+                      00666 
+                      00667 #undefine margp2
+                      00668 
+                      00669 
+                      00670 
+                      00671 
+                      00672 
+                      00673 
+                      00674 
+                      00675  
+                      00676 
+                      00677 
+                      00678 
+                      00679 ukrnl2 UDATA
+0000                  00680 stack res HLOE_STACK_SIZE
+                      00681  
+                      00682 ukrnl3 UDATA 
+0000                  00683 alt_stack res HLOE_STACK2_SIZE
+                      00684  
+                      00685 
+                      00686 
+                      00687 ukernl udata 
+                      00688 
+                      00689 
+                      00690 
+                      00691 
+                      00692 
+0000                  00693 hllblss00 res 1           
+                      00694 #ifdef HLLMULTITASK
+                      00695 #ifdef HLLGUARDhllblss
+                      00696 hllblss00isr res 1      
+                      00697 #endif
+                      00698 #endif
+                      00699 
+0001                  00700 hllblss01 res 1    
+                      00701 #ifdef HLLMULTITASK
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00702 #ifdef HLLGUARDhllblss
+                      00703 hllblss01isr res 1      
+                      00704 #endif
+                      00705 #endif
+                      00706 
+0002                  00707 hllblss02 res 1    
+                      00708 #ifdef HLLMULTITASK
+                      00709 #ifdef HLLGUARDhllblss
+                      00710 hllblss02isr res 1      
+                      00711 #endif
+                      00712 #endif
+                      00713   
+                      00714 ukrshr udata_shr
+                      00715 
+                      00716 
+0000                  00717 softstack0 res 1                
+                      00718 #ifdef HLLMULTITASK
+                      00719 softstack0isr res 1
+                      00720 #endif
+                      00721 
+0001                  00722 softstack1 res 1                
+                      00723 #ifdef HLLMULTITASK
+                      00724 softstack1isr res 1
+                      00725 #endif
+                      00726 
+0002                  00727 softstack2 res 1                
+                      00728 #ifdef HLLMULTITASK
+                      00729 softstack2isr res 1
+                      00730 #endif
+                      00731 
+0003                  00732 alt_fsr res 1
+0004                  00733 W_Save res 1 
+0005                  00734 STATUS_Save res 1
+0006                  00735 FSR_Save res 1
+0007                  00736 ALT_Save res 1
+0008                  00737 in_isr res 1
+                      00738 
+                      00739 hllkrna00 CODE
+                      00740 
+                      00741  
+                      00742 
+                      00743 
+                      00744 #define mterm hllblss00
+                      00745 
+                      00746 
+0000                  00747 mul:  
+                      00748 #ifdef HLLMULTITASK
+                      00749 #ifdef HLLGUARDhllblss 
+                      00750  movf in_isr,f  
+                      00751  btfsc STATUS,Z
+                      00752  
+                      00753 
+                      00754 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00755  goto mul0
+                      00756 
+                      00757  POP
+                      00758  banksel mterm 
+                      00759  movwf mterm
+                      00760  clrw 
+                      00761  addwf HLINDF,w 
+                      00762  decf mterm,f 
+                      00763  btfss STATUS,Z 
+                      00764  goto $-3
+                      00765  movwf HLINDF
+                      00766  return
+                      00767 
+                      00768 
+                      00769 
+                      00770 #undefine mterm
+                      00771 
+                      00772 
+                      00773 #define mterm hllblss00+1
+                      00774 
+                      00775 
+                      00776 mul0:
+                      00777 #endif
+                      00778 #endif
+                      00779 
+                      00780  POP
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+0002   ???? ????      00781  banksel mterm 
+0004   00??           00782  movwf mterm
+0005   0103           00783  clrw 
+0006   0700           00784  addwf HLINDF,w 
+0007   03??           00785  decf mterm,f 
+0008   1D03           00786  btfss STATUS,Z 
+0009   2???           00787  goto $-3
+000A   0080           00788  movwf HLINDF
+000B   0008           00789  return
+                      00790 
+                      00791 
+                      00792 
+                      00793 #undefine mterm
+                      00794 hllkrna01 CODE
+                      00795 
+0000                  00796 add: 
+                      00797  POP
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+0002   0700           00798  addwf HLINDF,w
+0003   0384           00799  decf HLFSR,f 
+                      00800  PUSH
+0004   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0005   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+0006   0008           00801  return
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00802  
+                      00803 hllkrna02 CODE 
+                      00804 
+0000                  00805 negti:  
+0000   0980           00806  comf HLINDF,f
+0001   0A80           00807  incf HLINDF,f
+0002   0008           00808  return
+                      00809  
+                      00810 hllkrna03 CODE 
+                      00811  
+0000                  00812 printch:
+                      00813  POP
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+                      00814 #ifdef HLLMULTITASK 
+                      00815  
+                      00816  banksel PIR1
+                      00817  btfss PIR1,TXIF  
+                      00818  goto $-1 
+                      00819 #endif 
+                      00820  
+0002   1283 1303      00821  banksel TXREG
+0004   0099           00822  movwf TXREG  
+                      00823  
+0005   1283 1303      00824  banksel PIR1
+0007   1E0C           00825  btfss PIR1,TXIF  
+0008   2???           00826  goto $-1  
+0009   0008           00827  return  
+                      00828  
+                      00829 
+                      00830 hllkrna04 CODE
+                      00831  
+                      00832 
+                      00833 
+                      00834 #define mterm hllblss00
+                      00835 
+                      00836 
+                      00837 #define mdiv hllblss01
+                      00838 
+                      00839 
+                      00840 #define mquot hllblss02
+                      00841 
+                      00842 
+0000                  00843 modu:  
+                      00844 #ifdef HLLMULTITASK
+                      00845 #ifdef HLLGUARDhllblss 
+                      00846  movf in_isr,f  
+                      00847  btfsc STATUS,Z
+                      00848  
+                      00849 
+                      00850 
+                      00851  goto modu0
+                      00852 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00853  banksel mquot 
+                      00854  clrf mquot
+                      00855  POP
+                      00856  movwf mdiv
+                      00857  POP
+                      00858  movwf mterm
+                      00859  movfw mdiv
+                      00860  subwf mterm,f
+                      00861  btfss STATUS,C 
+                      00862  goto $+3
+                      00863  incf mquot,f 
+                      00864  goto $-4
+                      00865  addwf mterm,w
+                      00866  PUSH
+                      00867  return 
+                      00868 
+                      00869 
+                      00870 
+                      00871 #undefine mterm
+                      00872 
+                      00873 
+                      00874 #undefine mdiv
+                      00875 
+                      00876 
+                      00877 #undefine mquot
+                      00878 
+                      00879 
+                      00880 #define mterm hllblss00+1
+                      00881 
+                      00882 
+                      00883 #define mdiv hllblss01+1
+                      00884 
+                      00885 
+                      00886 #define mquot hllblss02+1
+                      00887 
+                      00888 
+                      00889 modu0:
+                      00890 #endif
+                      00891 #endif
+                      00892 
+0000   ???? ????      00893  banksel mquot 
+0002   01??           00894  clrf mquot
+                      00895  POP
+0003   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0004   0384               M  decf FSR,f 
+0005   00??           00896  movwf mdiv
+                      00897  POP
+0006   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0007   0384               M  decf FSR,f 
+0008   00??           00898  movwf mterm
+0009   08??           00899  movfw mdiv
+000A   02??           00900  subwf mterm,f
+000B   1C03           00901  btfss STATUS,C 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000C   2???           00902  goto $+3
+000D   0A??           00903  incf mquot,f 
+000E   2???           00904  goto $-4
+000F   07??           00905  addwf mterm,w
+                      00906  PUSH
+0010   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0011   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+0012   0008           00907  return 
+                      00908 
+                      00909 
+                      00910 
+                      00911 #undefine mterm
+                      00912 
+                      00913 
+                      00914 #undefine mdiv
+                      00915 
+                      00916 
+                      00917 #undefine mquot
+                      00918 hllkrna05 CODE
+                      00919 
+                      00920 
+                      00921 
+                      00922 #define mterm hllblss00
+                      00923 
+                      00924 
+                      00925 #define mdiv hllblss01
+                      00926 
+                      00927 
+                      00928 #define mquot hllblss02
+                      00929 
+                      00930 
+0000                  00931 divu:  
+                      00932 #ifdef HLLMULTITASK
+                      00933 #ifdef HLLGUARDhllblss 
+                      00934  movf in_isr,f  
+                      00935  btfsc STATUS,Z
+                      00936  
+                      00937 
+                      00938 
+                      00939  goto divu0
+                      00940 
+                      00941  banksel mquot 
+                      00942  clrf mquot
+                      00943  POP
+                      00944  movwf mdiv
+                      00945  POP
+                      00946  movwf mterm
+                      00947  movfw mdiv
+                      00948  subwf mterm,f
+                      00949  btfss STATUS,C 
+                      00950  goto $+3
+                      00951  incf mquot,f 
+                      00952  goto $-4
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00953  movfw mquot
+                      00954  PUSH
+                      00955  return 
+                      00956 
+                      00957 
+                      00958 
+                      00959 #undefine mterm
+                      00960 
+                      00961 
+                      00962 #undefine mdiv
+                      00963 
+                      00964 
+                      00965 #undefine mquot
+                      00966 
+                      00967 
+                      00968 #define mterm hllblss00+1
+                      00969 
+                      00970 
+                      00971 #define mdiv hllblss01+1
+                      00972 
+                      00973 
+                      00974 #define mquot hllblss02+1
+                      00975 
+                      00976 
+                      00977 divu0:
+                      00978 #endif
+                      00979 #endif
+                      00980 
+0000   ???? ????      00981  banksel mquot 
+0002   01??           00982  clrf mquot
+                      00983  POP
+0003   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0004   0384               M  decf FSR,f 
+0005   00??           00984  movwf mdiv
+                      00985  POP
+0006   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0007   0384               M  decf FSR,f 
+0008   00??           00986  movwf mterm
+0009   08??           00987  movfw mdiv
+000A   02??           00988  subwf mterm,f
+000B   1C03           00989  btfss STATUS,C 
+000C   2???           00990  goto $+3
+000D   0A??           00991  incf mquot,f 
+000E   2???           00992  goto $-4
+000F   08??           00993  movfw mquot
+                      00994  PUSH
+0010   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0011   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+0012   0008           00995  return 
+                      00996 
+                      00997 
+                      00998 
+                      00999 #undefine mterm
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01000 
+                      01001 
+                      01002 #undefine mdiv
+                      01003 
+                      01004 
+                      01005 #undefine mquot
+                      01006 hllkrna06 CODE
+                      01007 
+                      01008  
+                      01009  
+                      01010  
+0000                  01011 getch:
+0000   1283 1303      01012  banksel PIR1
+0002                  01013 geth2: 
+0002   1E8C           01014  btfss PIR1,RCIF
+0003   2???           01015  goto geth2
+0004   1283 1303      01016  banksel RCREG
+0006   081A           01017  movf RCREG,w
+                      01018  PUSH 
+0007   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0008   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+0009   0008           01019  return
+                      01020  
+                      01021 hllkrna07 CODE 
+                      01022  
+0000                  01023 eq: 
+                      01024  POP 
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+0002   0600           01025  xorwf HLINDF,w
+0003   3001           01026  movlw .1 
+0004   1D03           01027  btfss STATUS,Z
+0005   3000           01028  movlw .0 
+0006   0384           01029  decf HLFSR,f 
+                      01030  PUSH 
+0007   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0008   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+0009   0008           01031  return
+                      01032  
+                      01033  
+                      01034  
+                      01035 
+                      01036 #define sstack0 softstack0 
+                      01037 #define sstack1 softstack1 
+                      01038 #define sstack2 softstack2 
+                      01039 
+                      01040 hllparmcore macro 
+                      01041  movwf sstack2
+                      01042  movfw HLFSR 
+                      01043            
+                      01044                    
+                      01045  movwf sstack0
+                      01046  movfw HLINDF
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 28
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01047  
+                      01048  subwf sstack2,w
+                      01049  movwf HLFSR 
+                      01050  movfw HLINDF 
+                      01051  
+                      01052  movwf sstack1
+                      01053  
+                      01054  movfw sstack0
+                      01055  movwf HLFSR 
+                      01056  clrf sstack0
+                      01057  movfw sstack1 
+                      01058  movwf HLINDF
+                      01059  
+                      01060  movfw sstack2
+                      01061  pagesel kpush
+                      01062  goto kpush 
+                      01063  endm
+                      01064 
+                      01065  
+                      01066 hllkrna08 CODE  
+0000                  01067 parm:
+                      01068  KPOP 
+0000   ????               M  bankisel alt_stack ;This is OK for interrupts... part of STATUS 
+0001   08??               M  movf in_isr,f ;In shared RAM, no need for BANKSEL
+0002   1903               M  btfsc STATUS,Z
+0003   2???               M  goto $+0F
+0004   0804               M  movfw FSR 
+0005   00??               M  movwf softstack0+1 ;Save user stack ptr 
+0006   08??               M  movfw alt_fsr ;Get second stack ptr 
+0007   0084               M  movwf FSR 
+0008   0800               M  movfw INDF ;Dereference it 
+0009   0384               M  decf FSR,f ;Decrement it 
+000A   00??               M  movwf softstack1+1  ;Save popped value for ret urn 
+000B   0804               M  movfw FSR ;Save second stack ptr 
+000C   00??               M  movwf alt_fsr 
+000D   08??               M  movfw softstack0+1  ;Restore user stack ptr 
+000E   0084               M  movwf FSR 
+000F   01??               M  clrf softstack0+1
+0010   08??               M  movfw softstack1+1  ;Bring back popped value for ret urn 
+0011   2???               M  goto $+0E
+0012   0804               M  movfw FSR 
+0013   00??               M  movwf softstack0 ;Save user stack ptr 
+0014   08??               M  movfw alt_fsr ;Get second stack ptr 
+0015   0084               M  movwf FSR 
+0016   0800               M  movfw INDF ;Dereference it 
+0017   0384               M  decf FSR,f ;Decrement it 
+0018   00??               M  movwf softstack1  ;Save popped value for ret urn 
+0019   0804               M  movfw FSR ;Save second stack ptr 
+001A   00??               M  movwf alt_fsr 
+001B   08??               M  movfw softstack0  ;Restore user stack ptr 
+001C   0084               M  movwf FSR 
+001D   01??               M  clrf softstack0
+001E   08??               M  movfw softstack1  ;Bring back popped value for ret urn 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001F   ????               M  bankisel stack
+                      01069  
+                      01070 #ifdef HLLMULTITASK 
+                      01071  movf in_isr,f 
+                      01072  btfss STATUS,Z
+                      01073  goto parm4
+                      01074  hllparmcore
+                      01075 #undefine sstack0 
+                      01076 #undefine sstack1
+                      01077 #undefine sstack2 
+                      01078 #define sstack0 softstack0+1
+                      01079 #define sstack1 softstack1+1
+                      01080 #define sstack2 softstack2+1
+                      01081 parm4:
+                      01082 #endif 
+                      01083  hllparmcore
+0020   00??               M  movwf sstack2
+0021   0804               M  movfw HLFSR 
+                          M            
+                          M                    
+0022   00??               M  movwf sstack0
+0023   0800               M  movfw HLINDF
+                          M  
+0024   02??               M  subwf sstack2,w
+0025   0084               M  movwf HLFSR 
+0026   0800               M  movfw HLINDF 
+                          M  
+0027   00??               M  movwf sstack1
+                          M  
+0028   08??               M  movfw sstack0
+0029   0084               M  movwf HLFSR 
+002A   01??               M  clrf sstack0
+002B   08??               M  movfw sstack1 
+002C   0080               M  movwf HLINDF
+                          M  
+002D   08??               M  movfw sstack2
+                          M  pagesel kpush
+002E   2???               M  goto kpush 
+                      01084 #undefine sstack0 
+                      01085 #undefine sstack1
+                      01086 #undefine sstack2 
+                      01087  
+                      01088 hllkrna09 CODE  
+0000                  01089 kpop: 
+                      01090  KPOP
+0000   ????               M  bankisel alt_stack ;This is OK for interrupts... part of STATUS 
+0001   08??               M  movf in_isr,f ;In shared RAM, no need for BANKSEL
+0002   1903               M  btfsc STATUS,Z
+0003   2???               M  goto $+0F
+0004   0804               M  movfw FSR 
+0005   00??               M  movwf softstack0+1 ;Save user stack ptr 
+0006   08??               M  movfw alt_fsr ;Get second stack ptr 
+0007   0084               M  movwf FSR 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0008   0800               M  movfw INDF ;Dereference it 
+0009   0384               M  decf FSR,f ;Decrement it 
+000A   00??               M  movwf softstack1+1  ;Save popped value for ret urn 
+000B   0804               M  movfw FSR ;Save second stack ptr 
+000C   00??               M  movwf alt_fsr 
+000D   08??               M  movfw softstack0+1  ;Restore user stack ptr 
+000E   0084               M  movwf FSR 
+000F   01??               M  clrf softstack0+1
+0010   08??               M  movfw softstack1+1  ;Bring back popped value for ret urn 
+0011   2???               M  goto $+0E
+0012   0804               M  movfw FSR 
+0013   00??               M  movwf softstack0 ;Save user stack ptr 
+0014   08??               M  movfw alt_fsr ;Get second stack ptr 
+0015   0084               M  movwf FSR 
+0016   0800               M  movfw INDF ;Dereference it 
+0017   0384               M  decf FSR,f ;Decrement it 
+0018   00??               M  movwf softstack1  ;Save popped value for ret urn 
+0019   0804               M  movfw FSR ;Save second stack ptr 
+001A   00??               M  movwf alt_fsr 
+001B   08??               M  movfw softstack0  ;Restore user stack ptr 
+001C   0084               M  movwf FSR 
+001D   01??               M  clrf softstack0
+001E   08??               M  movfw softstack1  ;Bring back popped value for ret urn 
+001F   ????               M  bankisel stack
+0020   0008           01091  return 
+                      01092  
+                      01093 hllkrna10 CODE   
+0000                  01094 kpush: 
+                      01095  KPUSH
+0000   ????               M  bankisel alt_stack ;This is OK for interrupts... part of STATUS 
+0001   08??               M  movf in_isr,f ;In shared RAM, no need for BANKSEL
+0002   1903               M  btfsc STATUS,Z
+0003   2???               M  goto $+0E
+0004   00??               M  movwf softstack1+1 ;softstack1 holds parm value being pushed
+0005   0804               M  movfw FSR  
+0006   00??               M  movwf softstack0+1  ;softstack0 holds FSR
+0007   08??               M  movfw alt_fsr 
+0008   0084               M  movwf FSR 
+0009   08??               M  movfw softstack1+1
+000A   0A??               M  incf alt_fsr,f 
+000B   0A84               M  incf FSR,f ;The actual kernel push... preincrement for interrupt safety
+000C   0080               M  movwf INDF 
+000D   08??               M  movfw softstack0+1
+000E   0084               M  movwf FSR 
+000F   01??               M  clrf softstack0+1 
+0010   2???               M  goto $+0D
+0011   00??               M  movwf softstack1 ;softstack1 holds parm value being pushed
+0012   0804               M  movfw FSR  
+0013   00??               M  movwf softstack0  ;softstack0 holds FSR
+0014   08??               M  movfw alt_fsr 
+0015   0084               M  movwf FSR 
+0016   08??               M  movfw softstack1
+0017   0A??               M  incf alt_fsr,f 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0018   0A84               M  incf FSR,f ;The actual kernel push... preincrement for interrupt safety
+0019   0080               M  movwf INDF 
+001A   08??               M  movfw softstack0
+001B   0084               M  movwf FSR 
+001C   01??               M  clrf softstack0
+001D   ????               M  bankisel stack
+001E   0008           01096  return
+                      01097 
+                      01098 hllkrna11 CODE   
+0000                  01099 dispose:
+                      01100  DISCARD
+0000   0384               M  decf FSR,f 
+0001   0008           01101  return 
+                      01102  
+                      01103  
+                      01104 
+                      01105 
+                      01106 
+                      01107 
+                      01108 
+                      01109 
+                      01110 
+                      01111 
+                      01112 hllkrn444 CODE    
+0000                  01113 safepush: 
+                      01114  PUSH
+0000   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0001   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+                      01115  
+                      01116  
+                      01117  
+0002   0804           01118  movf HLFSR,w
+0003   3C??           01119  sublw stack  
+0004   1903           01120  btfsc STATUS,Z
+0005   2???           01121  goto kspox5 
+0006   1803           01122  btfsc STATUS,C 
+0007   2???           01123  goto sperr11 
+0008                  01124 kspox5:
+                      01125   
+                      01126 
+0008   0804           01127  movf HLFSR,w
+0009   3E01           01128  addlw .1
+000A   3C??           01129  sublw (stack+HLOE_STACK_SIZE)  
+000B   1C03           01130  btfss STATUS,C
+000C   2???           01131  goto sperr11
+000D   0800           01132  movf HLINDF,w
+000E   0008           01133  return
+000F                  01134 sperr11:
+000F   138B           01135  BCF INTCON,GIE 
+                      01136  DISCARD 
+0010   0384               M  decf FSR,f 
+0011                  01137 dmm445:
+0011   3021           01138  movlw '!' 
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01139  PUSH
+0012   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0013   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+                      01140  
+                      01141  FAR_CALL safepush,printch
+                          M  pagesel printch
+0014   2???               M  call printch
+                          M  pagesel safepush  ;This one restores the caller's code page
+0015   2???           01142  goto dmm445
+                      01143  
+                      01144  
+                      01145 
+                      01146 
+                      01147 
+                      01148 
+                      01149 
+                      01150  
+                      01151  
+                      01152 
+                      01153  
+                      01154 hlog1b CODE
+                      01155 
+                      01156 
+                      01157 #define margp2 hllblss00
+                      01158 
+                      01159 
+0000                  01160 setbit:  
+                      01161 #ifdef HLLMULTITASK
+                      01162 #ifdef HLLGUARDhllblss 
+                      01163  movf in_isr,f  
+                      01164  btfsc STATUS,Z
+                      01165  
+                      01166 
+                      01167 
+                      01168  goto setbit0
+                      01169 
+                      01170  POP
+                      01171  banksel margp2
+                      01172  movwf  margp2
+                      01173  POP
+                      01174  xorlw .0
+                      01175  btfss STATUS,Z
+                      01176  goto tcf00h
+                      01177  
+                      01178  movfw  margp2
+                      01179  iorlw .1
+                      01180  goto tcf99h
+                      01181 tcf00h: 
+                      01182  
+                      01183  xorlw .1
+                      01184  btfss STATUS,Z
+                      01185  goto tcf01h
+                      01186  
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01187  movfw  margp2
+                      01188  iorlw .2
+                      01189  goto tcf99h
+                      01190 tcf01h: 
+                      01191  xorlw .1
+                      01192  xorlw .2
+                      01193  btfss STATUS,Z
+                      01194  goto tcf02h
+                      01195  
+                      01196  movfw margp2
+                      01197  iorlw .4
+                      01198  goto tcf99h
+                      01199 tcf02h: 
+                      01200  xorlw .2
+                      01201  xorlw .3
+                      01202  btfss STATUS,Z
+                      01203  goto tcf03h
+                      01204  
+                      01205  movfw margp2
+                      01206  iorlw .8
+                      01207  goto tcf99h
+                      01208 tcf03h: 
+                      01209  xorlw .3
+                      01210  xorlw .4
+                      01211  btfss STATUS,Z
+                      01212  goto tcf04h
+                      01213  
+                      01214  movfw margp2
+                      01215  iorlw .16
+                      01216  goto tcf99h
+                      01217 tcf04h: 
+                      01218  xorlw .4
+                      01219  xorlw .5
+                      01220  btfss STATUS,Z
+                      01221  goto tcf05h
+                      01222  
+                      01223  movfw margp2
+                      01224  iorlw .32
+                      01225  goto tcf99h
+                      01226 tcf05h: 
+                      01227  xorlw .5
+                      01228  xorlw .6
+                      01229  btfss STATUS,Z
+                      01230  goto tcf07h
+                      01231  
+                      01232  movfw margp2
+                      01233  iorlw .64
+                      01234  goto tcf99h
+                      01235 tcf07h: 
+                      01236  
+                      01237  movfw margp2
+                      01238  iorlw .128 
+                      01239 tcf99h:  
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 34
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01240  PUSH 
+                      01241  return
+                      01242 
+                      01243 
+                      01244 
+                      01245 
+                      01246 #undefine margp2
+                      01247 
+                      01248 
+                      01249 #define margp2 hllblss00+1
+                      01250 
+                      01251 
+                      01252 setbit0:
+                      01253 #endif
+                      01254 #endif
+                      01255 
+                      01256  POP
+0000   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0001   0384               M  decf FSR,f 
+0002   ???? ????      01257  banksel margp2
+0004   00??           01258  movwf  margp2
+                      01259  POP
+0005   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
+0006   0384               M  decf FSR,f 
+0007   3A00           01260  xorlw .0
+0008   1D03           01261  btfss STATUS,Z
+0009   2???           01262  goto hllIAAAA
+                      01263  
+000A   08??           01264  movfw  margp2
+000B   3801           01265  iorlw .1
+000C   2???           01266  goto hllPAAAA
+000D                  01267 hllIAAAA: 
+                      01268  
+000D   3A01           01269  xorlw .1
+000E   1D03           01270  btfss STATUS,Z
+000F   2???           01271  goto hllJAAAA
+                      01272  
+0010   08??           01273  movfw  margp2
+0011   3802           01274  iorlw .2
+0012   2???           01275  goto hllPAAAA
+0013                  01276 hllJAAAA: 
+0013   3A01           01277  xorlw .1
+0014   3A02           01278  xorlw .2
+0015   1D03           01279  btfss STATUS,Z
+0016   2???           01280  goto hllKAAAA
+                      01281  
+0017   08??           01282  movfw margp2
+0018   3804           01283  iorlw .4
+0019   2???           01284  goto hllPAAAA
+001A                  01285 hllKAAAA: 
+001A   3A02           01286  xorlw .2
+001B   3A03           01287  xorlw .3
+001C   1D03           01288  btfss STATUS,Z
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 35
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001D   2???           01289  goto hllLAAAA
+                      01290  
+001E   08??           01291  movfw margp2
+001F   3808           01292  iorlw .8
+0020   2???           01293  goto hllPAAAA
+0021                  01294 hllLAAAA: 
+0021   3A03           01295  xorlw .3
+0022   3A04           01296  xorlw .4
+0023   1D03           01297  btfss STATUS,Z
+0024   2???           01298  goto hllMAAAA
+                      01299  
+0025   08??           01300  movfw margp2
+0026   3810           01301  iorlw .16
+0027   2???           01302  goto hllPAAAA
+0028                  01303 hllMAAAA: 
+0028   3A04           01304  xorlw .4
+0029   3A05           01305  xorlw .5
+002A   1D03           01306  btfss STATUS,Z
+002B   2???           01307  goto hllNAAAA
+                      01308  
+002C   08??           01309  movfw margp2
+002D   3820           01310  iorlw .32
+002E   2???           01311  goto hllPAAAA
+002F                  01312 hllNAAAA: 
+002F   3A05           01313  xorlw .5
+0030   3A06           01314  xorlw .6
+0031   1D03           01315  btfss STATUS,Z
+0032   2???           01316  goto hllOAAAA
+                      01317  
+0033   08??           01318  movfw margp2
+0034   3840           01319  iorlw .64
+0035   2???           01320  goto hllPAAAA
+0036                  01321 hllOAAAA: 
+                      01322  
+0036   08??           01323  movfw margp2
+0037   3880           01324  iorlw .128 
+0038                  01325 hllPAAAA:  
+                      01326  PUSH 
+0038   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
+0039   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
+003A   0008           01327  return
+                      01328 
+                      01329 
+                      01330 
+                      01331 
+                      01332 #undefine margp2
+                      01333 
+30C6                  01334  end
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 36
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ALT_Save                          00000007
+ANS0                              00000000
+ANS1                              00000001
+ANS10                             00000002
+ANS11                             00000003
+ANS2                              00000002
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+ANSEL                             0000011E
+ANSELH                            0000011F
+BAUDCTL                           0000009B
+BF                                00000000
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+BRG5                              00000005
+BRG6                              00000006
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+BRGH                              00000002
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1IE                              00000005
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 37
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C1IF                              00000005
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1SEN                             00000005
+C1VREN                            00000007
+C2CH0                             00000000
+C2CH1                             00000001
+C2IE                              00000006
+C2IF                              00000006
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2REN                             00000004
+C2SYNC                            00000000
+C2VREN                            00000006
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CKE                               00000006
+CKP                               00000004
+CM1CON0                           00000119
+CM2CON0                           0000011A
+CM2CON1                           0000011B
+COPY                              
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DISCARD                           
+D_A                               00000005
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDAT                             0000010C
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FAR_CALL                          
+FERR                              00000002
+FSR                               00000004
+FSR_Save                          00000006
+GIE                               00000007
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 38
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+GO                                00000001
+GO_DONE                           00000001
+HALF_FAR_CALL                     
+HLFSR                             FSR
+HLINDF                            INDF
+HLLGUARDhllblss                   
+HLOE_STACK2_SIZE                  .20
+HLOE_STACK_SIZE                   .80
+HLTABLE                           
+HTS                               00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCA                              00000096
+IOCA0                             00000000
+IOCA1                             00000001
+IOCA2                             00000002
+IOCA3                             00000003
+IOCA4                             00000004
+IOCA5                             00000005
+IOCB                              00000116
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+KDISCARD                          
+KPOP                              
+KPUSH                             
+LTS                               00000001
+MC1OUT                            00000007
+MC2OUT                            00000006
+MSK                               00000093
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 39
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RABPU                         00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000007
+OSFIF                             00000007
+OSTS                              00000003
+P                                 00000004
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PC_Save                           00000001
+PEIE                              00000006
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+POP                               
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PREEMPT                           
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PULSR                             00000002
+PULSS                             00000003
+PUSH                              
+R                                 00000002
+RABIE                             00000003
+RABIF                             00000000
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+READ_WRITE                        00000002
+RESUME                            
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+R_W                               00000002
+S                                 00000003
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 40
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SBOREN                            00000004
+SCKP                              00000004
+SCS                               00000000
+SENB                              00000003
+SMP                               00000007
+SPBRG                             00000099
+SPBRGH                            0000009A
+SPEN                              00000007
+SR0                               00000006
+SR1                               00000007
+SRCON                             0000019E
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000093
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STATUS_Save                       00000005
+SWDTEN                            00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GINV                            00000007
+T1GSS                             00000001
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 41
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISB                             00000086
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRMT                              00000001
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+UA                                00000001
+ULPWUE                            00000005
+VCFG                              00000006
+VP6EN                             00000004
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000118
+VRR                               00000005
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000097
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPU                               00000095
+WPUA                              00000095
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA4                             00000004
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 42
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPUA5                             00000005
+WPUB                              00000115
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+WPUB7                             00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+W_Save                            00000004
+Z                                 00000002
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_BOR_SBODEN                       00003DFF
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_HS_OSC                           00003FFA
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__16F687                          00000001
+_hllkrna00_0009                   00000009
+_hllkrna03_0008                   00000008
+_hllkrna04_000C                   0000000C
+_hllkrna04_000E                   0000000E
+_hllkrna05_000C                   0000000C
+_hllkrna05_000E                   0000000E
+_hllkrna08_0003                   00000003
+_hllkrna08_0011                   00000011
+_hllkrna09_0003                   00000003
+_hllkrna09_0011                   00000011
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 43
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_hllkrna10_0003                   00000003
+_hllkrna10_0010                   00000010
+add                               00000000
+alt_fsr                           00000003
+alt_stack                         00000000
+clearbit                          00000000
+dispose                           00000000
+divu                              00000000
+dmm445                            00000011
+dowork                            00000000
+eq                                00000000
+getch                             00000000
+geth2                             00000002
+hllAAAAA                          0000000D
+hllBAAAA                          00000013
+hllCAAAA                          0000001A
+hllDAAAA                          00000021
+hllEAAAA                          00000028
+hllFAAAA                          0000002F
+hllGAAAA                          00000036
+hllHAAAA                          00000038
+hllIAAAA                          0000000D
+hllJAAAA                          00000013
+hllKAAAA                          0000001A
+hllLAAAA                          00000021
+hllMAAAA                          00000028
+hllNAAAA                          0000002F
+hllOAAAA                          00000036
+hllPAAAA                          00000038
+hllblss00                         00000000
+hllblss01                         00000001
+hllblss02                         00000002
+hllparmcore                       
+hllprgen2                         0000002E
+hllprogend                        00000060
+hlluserprog                       00000000
+hloego                            00000000
+in_isr                            00000008
+kpop                              00000000
+kpush                             00000000
+kspox5                            00000008
+modu                              00000000
+mul                               00000000
+negti                             00000000
+parm                              00000000
+pbase                             00000000
+printch                           00000000
+safepush                          00000000
+setbit                            00000000
+softstack0                        00000000
+softstack1                        00000001
+softstack2                        00000002
+sperr11                           0000000F
+MPASM  5.37                        TARGET.ASM   6-5-2012  21:01:51         PAGE 44
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+stack                             00000000
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,   103 suppressed
+
+

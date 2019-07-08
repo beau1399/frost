@@ -1,0 +1,23 @@
+;
+; Copies the SFP number atop the stack
+;
+
+ GLOBAL copyf
+
+sfp_copy CODE 
+
+HLTHUNK sfploc,copyf,mym,mye
+ POP
+ banksel mye ;Save arg
+ movwf mye
+ POP
+ movwf mym
+ PUSH
+ movfw mye
+ PUSH
+ movfw mym
+ PUSH
+ movfw mye
+ PUSH
+ return
+ HLEND

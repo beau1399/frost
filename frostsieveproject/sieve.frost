@@ -1,0 +1,84 @@
+/Prints primes that fit in the frost "U" data type (0..255)
+/ This version uses SQRT(candidate) as upper bound on potential divisors in the primality test, as rounded up to reflect the inherent granularity of SFP
+/ The overall algorithm here is general for any combo of int / real types, if one assumes that .nextf is implemented properly for actual hardware
+/ Commented sections are used to run this program in 2 different modes:
+/  1. It completes in 0x12008e cycles when kernel method MODU (which is based on repeated subtraction) is used... this is on the PIC 16F690
+/  2. It completes in 0x119fef cycles when adjunct method FASTMODU (which is based on 8 shifts per 8-bit byte) is used... this is on the PIC 16F690
+/  3. It completes in 0x0dfdc0 cycles when adjunct method MODU is used... this is on the PIC 16F1827 
+/  4. It completes in 0x0d65d1 cycles when adjunct method FASTMODU is used... this is on the PIC 16F1827 
+
+
+/Fully reentrant, typeable w/o shift key
+
+calls printu,printch,gti,notb,geu,debugptru,orb,powf,mulf,logf,printf,utof,ftou,addf,nextf
+
+
+calls modu
+/calls fastmodu
+ 
+insert clock
+frost115200bps
+
+.printch[13]
+.maing[2] /First number tested is 2
+
+macro maing-counter is .parm[0] end macro
+/Use of * enables tail recursion here and for isprimeinner[]
+d .maing * is
+
+ /Last prime tested is 255
+ /Loop condition
+ if .notb[.geu[maing-counter 255]], 
+
+  /Loop body
+  if .isprime[maing-counter],.printu[maing-counter] .printch[13] .printch[10],,  
+
+  /Loop increment and bottom
+ .add[1]    .maing[],,  
+;
+
+macro isprime-candidate is .parm[0] end macro
+d .isprime 1 1 is
+
+ /Call looping function to test against poss. divisors
+ .isprimeinner[   
+
+    /Max potential divisor
+    .sqrt[isprime-candidate]
+
+   isprime-candidate 
+ 
+    /Initial potential divisor
+    2  
+ ]
+
+;
+
+macro isprimeinner-counter is .parm[0] end macro
+macro isprimeinner-candidate is .parm[1] end macro
+macro isprimeinner-max-divisor is .parm[2] end macro
+d .isprimeinner * is
+ /Loop terminal condition
+ if 
+    .eq[isprimeinner-counter .add[1 isprimeinner-max-divisor]],
+
+    1,  /Loop reached end of tests, no divisibility, return true
+
+    /Loop body and increment and bottom
+    if .divis[isprimeinner-candidate isprimeinner-counter], 0, .add[1] .isprimeinner[],,
+;
+
+/ Is left parm divisible by right?
+macro divis-left is .parm[1] end macro
+macro divis-right is .parm[0] end macro
+d .divis 2 1 is
+ if .modu[divis-left divis-right], 0, 1,
+/ if .fastmodu[divis-left divis-right], 0, 1,
+;
+
+d .sqrt 1 1 is
+/Two "fudge factors" below... 0.5 to round up to next integer,
+/ nextf[] to round up to next SFP number. Doing the same thing in
+/ both type systems, bumping up to next granule.
+ .ftou[.addf[0.5 .nextf[.powf[.mulf[0.5 .logf[.utof[.parm[0]]]]]]]]
+;

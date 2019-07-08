@@ -1,0 +1,73 @@
+/
+/ Repository for generally useful FROST macros
+/ 
+/ Anything macro-based incurs zero cost at runtime,
+/   unless actually invoked in the program.
+/
+/ These macros themselves do not require any other 
+/  declaration (e.g. "calls" or "uses"). However, 
+/  each of them has its own set of dependencies,
+/  e.g. the subtraction macros depend on add and 
+/  multiply routines.
+/  If not met, these requirements result in fairly
+/  intuitive error MPASM errors, in the ERR files
+/  output by the build process. Many of the macros
+/  only use functions from "kernel.hloe"
+
+
+
+/////////////////////////////////////////
+
+macro subi is
+ .add[$0 .mul[-1 $1]]   
+end macro
+
+/////////////////////////////////////////
+
+macro sfp-sub is
+ .addf[$0 .mulf[-1.0 $1]]   
+end macro
+
+/////////////////////////////////////////
+
+macro blurb is
+
+t .$0
+ $1 0
+;
+
+d .put$0 0 0 is  /GC Purposes
+ .puti$0[0]
+;
+
+
+d .puti$0 * is 
+ if .eq[ .$0[.parm[0]] 0 ],, 
+  .printch[.$0[.parm[0]]]  .add[1] .puti$0[], 
+ ;
+end macro
+
+/////////////////////////////////////////
+
+macro parmf is .parm[$0+].parm[$0] end macro
+
+/////////////////////////////////////////
+
+macro isalpha is 
+ .andb[.geu[ $0 64] .geu[156 $0 ]] 
+end macro
+
+/////////////////////////////////////////
+
+macro isdigit is 
+ .andb[.geu[ $0 47] .geu[58 $0 ]]  
+end macro
+
+/////////////////////////////////////////
+
+macro ffor is 
+ $0 
+ when! $1 1
+  ffor ($0)($1-)
+ end!
+end macro

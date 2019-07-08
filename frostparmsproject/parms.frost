@@ -1,0 +1,11 @@
+calls printu,negti
+
+insert clock
+
+frost115200bps
+
+.printu[  .subtr[4 3] ]
+
+d .subtr 2 1 is
+ .add[.parm[1] .negti[.parm[0]]]
+;

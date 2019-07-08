@@ -1,0 +1,148 @@
+;
+; SFP 16-bit Float Print (Base 10 exponential notation)
+;
+
+;;;;#include "hloe.inc"
+ 
+ GLOBAL printf
+
+sfp_prrr CODE 
+ 
+HLTHUNK sfpaux,printf,thk000,thk001,thk002,thk003  
+
+ POP
+ banksel thk001 
+ movwf thk001
+ POP
+ movwf thk000
+ movlw '(' 
+ PUSH
+ FAR_CALL printf,printch 
+ banksel thk000
+ ;movfw thk000 
+ movlw '+' 
+ btfss thk000,7 
+ goto nomin
+ ;banksel thk000
+ movfw thk000
+ andlw .127 
+ movwf thk000 
+ movlw '-' 
+nomin: 
+ PUSH
+ FAR_CALL printf, printch 
+ banksel thk000
+ movfw thk000
+ addlw .128 
+ movwf thk000 
+ movfw thk000 
+ PUSH
+ movlw .100 
+ PUSH
+ FAR_CALL printf, divu 
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ banksel thk000
+ movfw thk000
+ PUSH
+ movlw .100 
+ PUSH
+ FAR_CALL printf, modu 
+ movlw .10 
+ PUSH
+ FAR_CALL printf, divu 
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ ;push m 
+ banksel thk000 
+ movfw thk000 
+ PUSH
+ movlw .10 
+ PUSH
+ FAR_CALL printf, modu 
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ movlw '/' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '1' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '2' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '8' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw ')' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '*' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '2' 
+ PUSH
+ FAR_CALL printf, printch 
+ movlw '^' 
+ PUSH
+ FAR_CALL printf, printch 
+ banksel thk001 
+ ;movfw thk001 
+ movlw '+' 
+ btfss thk001,7 
+ goto nomin2 
+ movfw thk001 
+ xorlw .255 
+ addlw .1
+ movwf thk001 
+ movlw '-' 
+nomin2: 
+ PUSH
+ FAR_CALL printf, printch 
+ ;push e 
+ banksel thk001 
+ movfw thk001 
+ PUSH
+ movlw .100 
+ PUSH
+ FAR_CALL printf, divu 
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ ;push e 
+ banksel thk001 
+ movfw thk001 
+ PUSH
+ movlw .100 
+ PUSH
+ FAR_CALL printf, modu 
+ movlw .10 
+ PUSH
+ FAR_CALL printf, divu 
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ ;push e 
+ banksel thk001 
+ movfw thk001 
+ PUSH
+ movlw .10 
+ PUSH
+ FAR_CALL printf, modu
+ FAR_CALL printf, ascii 
+ FAR_CALL printf, printch 
+ movlw ' '
+ PUSH
+ FAR_CALL printf, printch 
+ 
+ return 
+HLEND
+  
+sfp_ddbasc CODE 
+ 
+ascii:
+ POP
+ addlw '0' 
+ PUSH
+ return
+
+ 
+ 

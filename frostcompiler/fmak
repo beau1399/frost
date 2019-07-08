@@ -1,0 +1,5 @@
+rm frost.tab.cpp
+rm frost.tab.hpp
+rm lex.yy.c
+flex frost.l
+bison -d frost.ypp

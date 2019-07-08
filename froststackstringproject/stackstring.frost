@@ -1,0 +1,13 @@
+calls printch
+insert clock
+frost115200bps
+
+0 10 13 'Hello, World!' 
+.stackprint[]
+
+/For the 0
+.dispose[]
+
+d .stackprint * is
+ if .parm[0],.printch[] .stackprint[],,
+;

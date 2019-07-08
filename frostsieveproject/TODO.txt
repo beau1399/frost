@@ -1,0 +1,16 @@
+ //If, for any found lib, there is another .hloe file whose name is the first N chars
+ // of the found lib's name, then by rule that second lib is a dependency also (e.g.
+ // "sfp" for "sfpaddf" and such).
+
+relates primarily to ffact that .hloe files deal with memory allocation, not cross-platform?
+ .INC and .FROST are polymorphic abpout PROC / BOARD, to deal w. cross-platform issues
+
+To what extent does the original FROST article need to summarize abbove issue??
+
+discussion of REM in build.bat, of commented-out MOD oper. in FROST file
+
+general audit of comprehensiveness of path change req't discussion, e.g. in build files
+
+LSHIFT, RSHIFT mentioned orig article; USE THEM ELSEWHERE E.G. SFP
+
+Ensure nextf adequately discussed in frost article- fastdiv fastmod too?

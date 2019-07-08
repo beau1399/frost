@@ -1,0 +1,12 @@
+calls printch,add,parm
+
+insert clock
+
+frost115200bps
+
+.printch['.']
+.some-As[10]
+  
+d .some-As * is
+  if .parm[0],.printch['A'] .add[-1] .some-As[],,
+; 

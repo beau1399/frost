@@ -1,0 +1,7 @@
+
+echo ASSEMBLING TARGET...
+wine '"/home/dell/.wine/drive_c/Program Files (x86)/Microchip/MPASM Suite/MPASMWIN.exe" /w2 /q /p16f690 "target.asm" /l"target.lst" /e"target.err" /o"target.o'
+cat target.err
+
+wine '"/home/dell/.wine/drive_c/Program Files (x86)/Microchip/MPASM Suite/MPLink.exe" "/home/dell/frost/frostcompiler/hloe16f690.lkr"  /p16f690'
+ "target.o"  /o"hloe.hex" /M"hloe.map" /W

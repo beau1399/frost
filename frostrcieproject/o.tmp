@@ -1,0 +1,45 @@
+event r is
+ .printch[@rcreg] 
+;
+
+
+event 1 is
+ .printch[46]
+;
+
+
+
+
+
+
+
+
+ .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 50  > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta .clearbit[tmr1cs .clearbit[tmr1ge .clearbit[t1ckps1 .clearbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+.clearbit[tmr1on @t1con] > t1con 
+0 > tmr1h 0 > tmr1l
+
+
+
+
+.setbit[peie @intcon] > intcon
+.setbit[rcie @pie1] > pie1
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon
+
+
+
+
+
+
+

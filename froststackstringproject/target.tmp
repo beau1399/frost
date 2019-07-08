@@ -1,0 +1,385 @@
+
+#include "hloe.inc"
+
+
+;
+; R O B O T
+;
+; C O N F I G
+;
+
+
+ __config (_EXTRC_OSC_NOCLKOUT& _WDT_OFF  & _MCLRE_OFF & _IESO_OFF & _FCMEN_OFF  & _PWRTE_ON & _BOR_OFF)
+
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+
+;
+; R O B O T
+;
+; H E A D E R
+;
+
+#ifdef HLLMULTITASK
+ExitISR:    
+ RESUME 
+ 
+  retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+PC_Save res .1
+
+main code
+hloego:
+
+ 
+
+  
+  clrf in_isr
+ 
+  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR 
+  movlw alt_stack-1
+  movwf alt_fsr 
+ 
+ 
+ clrf softstack0 
+ 
+ bankisel stack
+ pagesel hlluserprog
+ goto hlluserprog
+hllupuser CODE
+hlluserprog: 
+ 
+
+ movlw SYNC
+
+ PUSH 
+
+
+ movlw BRGH
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+ PUSH 
+
+
+ movlw SCKP
+
+ PUSH 
+
+   banksel BAUDCTL
+   movfw BAUDCTL
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCTL
+ movwf BAUDCTL
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw .25 
+ PUSH 
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .0  
+ PUSH 
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw TXEN
+
+ PUSH 
+
+
+ movlw TX9
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw SPEN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw .0 
+ PUSH 
+
+
+ movlw .10 
+ PUSH 
+
+
+ movlw .13 
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .33
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .100
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .108
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .114
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .111
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .87
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .32
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .44
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .111
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .108
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .108
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .101
+
+ PUSH 
+
+ ; char 'Hello, World!'
+
+
+ movlw .72
+
+ PUSH 
+
+
+ FAR_CALL hlluserprog,stackprint
+
+
+ FAR_CALL hlluserprog,dispose
+
+    
+hllprogend:
+ goto hllprogend
+ 
+
+hllt452 CODE
+stackprint:
+ movf FSR,w
+ 
+
+ FAR_CALL stackprint , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL stackprint,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J0 
+ 
+
+ FAR_CALL stackprint,printch
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL stackprint,stackprint
+
+ 
+ goto hlllb51J1
+ 
+
+hlllb51J0:
+
+
+hlllb51J1:
+
+
+ KDISCARD
+
+
+ return
+ 

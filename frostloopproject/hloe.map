@@ -1,0 +1,194 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Sat Feb 02 15:45:35 2013
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   Resetv       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000002    program   0x000004
+                hllupuser       code   0x000004    program   0x000114
+                   hlog1b       code   0x00008e    program   0x000076
+                   hlog1a       code   0x0000c9    program   0x000076
+                hllkrna08       code   0x000104    program   0x00005e
+                hllkrna09       code   0x000133    program   0x000042
+                hllkrna10       code   0x000154    program   0x00003e
+                hllkrn444       code   0x000173    program   0x00002c
+                hllkrna05       code   0x000189    program   0x000026
+                hllkrna04       code   0x00019c    program   0x000026
+                hllkrna00       code   0x0001af    program   0x000018
+                hllkrna07       code   0x0001bb    program   0x000014
+                hllkrna06       code   0x0001c5    program   0x000014
+                hllkrna03       code   0x0001cf    program   0x000014
+                     main       code   0x0001d9    program   0x000010
+                   hlog1d       code   0x0001e1    program   0x00000e
+                hllkrna01       code   0x0001e8    program   0x00000e
+                  hllt450       code   0x0001ef    program   0x00000a
+                hllkrna02       code   0x0001f4    program   0x000006
+                hllkrna11       code   0x0001f7    program   0x000004
+    .config_2007_TARGET.O       code   0x002007    program   0x000002
+                   ukrnl2      udata   0x000020       data   0x000050
+                   ukrshr      udata   0x000070       data   0x000009
+                 mainvars      udata   0x000079       data   0x000002
+                   ukrnl3      udata   0x0000a0       data   0x000014
+                   ukernl      udata   0x0000b4       data   0x000003
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0001f8      
+                            0x002007    0x002007      
+            506 out of 2310 program addresses used, program memory utilization is 21%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          _hllkrna00_0009   0x0001b8    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna03_0008   0x0001d7    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna04_000C   0x0001a8    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna04_000E   0x0001aa    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna05_000C   0x000195    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna05_000E   0x000197    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna08_0003   0x000107    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna08_0011   0x000115    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna09_0003   0x000136    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna09_0011   0x000144    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna10_0003   0x000157    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna10_0010   0x000164    program     static F:\beau\frostloopproject\target.asm
+                      add   0x0001e8    program     static F:\beau\frostloopproject\target.asm
+                 clearbit   0x0000c9    program     static F:\beau\frostloopproject\target.asm
+                  dispose   0x0001f7    program     static F:\beau\frostloopproject\target.asm
+                     divu   0x000189    program     static F:\beau\frostloopproject\target.asm
+                   dmm445   0x000184    program     static F:\beau\frostloopproject\target.asm
+                       eq   0x0001bb    program     static F:\beau\frostloopproject\target.asm
+                    getch   0x0001c5    program     static F:\beau\frostloopproject\target.asm
+                    geth2   0x0001c7    program     static F:\beau\frostloopproject\target.asm
+                 hllAAAAA   0x0000d6    program     static F:\beau\frostloopproject\target.asm
+                 hllBAAAA   0x0000dc    program     static F:\beau\frostloopproject\target.asm
+                 hllCAAAA   0x0000e3    program     static F:\beau\frostloopproject\target.asm
+                 hllDAAAA   0x0000ea    program     static F:\beau\frostloopproject\target.asm
+                 hllEAAAA   0x0000f1    program     static F:\beau\frostloopproject\target.asm
+                 hllFAAAA   0x0000f8    program     static F:\beau\frostloopproject\target.asm
+                 hllGAAAA   0x0000ff    program     static F:\beau\frostloopproject\target.asm
+                 hllHAAAA   0x000101    program     static F:\beau\frostloopproject\target.asm
+                 hllIAAAA   0x00009b    program     static F:\beau\frostloopproject\target.asm
+                 hllJAAAA   0x0000a1    program     static F:\beau\frostloopproject\target.asm
+                 hllKAAAA   0x0000a8    program     static F:\beau\frostloopproject\target.asm
+                 hllLAAAA   0x0000af    program     static F:\beau\frostloopproject\target.asm
+                 hllMAAAA   0x0000b6    program     static F:\beau\frostloopproject\target.asm
+                 hllNAAAA   0x0000bd    program     static F:\beau\frostloopproject\target.asm
+                 hllOAAAA   0x0000c4    program     static F:\beau\frostloopproject\target.asm
+                 hllPAAAA   0x0000c6    program     static F:\beau\frostloopproject\target.asm
+                hllprgen2   0x0001f3    program     static F:\beau\frostloopproject\target.asm
+               hllprogend   0x00008d    program     static F:\beau\frostloopproject\target.asm
+              hlluserprog   0x000004    program     static F:\beau\frostloopproject\target.asm
+                   hloego   0x0001d9    program     static F:\beau\frostloopproject\target.asm
+                     kpop   0x000133    program     static F:\beau\frostloopproject\target.asm
+                    kpush   0x000154    program     static F:\beau\frostloopproject\target.asm
+                   kspox5   0x00017b    program     static F:\beau\frostloopproject\target.asm
+                  many_Bs   0x0001ef    program     static F:\beau\frostloopproject\target.asm
+                     modu   0x00019c    program     static F:\beau\frostloopproject\target.asm
+                      mul   0x0001af    program     static F:\beau\frostloopproject\target.asm
+                    negti   0x0001f4    program     static F:\beau\frostloopproject\target.asm
+                      oru   0x0001e1    program     static F:\beau\frostloopproject\target.asm
+                     parm   0x000104    program     static F:\beau\frostloopproject\target.asm
+                  printch   0x0001cf    program     static F:\beau\frostloopproject\target.asm
+                 safepush   0x000173    program     static F:\beau\frostloopproject\target.asm
+                   setbit   0x00008e    program     static F:\beau\frostloopproject\target.asm
+                  sperr11   0x000182    program     static F:\beau\frostloopproject\target.asm
+                 ALT_Save   0x000077       data     static F:\beau\frostloopproject\target.asm
+                 FSR_Save   0x000076       data     static F:\beau\frostloopproject\target.asm
+                  PC_Save   0x00007a       data     static F:\beau\frostloopproject\target.asm
+              STATUS_Save   0x000075       data     static F:\beau\frostloopproject\target.asm
+                   W_Save   0x000074       data     static F:\beau\frostloopproject\target.asm
+                  alt_fsr   0x000073       data     static F:\beau\frostloopproject\target.asm
+                alt_stack   0x0000a0       data     static F:\beau\frostloopproject\target.asm
+                hllblss00   0x0000b4       data     static F:\beau\frostloopproject\target.asm
+                hllblss01   0x0000b5       data     static F:\beau\frostloopproject\target.asm
+                hllblss02   0x0000b6       data     static F:\beau\frostloopproject\target.asm
+                   in_isr   0x000078       data     static F:\beau\frostloopproject\target.asm
+                    pbase   0x000079       data     static F:\beau\frostloopproject\target.asm
+               softstack0   0x000070       data     static F:\beau\frostloopproject\target.asm
+               softstack1   0x000071       data     static F:\beau\frostloopproject\target.asm
+               softstack2   0x000072       data     static F:\beau\frostloopproject\target.asm
+                    stack   0x000020       data     static F:\beau\frostloopproject\target.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+              hlluserprog   0x000004    program     static F:\beau\frostloopproject\target.asm
+               hllprogend   0x00008d    program     static F:\beau\frostloopproject\target.asm
+                   setbit   0x00008e    program     static F:\beau\frostloopproject\target.asm
+                 hllIAAAA   0x00009b    program     static F:\beau\frostloopproject\target.asm
+                 hllJAAAA   0x0000a1    program     static F:\beau\frostloopproject\target.asm
+                 hllKAAAA   0x0000a8    program     static F:\beau\frostloopproject\target.asm
+                 hllLAAAA   0x0000af    program     static F:\beau\frostloopproject\target.asm
+                 hllMAAAA   0x0000b6    program     static F:\beau\frostloopproject\target.asm
+                 hllNAAAA   0x0000bd    program     static F:\beau\frostloopproject\target.asm
+                 hllOAAAA   0x0000c4    program     static F:\beau\frostloopproject\target.asm
+                 hllPAAAA   0x0000c6    program     static F:\beau\frostloopproject\target.asm
+                 clearbit   0x0000c9    program     static F:\beau\frostloopproject\target.asm
+                 hllAAAAA   0x0000d6    program     static F:\beau\frostloopproject\target.asm
+                 hllBAAAA   0x0000dc    program     static F:\beau\frostloopproject\target.asm
+                 hllCAAAA   0x0000e3    program     static F:\beau\frostloopproject\target.asm
+                 hllDAAAA   0x0000ea    program     static F:\beau\frostloopproject\target.asm
+                 hllEAAAA   0x0000f1    program     static F:\beau\frostloopproject\target.asm
+                 hllFAAAA   0x0000f8    program     static F:\beau\frostloopproject\target.asm
+                 hllGAAAA   0x0000ff    program     static F:\beau\frostloopproject\target.asm
+                 hllHAAAA   0x000101    program     static F:\beau\frostloopproject\target.asm
+                     parm   0x000104    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna08_0003   0x000107    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna08_0011   0x000115    program     static F:\beau\frostloopproject\target.asm
+                     kpop   0x000133    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna09_0003   0x000136    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna09_0011   0x000144    program     static F:\beau\frostloopproject\target.asm
+                    kpush   0x000154    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna10_0003   0x000157    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna10_0010   0x000164    program     static F:\beau\frostloopproject\target.asm
+                 safepush   0x000173    program     static F:\beau\frostloopproject\target.asm
+                   kspox5   0x00017b    program     static F:\beau\frostloopproject\target.asm
+                  sperr11   0x000182    program     static F:\beau\frostloopproject\target.asm
+                   dmm445   0x000184    program     static F:\beau\frostloopproject\target.asm
+                     divu   0x000189    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna05_000C   0x000195    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna05_000E   0x000197    program     static F:\beau\frostloopproject\target.asm
+                     modu   0x00019c    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna04_000C   0x0001a8    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna04_000E   0x0001aa    program     static F:\beau\frostloopproject\target.asm
+                      mul   0x0001af    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna00_0009   0x0001b8    program     static F:\beau\frostloopproject\target.asm
+                       eq   0x0001bb    program     static F:\beau\frostloopproject\target.asm
+                    getch   0x0001c5    program     static F:\beau\frostloopproject\target.asm
+                    geth2   0x0001c7    program     static F:\beau\frostloopproject\target.asm
+                  printch   0x0001cf    program     static F:\beau\frostloopproject\target.asm
+          _hllkrna03_0008   0x0001d7    program     static F:\beau\frostloopproject\target.asm
+                   hloego   0x0001d9    program     static F:\beau\frostloopproject\target.asm
+                      oru   0x0001e1    program     static F:\beau\frostloopproject\target.asm
+                      add   0x0001e8    program     static F:\beau\frostloopproject\target.asm
+                  many_Bs   0x0001ef    program     static F:\beau\frostloopproject\target.asm
+                hllprgen2   0x0001f3    program     static F:\beau\frostloopproject\target.asm
+                    negti   0x0001f4    program     static F:\beau\frostloopproject\target.asm
+                  dispose   0x0001f7    program     static F:\beau\frostloopproject\target.asm
+                    stack   0x000020       data     static F:\beau\frostloopproject\target.asm
+               softstack0   0x000070       data     static F:\beau\frostloopproject\target.asm
+               softstack1   0x000071       data     static F:\beau\frostloopproject\target.asm
+               softstack2   0x000072       data     static F:\beau\frostloopproject\target.asm
+                  alt_fsr   0x000073       data     static F:\beau\frostloopproject\target.asm
+                   W_Save   0x000074       data     static F:\beau\frostloopproject\target.asm
+              STATUS_Save   0x000075       data     static F:\beau\frostloopproject\target.asm
+                 FSR_Save   0x000076       data     static F:\beau\frostloopproject\target.asm
+                 ALT_Save   0x000077       data     static F:\beau\frostloopproject\target.asm
+                   in_isr   0x000078       data     static F:\beau\frostloopproject\target.asm
+                    pbase   0x000079       data     static F:\beau\frostloopproject\target.asm
+                  PC_Save   0x00007a       data     static F:\beau\frostloopproject\target.asm
+                alt_stack   0x0000a0       data     static F:\beau\frostloopproject\target.asm
+                hllblss00   0x0000b4       data     static F:\beau\frostloopproject\target.asm
+                hllblss01   0x0000b5       data     static F:\beau\frostloopproject\target.asm
+                hllblss02   0x0000b6       data     static F:\beau\frostloopproject\target.asm
+
+

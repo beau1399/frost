@@ -1,0 +1,837 @@
+
+#include "hloe.inc"
+
+ __config (_INTRC_OSC_NOCLKOUT & _WDT_OFF & _PWRTE_ON & _MCLRE_OFF & _CP_OFF & _BOR_ON & _IESO_OFF & _FCMEN_OFF)
+
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+#ifdef HLLMULTITASK
+ExitISR:    
+
+  RESUME
+  
+  
+  retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+
+PC_Save res .1
+
+main code
+hloego:
+
+ 
+  clrf in_isr
+ 
+  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR 
+  movlw alt_stack-1
+  movwf alt_fsr 
+  
+  
+  clrf softstack0
+ 
+ bankisel stack
+ pagesel hlluserprog
+ goto hlluserprog
+hllupuser CODE
+hlluserprog: 
+ 
+
+ movlw .112 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel OSCCON
+   movfw OSCCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,oru
+
+ POP
+ banksel OSCCON
+ movwf OSCCON
+ 
+
+
+ movlw .17 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw SYNC
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw CREN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw CREN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw SPEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw TXEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw TX9
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw BRGH
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw SCKP
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel BAUDCTL
+   movfw BAUDCTL
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCTL
+ movwf BAUDCTL
+ 
+
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel ANSELH
+ movwf ANSELH
+ 
+
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel ANSEL
+ movwf ANSEL
+ 
+
+
+ movlw RCIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw TXIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw .13
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,printch
+
+
+ movlw .2
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,maing
+
+    
+hllprogend:
+ goto hllprogend
+ 
+
+hllt454 CODE
+maing:
+ movf FSR,w
+ 
+
+ FAR_CALL maing , kpush
+
+
+ movlw .0
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,parm
+
+
+ movlw .255
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,geu
+
+
+ FAR_CALL maing,notb
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J2 
+ 
+
+ movlw .0
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,parm
+
+
+ FAR_CALL maing,isprime
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J0 
+ 
+
+ movlw .0
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,parm
+
+
+ FAR_CALL maing,printu
+
+
+ movlw .13
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,printch
+
+
+ movlw .10
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,printch
+
+ 
+ goto hlllb51J1
+ 
+
+hlllb51J0:
+
+
+hlllb51J1:
+
+
+ movlw .1
+
+   FAR_CALL maing , safepush
+
+
+ FAR_CALL maing,add
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL maing,maing
+
+ 
+ goto hlllb51J3
+ 
+
+hlllb51J2:
+
+
+hlllb51J3:
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt455 CODE
+isprime:
+ movf FSR,w
+ 
+
+ FAR_CALL isprime , kpush
+
+
+ movlw .0
+
+   FAR_CALL isprime , safepush
+
+
+ FAR_CALL isprime,parm
+
+
+ FAR_CALL isprime,sqrt
+
+
+ movlw .0
+
+   FAR_CALL isprime , safepush
+
+
+ FAR_CALL isprime,parm
+
+
+ movlw .2  
+ 
+
+   FAR_CALL isprime , safepush
+
+
+ FAR_CALL isprime,isprimeinner
+
+
+ FAR_CALL isprime,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL isprime , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ FAR_CALL isprime , kpop
+
+
+ FAR_CALL isprime , safepush
+ 
+
+ return
+ 
+
+hllt4510 CODE
+isprimeinner:
+ movf FSR,w
+ 
+
+ FAR_CALL isprimeinner , kpush
+
+
+ movlw .0
+
+   FAR_CALL isprimeinner , safepush
+
+
+ FAR_CALL isprimeinner,parm
+
+
+ movlw .1 
+
+   FAR_CALL isprimeinner , safepush
+
+
+ movlw .2
+
+   FAR_CALL isprimeinner , safepush
+
+
+ FAR_CALL isprimeinner,parm
+
+
+ FAR_CALL isprimeinner,add
+
+
+ FAR_CALL isprimeinner,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J8 
+ 
+
+ movlw .1
+
+   FAR_CALL isprimeinner , safepush
+
+ 
+ goto hlllb51J9
+ 
+
+hlllb51J8:
+
+
+ movlw .1
+
+   FAR_CALL isprimeinner , safepush
+
+
+ FAR_CALL isprimeinner,parm
+
+
+ movlw .0
+
+   FAR_CALL isprimeinner , safepush
+
+
+ FAR_CALL isprimeinner,parm
+
+
+ FAR_CALL isprimeinner,divis
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J6 
+ 
+
+ movlw .0
+
+   FAR_CALL isprimeinner , safepush
+
+ 
+ goto hlllb51J7
+ 
+
+hlllb51J6:
+
+
+ movlw .1
+
+   FAR_CALL isprimeinner , safepush
+
+
+ FAR_CALL isprimeinner,add
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL isprimeinner,isprimeinner
+
+
+hlllb51J7:
+
+
+hlllb51J9:
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt4513 CODE
+divis:
+ movf FSR,w
+ 
+
+ FAR_CALL divis , kpush
+
+
+ movlw .1
+
+   FAR_CALL divis , safepush
+
+
+ FAR_CALL divis,parm
+
+
+ movlw .0
+
+   FAR_CALL divis , safepush
+
+
+ FAR_CALL divis,parm
+
+
+ FAR_CALL divis,modu
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J11 
+ 
+
+ movlw .0
+
+   FAR_CALL divis , safepush
+
+ 
+ goto hlllb51J12
+ 
+
+hlllb51J11:
+
+
+ movlw .1
+
+   FAR_CALL divis , safepush
+
+
+hlllb51J12:
+
+
+ FAR_CALL divis,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL divis , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL divis , kpop
+
+
+ FAR_CALL divis , safepush
+ 
+
+ return
+ 
+
+hllt4514 CODE
+sqrt:
+ movf FSR,w
+ 
+
+ FAR_CALL sqrt , kpush
+
+
+ movlw .0
+ 
+
+
+
+   FAR_CALL sqrt , safepush
+
+
+ movlw .255
+ 
+
+
+   FAR_CALL sqrt , safepush
+
+
+ movlw .0
+ 
+
+
+
+   FAR_CALL sqrt , safepush
+
+
+ movlw .255
+ 
+
+
+   FAR_CALL sqrt , safepush
+
+
+ movlw .0
+
+   FAR_CALL sqrt , safepush
+
+
+ FAR_CALL sqrt,parm
+
+
+ FAR_CALL sqrt,utof
+
+
+ FAR_CALL sqrt,logf
+
+
+ FAR_CALL sqrt,mulf
+
+
+ FAR_CALL sqrt,powf
+
+
+ FAR_CALL sqrt,nextf
+
+
+ FAR_CALL sqrt,addf
+
+
+ FAR_CALL sqrt,ftou
+
+
+ FAR_CALL sqrt,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL sqrt , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ FAR_CALL sqrt , kpop
+
+
+ FAR_CALL sqrt , safepush
+ 
+
+ return
+ 

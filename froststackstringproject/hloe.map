@@ -1,0 +1,186 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Thu Dec 27 19:03:46 2012
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   Resetv       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000002    program   0x000004
+                hllupuser       code   0x000004    program   0x000136
+                   hlog1b       code   0x00009f    program   0x000076
+                   hlog1a       code   0x0000da    program   0x000076
+                hllkrna08       code   0x000115    program   0x00005e
+                hllkrna09       code   0x000144    program   0x000042
+                hllkrna10       code   0x000165    program   0x00003e
+                hllkrna05       code   0x000184    program   0x000026
+                hllkrna04       code   0x000197    program   0x000026
+                  hllt452       code   0x0001aa    program   0x000022
+                hllkrna00       code   0x0001bb    program   0x000018
+                hllkrna07       code   0x0001c7    program   0x000014
+                hllkrna06       code   0x0001d1    program   0x000014
+                hllkrna03       code   0x0001db    program   0x000014
+                     main       code   0x0001e5    program   0x000010
+                hllkrna01       code   0x0001ed    program   0x00000e
+                hllkrna02       code   0x0001f4    program   0x000006
+                hllkrna11       code   0x0001f7    program   0x000004
+    .config_2007_TARGET.O       code   0x002007    program   0x000002
+                   ukrnl2      udata   0x000020       data   0x000050
+                   ukrshr      udata   0x000070       data   0x000009
+                 mainvars      udata   0x000079       data   0x000002
+                   ukrnl3      udata   0x0000a0       data   0x000014
+                   ukernl      udata   0x0000b4       data   0x000003
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0001f8      
+                            0x002007    0x002007      
+            506 out of 2310 program addresses used, program memory utilization is 21%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          _hllkrna00_0009   0x0001c4    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna03_0008   0x0001e3    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna04_000C   0x0001a3    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna04_000E   0x0001a5    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna05_000C   0x000190    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna05_000E   0x000192    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna08_0003   0x000118    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna08_0011   0x000126    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna09_0003   0x000147    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna09_0011   0x000155    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna10_0003   0x000168    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna10_0010   0x000175    program     static F:\Beau\froststackstringproject\target.asm
+                      add   0x0001ed    program     static F:\Beau\froststackstringproject\target.asm
+                 clearbit   0x0000da    program     static F:\Beau\froststackstringproject\target.asm
+                  dispose   0x0001f7    program     static F:\Beau\froststackstringproject\target.asm
+                     divu   0x000184    program     static F:\Beau\froststackstringproject\target.asm
+                       eq   0x0001c7    program     static F:\Beau\froststackstringproject\target.asm
+                    getch   0x0001d1    program     static F:\Beau\froststackstringproject\target.asm
+                    geth2   0x0001d3    program     static F:\Beau\froststackstringproject\target.asm
+                 hllAAAAA   0x0000e7    program     static F:\Beau\froststackstringproject\target.asm
+                 hllBAAAA   0x0000ed    program     static F:\Beau\froststackstringproject\target.asm
+                 hllCAAAA   0x0000f4    program     static F:\Beau\froststackstringproject\target.asm
+                 hllDAAAA   0x0000fb    program     static F:\Beau\froststackstringproject\target.asm
+                 hllEAAAA   0x000102    program     static F:\Beau\froststackstringproject\target.asm
+                 hllFAAAA   0x000109    program     static F:\Beau\froststackstringproject\target.asm
+                 hllGAAAA   0x000110    program     static F:\Beau\froststackstringproject\target.asm
+                 hllHAAAA   0x000112    program     static F:\Beau\froststackstringproject\target.asm
+                 hllIAAAA   0x0000ac    program     static F:\Beau\froststackstringproject\target.asm
+                 hllJAAAA   0x0000b2    program     static F:\Beau\froststackstringproject\target.asm
+                 hllKAAAA   0x0000b9    program     static F:\Beau\froststackstringproject\target.asm
+                 hllLAAAA   0x0000c0    program     static F:\Beau\froststackstringproject\target.asm
+                 hllMAAAA   0x0000c7    program     static F:\Beau\froststackstringproject\target.asm
+                 hllNAAAA   0x0000ce    program     static F:\Beau\froststackstringproject\target.asm
+                 hllOAAAA   0x0000d5    program     static F:\Beau\froststackstringproject\target.asm
+                 hllPAAAA   0x0000d7    program     static F:\Beau\froststackstringproject\target.asm
+                hlllb51J0   0x0001b8    program     static F:\Beau\froststackstringproject\target.asm
+                hlllb51J1   0x0001b8    program     static F:\Beau\froststackstringproject\target.asm
+                hllprgen2   0x0001ba    program     static F:\Beau\froststackstringproject\target.asm
+               hllprogend   0x00009e    program     static F:\Beau\froststackstringproject\target.asm
+              hlluserprog   0x000004    program     static F:\Beau\froststackstringproject\target.asm
+                   hloego   0x0001e5    program     static F:\Beau\froststackstringproject\target.asm
+                     kpop   0x000144    program     static F:\Beau\froststackstringproject\target.asm
+                    kpush   0x000165    program     static F:\Beau\froststackstringproject\target.asm
+                     modu   0x000197    program     static F:\Beau\froststackstringproject\target.asm
+                      mul   0x0001bb    program     static F:\Beau\froststackstringproject\target.asm
+                    negti   0x0001f4    program     static F:\Beau\froststackstringproject\target.asm
+                     parm   0x000115    program     static F:\Beau\froststackstringproject\target.asm
+                  printch   0x0001db    program     static F:\Beau\froststackstringproject\target.asm
+                   setbit   0x00009f    program     static F:\Beau\froststackstringproject\target.asm
+               stackprint   0x0001aa    program     static F:\Beau\froststackstringproject\target.asm
+                 ALT_Save   0x000077       data     static F:\Beau\froststackstringproject\target.asm
+                 FSR_Save   0x000076       data     static F:\Beau\froststackstringproject\target.asm
+                  PC_Save   0x00007a       data     static F:\Beau\froststackstringproject\target.asm
+              STATUS_Save   0x000075       data     static F:\Beau\froststackstringproject\target.asm
+                   W_Save   0x000074       data     static F:\Beau\froststackstringproject\target.asm
+                  alt_fsr   0x000073       data     static F:\Beau\froststackstringproject\target.asm
+                alt_stack   0x0000a0       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss00   0x0000b4       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss01   0x0000b5       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss02   0x0000b6       data     static F:\Beau\froststackstringproject\target.asm
+                   in_isr   0x000078       data     static F:\Beau\froststackstringproject\target.asm
+                    pbase   0x000079       data     static F:\Beau\froststackstringproject\target.asm
+               softstack0   0x000070       data     static F:\Beau\froststackstringproject\target.asm
+               softstack1   0x000071       data     static F:\Beau\froststackstringproject\target.asm
+               softstack2   0x000072       data     static F:\Beau\froststackstringproject\target.asm
+                    stack   0x000020       data     static F:\Beau\froststackstringproject\target.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+              hlluserprog   0x000004    program     static F:\Beau\froststackstringproject\target.asm
+               hllprogend   0x00009e    program     static F:\Beau\froststackstringproject\target.asm
+                   setbit   0x00009f    program     static F:\Beau\froststackstringproject\target.asm
+                 hllIAAAA   0x0000ac    program     static F:\Beau\froststackstringproject\target.asm
+                 hllJAAAA   0x0000b2    program     static F:\Beau\froststackstringproject\target.asm
+                 hllKAAAA   0x0000b9    program     static F:\Beau\froststackstringproject\target.asm
+                 hllLAAAA   0x0000c0    program     static F:\Beau\froststackstringproject\target.asm
+                 hllMAAAA   0x0000c7    program     static F:\Beau\froststackstringproject\target.asm
+                 hllNAAAA   0x0000ce    program     static F:\Beau\froststackstringproject\target.asm
+                 hllOAAAA   0x0000d5    program     static F:\Beau\froststackstringproject\target.asm
+                 hllPAAAA   0x0000d7    program     static F:\Beau\froststackstringproject\target.asm
+                 clearbit   0x0000da    program     static F:\Beau\froststackstringproject\target.asm
+                 hllAAAAA   0x0000e7    program     static F:\Beau\froststackstringproject\target.asm
+                 hllBAAAA   0x0000ed    program     static F:\Beau\froststackstringproject\target.asm
+                 hllCAAAA   0x0000f4    program     static F:\Beau\froststackstringproject\target.asm
+                 hllDAAAA   0x0000fb    program     static F:\Beau\froststackstringproject\target.asm
+                 hllEAAAA   0x000102    program     static F:\Beau\froststackstringproject\target.asm
+                 hllFAAAA   0x000109    program     static F:\Beau\froststackstringproject\target.asm
+                 hllGAAAA   0x000110    program     static F:\Beau\froststackstringproject\target.asm
+                 hllHAAAA   0x000112    program     static F:\Beau\froststackstringproject\target.asm
+                     parm   0x000115    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna08_0003   0x000118    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna08_0011   0x000126    program     static F:\Beau\froststackstringproject\target.asm
+                     kpop   0x000144    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna09_0003   0x000147    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna09_0011   0x000155    program     static F:\Beau\froststackstringproject\target.asm
+                    kpush   0x000165    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna10_0003   0x000168    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna10_0010   0x000175    program     static F:\Beau\froststackstringproject\target.asm
+                     divu   0x000184    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna05_000C   0x000190    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna05_000E   0x000192    program     static F:\Beau\froststackstringproject\target.asm
+                     modu   0x000197    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna04_000C   0x0001a3    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna04_000E   0x0001a5    program     static F:\Beau\froststackstringproject\target.asm
+               stackprint   0x0001aa    program     static F:\Beau\froststackstringproject\target.asm
+                hlllb51J1   0x0001b8    program     static F:\Beau\froststackstringproject\target.asm
+                hlllb51J0   0x0001b8    program     static F:\Beau\froststackstringproject\target.asm
+                hllprgen2   0x0001ba    program     static F:\Beau\froststackstringproject\target.asm
+                      mul   0x0001bb    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna00_0009   0x0001c4    program     static F:\Beau\froststackstringproject\target.asm
+                       eq   0x0001c7    program     static F:\Beau\froststackstringproject\target.asm
+                    getch   0x0001d1    program     static F:\Beau\froststackstringproject\target.asm
+                    geth2   0x0001d3    program     static F:\Beau\froststackstringproject\target.asm
+                  printch   0x0001db    program     static F:\Beau\froststackstringproject\target.asm
+          _hllkrna03_0008   0x0001e3    program     static F:\Beau\froststackstringproject\target.asm
+                   hloego   0x0001e5    program     static F:\Beau\froststackstringproject\target.asm
+                      add   0x0001ed    program     static F:\Beau\froststackstringproject\target.asm
+                    negti   0x0001f4    program     static F:\Beau\froststackstringproject\target.asm
+                  dispose   0x0001f7    program     static F:\Beau\froststackstringproject\target.asm
+                    stack   0x000020       data     static F:\Beau\froststackstringproject\target.asm
+               softstack0   0x000070       data     static F:\Beau\froststackstringproject\target.asm
+               softstack1   0x000071       data     static F:\Beau\froststackstringproject\target.asm
+               softstack2   0x000072       data     static F:\Beau\froststackstringproject\target.asm
+                  alt_fsr   0x000073       data     static F:\Beau\froststackstringproject\target.asm
+                   W_Save   0x000074       data     static F:\Beau\froststackstringproject\target.asm
+              STATUS_Save   0x000075       data     static F:\Beau\froststackstringproject\target.asm
+                 FSR_Save   0x000076       data     static F:\Beau\froststackstringproject\target.asm
+                 ALT_Save   0x000077       data     static F:\Beau\froststackstringproject\target.asm
+                   in_isr   0x000078       data     static F:\Beau\froststackstringproject\target.asm
+                    pbase   0x000079       data     static F:\Beau\froststackstringproject\target.asm
+                  PC_Save   0x00007a       data     static F:\Beau\froststackstringproject\target.asm
+                alt_stack   0x0000a0       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss00   0x0000b4       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss01   0x0000b5       data     static F:\Beau\froststackstringproject\target.asm
+                hllblss02   0x0000b6       data     static F:\Beau\froststackstringproject\target.asm
+
+

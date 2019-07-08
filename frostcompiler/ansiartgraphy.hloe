@@ -1,0 +1,195 @@
+;
+; HLOE ANSI Terminal Library
+;
+
+
+ GLOBAL graphy
+
+ 
+ 
+ansiaff CODE
+
+
+HLTHUNK aart,graphy,cont,vert,flgg3
+;Print PARM0 blocks (out of PARM1 possible) 
+; e.g. _graphy[8 _divu[_sample[] 32] 10 10 ]
+
+
+ ;Push base ptr. 
+ movf HLFSR,w
+ 
+;
+; TODO reconsider this optimization if we can find other ways to squeeze what we need in?
+;  build the allowability of this optimization into the hloe spec?
+; 
+ ;Sometimes this is an allowable optimization... requires a keen eye
+ ; When must we use FAR_CALL? Whenever it is necessary to immediately set
+ ; the code page back to the caller's code page. If there's no decision 
+ ; or goto logic, or functions affecting PC, before next "far" call or goto,
+ ; then there is not any requirement to set the page back to the caller page.
+ ;FAR_CALL graphy, kpush 
+ pagesel kpush
+ call kpush
+
+
+
+ movlw .2
+ PUSH
+ FAR_CALL graphy,parm
+ POP
+ banksel cont
+ movwf cont
+ 
+ 
+ 
+ movlw .0
+ xorwf cont,w
+ btfsc STATUS,Z
+ goto b6tt1f
+ 
+ttl44: 
+ bcf flgg3,0
+ goto p1helpr
+went44: 
+
+ 
+ 
+
+ 
+ movlw 0xDB
+ PUSH
+ FAR_CALL graphy,printch
+ 
+
+ banksel cont
+ decfsz cont,F
+ goto ttl44
+ 
+
+ 
+  ;loop from parm2 up to parm3
+b6tt1f: 
+ movlw .3
+ PUSH
+ ;FAR_CALL graphy,parm
+  pagesel parm
+  call parm
+ 
+ movlw .2
+ PUSH
+ 
+ 
+ ;FAR_CALL graphy,parm
+  pagesel parm
+  call parm
+
+
+
+ ;FAR_CALL graphy,negti
+  pagesel negti
+  call negti
+
+ 
+ 
+ FAR_CALL graphy,add
+ POP
+ banksel cont
+ movwf cont
+ 
+ movf cont,f
+ btfsc STATUS,Z
+ goto tt655 
+
+
+
+
+
+
+
+ttl55: 
+ bsf flgg3,0 
+ goto p1helpr
+went55:
+ 
+ 
+ movlw 0xB0
+ PUSH
+ FAR_CALL graphy,printch
+ 
+
+ banksel cont
+ decfsz cont,F
+ goto ttl55
+ 
+ 
+tt655:
+ 
+  
+ 
+ ;FAR_CALL graphy, kpop ;Clean up base ptr
+ pagesel kpop
+ goto kpop
+ 
+ movwf HLFSR
+ return
+ 
+ 
+
+p1helpr:
+
+ movlw 0x1b
+ PUSH
+ ;FAR_CALL graphy,printch
+ pagesel printch
+ call printch
+
+ 
+ movlw '['
+ PUSH
+
+ ;FAR_CALL graphy,printch
+ pagesel printch
+ call printch
+
+ 
+ 
+ COPY 
+ ;FAR_CALL graphy,printu
+ pagesel printu
+ call printu
+
+ 
+ 
+ decf HLINDF,f
+ 
+ movlw ';'
+ PUSH
+ ;FAR_CALL graphy,printch
+ pagesel printch
+ call printch
+
+ 
+
+ movlw .1 
+ PUSH
+; FAR_CALL graphy,parm
+ pagesel parm
+ call parm
+
+; FAR_CALL graphy,printu
+ pagesel printu
+ call printu
+
+ 
+ movlw 'H'
+ PUSH
+ FAR_CALL graphy,printch
+ 
+ banksel cont
+ btfss flgg3,0 
+ goto went44
+ goto went55
+  
+ 
+ 
+HLEND

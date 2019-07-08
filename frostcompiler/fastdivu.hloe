@@ -1,0 +1,98 @@
+; Fast Divide
+;
+; Doesn't make outside calls or gotos, so PAGESEL is not used.  TODO - explore and discuss! also discuss: kernel small, doesn't require much ram. so repeated subtraction ok, esp for 8-bit
+;
+; Does not lock out interrupts at any point.   
+;
+GLOBAL fastdivu
+ 
+;Storage Allocation
+ufstdv034 udata 
+
+fstdvss00 res 1 	  
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss00isr res 1      
+#endif
+#endif
+
+fstdvss01 res 1    
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss01isr res 1      
+#endif
+#endif
+
+fstdvss02 res 1    
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss02isr res 1      
+#endif
+#endif
+  
+fstdvss03 res 1    
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss03isr res 1      
+#endif
+#endif
+    
+fstdvss04 res 1    
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss04isr res 1      
+#endif
+#endif
+    
+fstdvss05 res 1    
+#ifdef HLLMULTITASK
+#ifdef HLLGUARDfstdvss
+fstdvss05isr res 1      
+#endif
+#endif
+    
+fstdvss CODE
+
+; Based on "restoring division" algorithm as posted by one UCLA instructor.
+;  (See http://www.seas.ucla.edu/~ingrid/ee213a/lectures/division_presentV2.pdf 
+;  However, also see comments below; implementation evolved to reflect what was
+;  available on the simplest CPUs targeted, e.g. the 16F690 family.)
+HLTHUNK fstdvss,fastdivu,aterm,bterm,pterm,keepp,countrr
+ banksel countrr
+ clrf countrr
+ POP
+ movwf bterm
+ POP
+ movwf aterm
+ clrf pterm
+lop55d:         ;FOR CONTRR=0 TO 7
+ movfw countrr
+ xorlw .8
+ btfsc STATUS,Z
+ goto n2xx4s
+ movfw aterm
+ andlw .128
+ movwf keepp
+ LSHIFT pterm
+ LSHIFT aterm
+ movfw keepp    
+ btfsc STATUS,Z 
+ goto n119ec
+ incf pterm,f
+n119ec:
+ movfw bterm
+ subwf pterm,w
+ btfss STATUS,C  ;C==1 implies w<=f i.e. bterm<=pterm if this is not true we need to branch so branch when !c
+ goto n01cee
+ movwf pterm  ;Use the subtraction to alter pterm unless carry occurred. While the implementation seen here
+ movfw aterm  ; was based on pseudocode for a "restoring" division algorithm, we actually don't restore per se.
+ iorlw .1     ; Rather, we just don't complete the -= operation on PTERM unless restoration would not have been
+ movwf aterm  ; required.
+n01cee: 
+ incf countrr,f
+ goto lop55d  ;END FOR
+n2xx4s:
+ movf aterm,w
+ PUSH 
+ return
+HLEND

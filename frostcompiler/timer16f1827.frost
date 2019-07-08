@@ -1,0 +1,2 @@
+/"Fast" 16-bit timer (1,1 prescale) ~48 newlines per second 
+.clearbit[tmr1cs0 .clearbit[tmr1ge .clearbit[t1ckps1 .clearbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con

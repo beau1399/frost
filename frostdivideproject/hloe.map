@@ -1,0 +1,216 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Tue May 05 21:23:24 2015
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   Resetv       code   0x000000    program   0x000006
+                   .cinit    romdata   0x000003    program   0x000004
+                hllupuser       code   0x000005    program   0x0001a4
+                  cprntuc       code   0x0000d7    program   0x000084
+                   hlog1b       code   0x000119    program   0x000076
+                   hlog1a       code   0x000154    program   0x000076
+                hllkrna08       code   0x00018f    program   0x000060
+                  fstdvss       code   0x0001bf    program   0x000056
+                hllkrna09       code   0x0001ea    program   0x000042
+                hllkrna10       code   0x00020b    program   0x00003e
+                hllkrna05       code   0x00022a    program   0x000026
+                hllkrna04       code   0x00023d    program   0x000026
+                hllkrna00       code   0x000250    program   0x000018
+                hllkrna07       code   0x00025c    program   0x000014
+                hllkrna06       code   0x000266    program   0x000014
+                hllkrna03       code   0x000270    program   0x000014
+                     main       code   0x00027a    program   0x000012
+                hllkrna01       code   0x000283    program   0x00000e
+                hllkrna02       code   0x00028a    program   0x000006
+                hllkrna11       code   0x00028d    program   0x000004
+    .config_2007_TARGET.O       code   0x002007    program   0x000002
+                   ukrnl2      udata   0x000020       data   0x000050
+                   ukrshr      udata   0x000070       data   0x000009
+                 mainvars      udata   0x000079       data   0x000002
+                   ukrnl3      udata   0x0000a0       data   0x000014
+                ufstdv034      udata   0x0000b4       data   0x000006
+                   ukernl      udata   0x0000ba       data   0x000003
+                  ansiadt      udata   0x0000bd       data   0x000003
+                  ansiadu      udata   0x0000c0       data   0x000001
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x00028e      
+                            0x002007    0x002007      
+            656 out of 4358 program addresses used, program memory utilization is 15%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+          _hllkrna00_0009   0x000259    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna03_0008   0x000278    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna04_000C   0x000249    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna04_000E   0x00024b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna05_000C   0x000236    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna05_000E   0x000238    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna08_0003   0x000192    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna08_0011   0x0001a0    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna09_0003   0x0001ed    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna09_0011   0x0001fb    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna10_0003   0x00020e    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna10_0010   0x00021b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                      add   0x000283    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 clearbit   0x000154    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  dispose   0x00028d    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     divu   0x00022a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                       eq   0x00025c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 fastdivu   0x0001bf    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    getch   0x000266    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    geth2   0x000268    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllAAAAA   0x000161    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllBAAAA   0x000167    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllCAAAA   0x00016e    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllDAAAA   0x000175    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllEAAAA   0x00017c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllFAAAA   0x000183    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllGAAAA   0x00018a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllHAAAA   0x00018c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllIAAAA   0x0001cd    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllJAAAA   0x0001dc    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllKAAAA   0x0001e4    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllLAAAA   0x0001e6    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllMAAAA   0x000126    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllNAAAA   0x00012c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllOAAAA   0x000133    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllPAAAA   0x00013a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllQAAAA   0x000141    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllRAAAA   0x000148    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllSAAAA   0x00014f    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllTAAAA   0x000151    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllprgen2   0x0000d6    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               hllprogend   0x0000d5    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+              hlluserprog   0x000005    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   hloego   0x00027a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     kpop   0x0001ea    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    kpush   0x00020b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     modu   0x00023d    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                      mul   0x000250    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    negti   0x00028a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     parm   0x00018f    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  printch   0x000270    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   printu   0x0000d7    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   setbit   0x000119    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 ALT_Save   0x000077       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 FSR_Save   0x000076       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  PC_Save   0x00007a       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+              STATUS_Save   0x000075       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   W_Save   0x000074       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart00   0x0000bd       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart01   0x0000be       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart02   0x0000bf       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 aartpr00   0x0000c0       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  alt_fsr   0x000073       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                alt_stack   0x0000a0       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss00   0x0000b4       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss01   0x0000b5       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss02   0x0000b6       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss03   0x0000b7       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss04   0x0000b8       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss05   0x0000b9       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss00   0x0000ba       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss01   0x0000bb       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss02   0x0000bc       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   in_isr   0x000078       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    pbase   0x000079       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack0   0x000070       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack1   0x000071       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack2   0x000072       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    stack   0x000020       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+              hlluserprog   0x000005    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               hllprogend   0x0000d5    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllprgen2   0x0000d6    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   printu   0x0000d7    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   setbit   0x000119    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllMAAAA   0x000126    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllNAAAA   0x00012c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllOAAAA   0x000133    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllPAAAA   0x00013a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllQAAAA   0x000141    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllRAAAA   0x000148    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllSAAAA   0x00014f    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllTAAAA   0x000151    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 clearbit   0x000154    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllAAAAA   0x000161    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllBAAAA   0x000167    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllCAAAA   0x00016e    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllDAAAA   0x000175    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllEAAAA   0x00017c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllFAAAA   0x000183    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllGAAAA   0x00018a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllHAAAA   0x00018c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     parm   0x00018f    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna08_0003   0x000192    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna08_0011   0x0001a0    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 fastdivu   0x0001bf    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllIAAAA   0x0001cd    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllJAAAA   0x0001dc    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllKAAAA   0x0001e4    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 hllLAAAA   0x0001e6    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     kpop   0x0001ea    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna09_0003   0x0001ed    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna09_0011   0x0001fb    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    kpush   0x00020b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna10_0003   0x00020e    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna10_0010   0x00021b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     divu   0x00022a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna05_000C   0x000236    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna05_000E   0x000238    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                     modu   0x00023d    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna04_000C   0x000249    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna04_000E   0x00024b    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                      mul   0x000250    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna00_0009   0x000259    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                       eq   0x00025c    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    getch   0x000266    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    geth2   0x000268    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  printch   0x000270    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+          _hllkrna03_0008   0x000278    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   hloego   0x00027a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                      add   0x000283    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    negti   0x00028a    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  dispose   0x00028d    program     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    stack   0x000020       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack0   0x000070       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack1   0x000071       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+               softstack2   0x000072       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  alt_fsr   0x000073       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   W_Save   0x000074       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+              STATUS_Save   0x000075       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 FSR_Save   0x000076       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 ALT_Save   0x000077       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   in_isr   0x000078       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                    pbase   0x000079       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                  PC_Save   0x00007a       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                alt_stack   0x0000a0       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss00   0x0000b4       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss01   0x0000b5       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss02   0x0000b6       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss03   0x0000b7       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss04   0x0000b8       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                fstdvss05   0x0000b9       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss00   0x0000ba       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss01   0x0000bb       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                hllblss02   0x0000bc       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart00   0x0000bd       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart01   0x0000be       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                   aart02   0x0000bf       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+                 aartpr00   0x0000c0       data     static C:\Users\james.wilkinson\Downloads\frost\frostdivideproject\target.asm
+
+

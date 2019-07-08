@@ -1,0 +1,184 @@
+/
+/ Scrapnet is a synchronous serial network running at 115,200 bps (this can actually
+/  vary easily; it is a figure that is independent of the fixed clocking / framing 
+/  calculations below. It supports multiple senders and receivers, with each numbered 
+/  'node' operating as one or both of these. (There is no overlap b/w senders and 
+/  receivers in this example.
+/
+/  Scrapnet specifies a four-wire connection having Data, Ground, Start, and Clock pins,
+/  but it is also possible to monitor network traffic by connecting an RS-232 terminal to
+/  the ground and data pins (8-N-1; wire send and receive together). The data wire uses a 
+/  0-5V range, with 0 representing 1 (or mark) and 5V representing 0. 
+/
+/ The protocol is based around a frame of defined time length (~1/6 of a second0) divided
+/  evenly among a fixed-but-configurable number of 'nodes' or 'stations.' This is 'time 
+/  division multiplexing' of the overall channel, and it relies on exact timing requiring 
+/  'real time' code and a common clock. Here, two PIC 16F690 (or compatible) nodes split 
+/  the frame in half. One writes out graphics and the other a long string.
+/
+/ Because the timer events are 'atomic' across the whole network, ANSI cursor positioning
+/ can even be done and screens constructed using 'space division multiplexing' of the 
+/ channel. Or, overlapping positions on the ANSI terminal can be written to (or drawn to
+/ ) to give a graphic or numerical averaged signal. This doubles (or triples, etc.) the
+/ effective frame rate and introduces physical redundancy as well, all in a highly 
+/ scalable, predictable, and linear fashion.
+/
+/ Another application is a centralized, cheap day/night mode; just assign a single net
+/  node to determine mode, and wire it with a photoresistor. Compare to Ethernet / Win32
+/  based solution with all attendant expensive and non-deterministic headaches.
+
+
+calls clearbit,setbit,andu,add,parm,day,night,geu,graphx,cls,modu,divf,ftou,gtf
+
+insert analog
+
+var cnt,wasnight
+
+///////////////////// COMPILE-TIME CONSTANTS ///////////////////////////
+
+/These are the first macro replacements that occur, hence compile-time
+/ constants quite logically end up at the top of the Frost source.
+
+macro netid is 0 end macro 
+
+/Is this necessary? TODO; can observe usage in mplab. Default is 20, may be sufficient.
+altstack is 80
+
+
+///////////////////////////// DISTRIBUTED TASKS ///////////////////////////////////
+
+
+
+event 1 is 
+ .handler[.addf[1.0 .samplef[4]]]  /Code below assumes value of at least 1.0
+ ; 
+
+///////////////////////////// MAIN TASK ////////////////////////////////
+
+
+/A0, A1, A2, A4 are all inputs
+.setbit[0 .setbit[4 .setbit[1 .setbit[2 @trisa]]]] > trisa
+
+/C0 is an input
+.setbit[0 @trisc] > trisc
+
+/comparator output off
+.clearbit[5 @cm1con0] > cm1con0
+
+/Disable all interrupts at first
+0 > intcon
+0 > gie
+
+/using real pull-up resistors for precision
+.setbit[not-rabpu @option-reg] > option-reg
+
+/"Sample" function will set ansel bits as needed
+0 > anselh
+0 > ansel
+
+.clearbit[rcie .clearbit[txie @pie1]] > pie1
+
+
+frost115200bps
+
+if netid,,
+ 1 > wasnight 
+ .night[],
+
+insert slowtimer
+
+.setbit[tmr1ie @pie1] > pie1 /Enable timer1 interrupt
+.setbit[peie @intcon] > intcon /PEIE peripheral interrupt enable
+
+if netid,,.cls[] ,
+
+
+.wait-button[]
+
+.clearbit[tmr1on @t1con] > t1con /timer off
+
+0 > tmr1h 
+0 > tmr1l
+.setbit[GIE @intcon] > intcon /GIE on
+
+if netid, 128 > tmr1h ,,
+.setbit[tmr1on @t1con] > t1con /timer on
+
+
+
+///////////////////////////// ROUTINES /////////////////////////////////
+
+
+
+
+d .wait-button is
+ if .andu[@PORTA 16],.wait-button[],, /Wait  weak pull-up on A4 to get grounded out...
+;
+
+d .bigbar 2 0 is
+  .graphx[15 .parm[0] .parm[1] 11 ]
+  .graphx[15 .parm[0] .parm[1] 12 ]
+  .graphx[15 .parm[0] .parm[1] 13 ]
+;
+
+blurb`TextA\`
+ 13 10 
+ 'OS-9 6809 ran on Motorola EXORbus systems using the Motorola 6809, SS-50 '
+ 0
+\
+
+blurb`TextB\`
+ 13 10 
+ 'and SS-50C bus systems from companies like Gimix, Midwest Scientific and '
+ 0
+\
+
+blurb`TextC\`
+ 13 10 
+ 'Smoke Signal Broadcasting. Motorola called it an "8-bit Plus" design.    '
+ 0
+\
+
+
+blurb`TextE\`
+ 13 10 
+ '                                                                         '
+ 0
+\
+
+
+d .handler 2 0 is
+
+if netid,
+
+  .plotat[65 .ftou[.divf[parmf`0\ 64.0]]]
+
+    .add[1 @cnt] > cnt
+
+	if .geu[8 .modu[@cnt 32] ],.putTextA[],,
+	if .geu[16 .modu[@cnt 32] ],.putTextB[],,
+	if .geu[24 .modu[@cnt 32] ],.putTextC[],,
+	if .geu[8 .modu[@cnt 32] ],,.putTextE[],
+ ,  
+   
+  .plotat[5 .ftou[.divf[parmf`0\ 64.0]]]   
+  
+  /Arbitrate day/night
+  if @wasnight,
+   if .gtf[parmf`0\ 512.0],.day[] .cls[] 0>wasnight,,,
+   if .gtf[512.0 parmf`0\],.night[] .cls[] 1>wasnight,,,/was day
+ ,  
+;
+
+macro plotat-value is .parm[0] end macro
+macro plotat-column is .parm[1] end macro
+d .plotat 2 0 is
+ .graphx[15 plotat-value plotat-column 7 ]
+ .graphx[15 plotat-value plotat-column 8 ]
+ .graphx[15 plotat-value plotat-column 9 ]
+
+ .graphx[15 plotat-value plotat-column 11 ]
+ .graphx[15 plotat-value plotat-column 12 ]
+ .graphx[15 plotat-value plotat-column 13 ]
+
+;

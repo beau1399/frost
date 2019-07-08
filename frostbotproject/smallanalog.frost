@@ -1,0 +1,35 @@
+/Analog sampling code... a subset of what's in analog.frost (only channels 0 and 4
+/  are supported, to save space)
+d .samplef 1 2 is
+ /Sets analog channeland samples it
+ .setbit[6 .clearbit[5 .setbit[4 @adcon1]]] > adcon1
+
+   if .eq[.parm[0] 0], .clearbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+	   .clearbit[2 .clearbit[3 .setbit[4 @adcon0]]]
+	  
+   ,
+ > adcon0
+ 
+ .dispose[]
+ 
+  /TODO use bit names here and elsewhere
+  .clearbit[1 .setbit[7 .setbit[0 @adcon0]]] > adcon0 /Right-justified return; plus GO=0 and ADON; 
+
+
+ .setbit[0 @ansel] > ansel	/A0 ANALOG
+ 
+ /Wait for AD conversion process...
+ .setbit[1 @adcon0] > adcon0
+ 
+ .ourwait[]
+ 
+ /Compute SFP result from adresh,adresl (a 10-bit int)
+ .addf[.mulf[256.0 .utof[.andu[3 @adresh]]] .utof[@adresl]]
+;
+
+d .ourwait is 
+ if .andu[2 @adcon0],
+  .ourwait[],
+ ,
+; 

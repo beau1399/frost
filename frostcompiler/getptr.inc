@@ -1,0 +1,2 @@
+ movf FSR,w
+ 

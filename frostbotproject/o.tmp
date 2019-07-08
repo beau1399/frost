@@ -1,0 +1,328 @@
+event 1 is 
+  1>ticked
+    .graphx[15 @setf 60 15 ]  
+  
+  
+  
+  .printch['S'].printch['e'].printch['t']
+  .graphx[15 @setg 60 16 ]
+  .printch['P'].printch['o'].printch['s']
+ ;
+
+
+
+.main-setup[]
+
+.clearbit[tmr1on @t1con] > t1con 
+
+.wait-button[]
+
+0 > tmr1h 
+0 > tmr1l
+0 > ticked 
+
+.setbit[gie @intcon] > intcon 
+
+
+
+
+
+
+
+
+
+   8 > tmr1h 		
+   .setbit[tmr1on @t1con] > t1con 
+
+.longf[
+   0.0 
+   .addf[ 1.0 .samplef[4]]  
+   0.0                      
+   302.0 ] 
+
+
+  
+
+
+d .main-setup is
+
+ 0 > setf 
+ 0 > setg
+
+ 
+ 0 > intcon
+
+ 
+ 0 > anselh
+ 0 > ansel
+
+ .pwmon[]
+
+  .clearbit[sync .setbit[brgh @txsta]] > txsta
+ .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+ .clearbit[cren @rcsta] > rcsta
+ .setbit[cren @rcsta] > rcsta
+ 25 > spbrg
+ 0  > spbrgh
+ .setbit[txen .clearbit[tx9 @txsta]] > txsta
+ .setbit[spen @rcsta] > rcsta if 1 ,.cls[],,
+
+ 
+ 
+ .clearbit[tmr1cs .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+ .setbit[tmr1ie @pie1] > pie1 
+
+ .setbit[peie @intcon] > intcon 
+
+;
+
+
+
+
+d .ourftou 2 1 is
+  if .gtf[.parm[1].parm[0] 15.0], 15,  
+   if .gtf[0.0 .parm[1].parm[0] ], 0,
+   .ftou[] 
+  ,,
+;
+
+d .longf *  is
+
+  .ourftou[.mulf[.addf[-249.0 .parm[1].parm[0] ] 0.075 ]] > setf
+  .ourftou[.mulf[.addf[-249.0 .parm[5].parm[4] ] 0.075 ]] > setg 
+
+  
+	
+  .control[.addf[ 1.0 .samplef[4]]]   
+  
+  .adjust[ .samplef[0]]  
+		  
+  
+  .longf[]
+ ;   
+
+d .adjust 4 2  is
+      if .andb[ 
+  .gtf[.parm[1].parm[0] 570.0 ] 
+  .gtf[435.0 .parm[3].parm[2] ]],
+     .addf[1.0 .parm[3].parm[2] ] 
+
+	 ,
+	    if .andb[ 
+		.gtf[110.0 .parm[1].parm[0] ]  
+		
+		
+		.gtf[.parm[3].parm[2] 250.0 ]], 
+             .addf[ -1.0 .parm[3].parm[2] ]
+
+			 , .parm[3].parm[2] ,
+	         
+	  ,
+ ;
+
+ d .usrpwm 6 0 is
+ 
+ .mulf[60.0 .parm[1].parm[0] ]  
+ 
+
+
+ .mulf[0.125 .parm[3].parm[2] ] 
+ .mulf[4000.0 .parm[5].parm[4] ] 
+ .addf[] .addf[]
+ .copyf[]
+ .copyf[]
+
+ 
+ 
+if .gtf[0.0],
+
+if .gtf[1023.0],.pwmf[1023.0 1] 
+,
+.pwmf[1],                        , 
+
+
+if .gtf[-1023.0], 
+.pwmf[.mulf[-1.0] 0],.pwmf[1023.0 0], 
+ ,
+ 
+ ;
+ 
+
+
+
+d .conform-i 2 2 is
+ if .gtf[.parm[1].parm[0] 0.0],
+   if .gtf[.parm[1].parm[0] 4000.0 ],4000.0 ,,  ,
+   if .gtf[-4000.0 .parm[1].parm[0] ],-4000.0 ,,  ,
+ ;  
+ 
+ 
+
+
+
+
+d .control 10 8 is 
+
+ 
+ 
+   
+  
+  .utof[@tmr1h]
+
+   .addf[ .parm[-1].parm[-2] .mulf[-1.0  .parm[9].parm[8] ]]    if @ticked, 1 0 > ticked, 0,
+
+  if .parm[-5] , 17.0 , .parm[-3].parm[-4] ,
+
+  
+  
+  
+  
+  
+  
+  
+  if .parm[-5] , .addf[ 1.0 .samplef[4]], .parm[1].parm[0] ,
+   
+   .addf[.parm[7].parm[6] .mulf[-1.0 .parm[-8].parm[-9] ]]     .addf[.parm[3].parm[2] .mulf[-1.0 .parm[-8].parm[-9] ]]    .conform-i[
+    .addf[ 
+      .parm[5].parm[4] .mulf[  
+  	    .parm[-12].parm[-13] .parm[-6].parm[-7] ] 
+       ]
+   ]  
+  
+   
+  .usrpwm[                                       
+   if .iszerof[.parm[-10].parm[-11] ],0.0,.divf[ .parm[-10].parm[-11] .parm[-6].parm[-7] ]  ,      
+   .parm[-14].parm[-15] .parm[-12].parm[-13] ]
+  
+  
+ 
+  
+  if .parm[-5] ,  14.0, .parm[-1].parm[-2] ,
+  
+  .parm[-8].parm[-9] .parm[-14].parm[-15] .parm[3].parm[2] ;
+
+d .wait-button is
+ if .andu[@porta 16],.wait-button[],, 
+;
+ 
+d .pwmon is
+  255 > pr2
+  .setbit[2 .setbit[3 0]] > ccp1con		
+  
+
+  
+  
+  
+  0 > ccpr1l
+
+  
+  
+  .clearbit[1 @pir1] > pir1
+  
+  
+  
+  
+  .clearbit[0 .clearbit[1 @t2con]] > t2con
+
+  
+  
+  .setbit[2 @t2con] > t2con
+
+  
+  
+  .clearbit[1 @pir1] > pir1
+  
+  .pwmin[]
+
+  
+  
+  
+  .clearbit[5 .clearbit[4 @trisc]] > trisc
+
+  
+  
+  0 > portc
+ 
+
+
+;
+
+
+d .pwmf 3 0 is 
+  
+ if .parm[0], 
+  .setbit[0 .clearbit[1 @pstrcon]] > pstrcon ,
+  .setbit[1 .clearbit[0 @pstrcon]] > pstrcon,
+ 
+ 
+ 
+ 
+  if .iszerof[.parm[2].parm[1] ],0,
+ 
+   if  .gtf[.parm[2].parm[1] 1000.0],255, 
+ 
+      .ftou[ .divf[.parm[2].parm[1] 4.0]]
+  ,,
+ > ccpr1l
+ 
+ 
+ 
+ 
+ 
+ .addf[.parm[2].parm[1] .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
+ 
+ if .gtf[.copyf[] 2.5],
+   .setbit[dc1b1 .setbit[dc1b0 @ccp1con]] > ccp1con
+ ,
+
+ if .gtf[.copyf[] 1.5],
+  .setbit[dc1b1  @ccp1con] > ccp1con
+  ,	  
+      if .gtf[.copyf[] 0.5],
+	  
+	  .setbit[dc1b0  @ccp1con] > ccp1con 
+	  ,,	  
+  ,    
+ , 
+;
+
+d .pwmin is
+ if .andu[@pir1 2],,.pwmin[],
+;
+
+
+
+d .samplef 1 2 is
+ 
+ .setbit[6 .clearbit[5 .setbit[4 @adcon1]]] > adcon1
+
+   if .eq[.parm[0] 0], .clearbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+	   .clearbit[2 .clearbit[3 .setbit[4 @adcon0]]]
+	  
+   ,
+ > adcon0
+ 
+ .dispose[]
+ 
+  
+  .clearbit[1 .setbit[7 .setbit[0 @adcon0]]] > adcon0 
+
+
+ .setbit[0 @ansel] > ansel	
+ 
+ 
+ .setbit[1 @adcon0] > adcon0
+ 
+ .ourwait[]
+ 
+ 
+ .addf[.mulf[256.0 .utof[.andu[3 @adresh]]] .utof[@adresl]]
+;
+
+d .ourwait is 
+ if .andu[2 @adcon0],
+  .ourwait[],
+ ,
+; 

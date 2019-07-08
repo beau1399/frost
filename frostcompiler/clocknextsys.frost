@@ -1,0 +1,4 @@
+calls oru,andu
+
+/Full 32mhz internal osc. for "Nextsys" demo board
+.oru[ 112 .andu[ 247 @osccon]] > osccon

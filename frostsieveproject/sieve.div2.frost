@@ -1,0 +1,71 @@
+/Prints primes that fit in the frost "U" data type (0..255)
+/ This version uses 0.5*(candidate) as upper bound on potential divisors in the primality test
+/ It completes in 0x276101 cycles
+
+/Fully reentrant, typeable w/o shift key
+
+calls printu,printch,gti,notb,geu,debugptru,orb,divu,powf,mulf,logf,printf,utof,ftou,addf
+ 
+insert clock
+frost115200bps
+
+.printch[13]
+.maing[2] /First prime tested is 2
+
+macro maing-counter is .parm[0] end macro
+/Use of * enables tail recursion here and for isprimeinner[]
+d .maing * is
+
+ /Last prime tested is 255
+ /Loop condition
+ if .notb[.geu[maing-counter 255]], 
+
+  /Loop body
+  if .isprime[maing-counter],.printu[maing-counter] .printch[' '],,  
+
+  /Loop increment and bottom
+ .add[1]    .maing[],,  
+;
+
+macro isprime-candidate is .parm[0] end macro
+d .isprime 1 1 is
+
+ /Call looping function to test against poss. divisors
+ .isprimeinner[   
+
+    /Max potential divisor
+    .divu[isprime-candidate 2]
+
+   isprime-candidate 
+ 
+    /Initial potential divisor
+    2  
+ ]
+
+;
+
+macro isprimeinner-counter is .parm[0] end macro
+macro isprimeinner-candidate is .parm[1] end macro
+macro isprimeinner-max-divisor is .parm[2] end macro
+d .isprimeinner * is
+ /Loop terminal condition
+ if 
+    .eq[isprimeinner-counter .add[1 isprimeinner-max-divisor]],
+
+    1,  /Loop reached end of tests, no divisibility, return true
+
+    /Loop body and increment and bottom
+    if .divis[isprimeinner-candidate isprimeinner-counter], 0, .add[1] .isprimeinner[],,
+;
+
+/ Is left parm divisible by right?
+macro divis-left is .parm[1] end macro
+macro divis-right is .parm[0] end macro
+d .divis 2 1 is
+ if .modu[divis-left divis-right], 0, 1,
+;
+
+/Rounds up
+d .sqrt 1 1 is
+ .ftou[.addf[0.5 .powf[.mulf[0.5 .logf[.utof[.parm[0]]]]]]]
+;

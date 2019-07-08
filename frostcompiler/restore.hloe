@@ -1,0 +1,20 @@
+;
+; HLOE library
+;
+; Gives higher-level programs access to the 
+; second stack...
+;
+
+;;;;#include "hloe.inc"
+
+ GLOBAL restore
+
+
+altstall CODE
+
+restore:
+ KPOP ;To W
+ PUSH ;From W to main stack
+ return 
+
+ 

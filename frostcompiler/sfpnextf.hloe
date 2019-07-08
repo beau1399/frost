@@ -1,0 +1,28 @@
+GLOBAL nextf
+ 
+sfp_nex CODE 
+
+HLTHUNK sfploc,nextf,loc000,loc001
+ POP 
+ banksel loc001 
+ movwf loc001
+ POP 
+ movwf loc000
+ andlw .127
+ xorlw .127
+ btfss STATUS,Z 
+ goto m0r33n
+ movfw loc000
+ andlw .128
+ movwf loc000
+ incf loc001,f
+ goto m0r34d   
+m0r33n:
+ incf loc000,f
+m0r34d:
+ movfw loc000
+ PUSH
+ movfw loc001
+ PUSH
+ return
+HLEND

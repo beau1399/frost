@@ -1,0 +1,6 @@
+calls setbit
+
+.setbit[tmr1ie @pie1] > pie1 /Enable timer1 interrupt
+.setbit[peie @intcon] > intcon /PEIE peripheral interrupt enable
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon /GIE on

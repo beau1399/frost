@@ -1,0 +1,21 @@
+;
+; HLOE library
+;
+; Gives higher-level programs access to the 
+; second stack...
+;
+
+;;;;#include "hloe.inc"
+
+ GLOBAL remove
+
+
+a1tsssck CODE
+
+remove:
+ POP ;To W
+ KPUSH ;From W to kernel stack
+ return
+
+
+ 

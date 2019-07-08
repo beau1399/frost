@@ -1,0 +1,35 @@
+;
+; HLOE Logical and Bit Operations
+;
+
+;;;;#include "hloe.inc"
+
+ GLOBAL orb
+
+
+ 
+hlog1e CODE
+ 
+
+orb: 
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto zzorz1;Z set
+ movlw .1
+ movwf HLINDF
+ return
+zzorz1: ;Z set
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto zzorz2;Z set
+ movlw .1
+ PUSH
+ return
+zzorz2: ;Z set 
+ movlw .0
+ PUSH
+ return
+
+ 

@@ -1,0 +1,20 @@
+;
+; HLOE Logical and Bit Operations
+;
+
+;;;;#include "hloe.inc"
+
+ GLOBAL oru
+ 
+
+ 
+hlog1d CODE
+
+oru: 
+ POP
+ iorwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+
+ 

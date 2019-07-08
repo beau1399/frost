@@ -1,0 +1,4 @@
+   banksel %s
+   movfw %s
+   
+   

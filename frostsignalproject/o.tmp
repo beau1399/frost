@@ -1,0 +1,80 @@
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  68 > spbrg
+  0 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   
+  .clearbit[5 @anselb] > anselb    
+  .setbit[txcksel @apfcon1] > apfcon1 .cls[]
+.longf[]
+
+d .longf is
+
+ 
+ .graphx[8 .ftou[.divf[.samplef[0] 128.0]]  10 10 ]
+ .longf[]
+;  
+
+
+
+d .samplef 1 2 is
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+   if .eq[.parm[0] 0], .clearbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+    if .eq[.parm[0] 1], .setbit[2 .clearbit[3 .clearbit[4 @adcon0]]],
+   
+     if .eq[.parm[0] 2], .clearbit[2 .setbit[3 .clearbit[4 @adcon0]]],
+   
+      if .eq[.parm[0] 3], .setbit[2 .setbit[3 .clearbit[4 @adcon0]]], 
+   
+       if .eq[.parm[0] 4], .clearbit[2 .clearbit[3 .setbit[4 @adcon0]]],
+   
+   ,,,,,
+ > adcon0
+ 
+ 
+ .setbit[0 @adcon0] > adcon0 
+ 
+ 
+ .dispose[]
+ 
+  
+   .clearbit[1 .clearbit[2 .clearbit[0 .setbit[7 .setbit[6 .setbit[5 .clearbit[4 @adcon1]]]]]]] > adcon1 
+  
+
+ .setbit[0 @ansela] > ansela	
+ 
+
+ 
+ .setbit[1 @adcon0] > adcon0
+ 
+ .ourwait[]
+ 
+ 
+ .addf[.mulf[256.0 .utof[.andu[3 @adresh]]] .utof[@adresl]]
+;
+
+
+
+d .ourwait is  
+ if .andu[2 @adcon0],
+  .ourwait[],
+ ,
+; 

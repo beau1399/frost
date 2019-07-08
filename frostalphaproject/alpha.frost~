@@ -1,0 +1,22 @@
+calls printch,add,parm,eq
+
+insert clock
+
+frost115200bps
+
+.abcs[0] 
+  
+d .abcs * is
+  .build['A'] 
+  .pstr[] 
+  .abcs[]
+; 
+  
+d .build * is
+ if .eq[ .parm[0] 'Z' ],, .add[ .parm[0]  1] .build[], 
+; 
+ 
+d .pstr * is
+ .printch[] .printch[ '?' ] 
+ if .eq[.parm[1] 0 ],, .pstr[],
+;

@@ -1,0 +1,2251 @@
+
+#include "hloe.inc"
+
+ __config (_INTRC_OSC_NOCLKOUT & _WDT_OFF & _PWRTE_ON & _MCLRE_OFF & _CP_OFF & _BOR_ON & _IESO_OFF & _FCMEN_OFF)
+
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+#ifdef HLLMULTITASK
+ExitISR:    
+
+  RESUME
+  
+  
+  retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+
+PC_Save res .1
+
+main code
+hloego:
+
+ 
+  clrf in_isr
+ 
+  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR 
+  movlw alt_stack-1
+  movwf alt_fsr 
+  
+  
+  clrf softstack0
+ 
+ bankisel stack
+ pagesel hlluserprog
+ goto hlluserprog
+hllupuser CODE
+hlluserprog: 
+ 
+
+ movlw .112 
+ PUSH 
+
+   banksel OSCCON
+   movfw OSCCON
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,oru
+
+ POP
+ banksel OSCCON
+ movwf OSCCON
+ 
+
+
+ movlw .17 
+ PUSH 
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw SYNC
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw CREN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw SPEN
+
+ PUSH 
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw TXEN
+
+ PUSH 
+
+
+ movlw TX9
+
+ PUSH 
+
+
+ movlw BRGH
+
+ PUSH 
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+ PUSH 
+
+
+ movlw SCKP
+
+ PUSH 
+
+   banksel BAUDCTL
+   movfw BAUDCTL
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCTL
+ movwf BAUDCTL
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ANSELH
+ movwf ANSELH
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel ANSEL
+ movwf ANSEL
+ 
+
+
+ movlw RCIE
+
+ PUSH 
+
+
+ movlw TXIE
+
+ PUSH 
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw TXIE
+
+ PUSH 
+
+
+ movlw RCIE
+
+ PUSH 
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+ PUSH 
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw .0 
+ PUSH 
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ FAR_CALL hlluserprog,cls
+
+
+ FAR_CALL hlluserprog,longf
+
+    
+hllprogend:
+ goto hllprogend
+ 
+
+hllt450 CODE
+longf:
+ movf FSR,w
+ 
+
+ FAR_CALL longf , kpush
+
+
+ movlw .10 
+ PUSH 
+
+
+ movlw .10 
+ PUSH 
+
+
+ movlw .65
+ PUSH 
+
+
+ FAR_CALL longf,wrapstringA
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL longf,longf
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt451 CODE
+makespaces:
+ movf FSR,w
+ 
+
+ FAR_CALL makespaces , kpush
+
+
+ movlw -.1
+ PUSH 
+
+
+ FAR_CALL makespaces,add
+
+
+ FAR_CALL makespaces,makespacesi
+
+
+ FAR_CALL makespaces,kpop
+
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ return
+ 
+
+hllt454 CODE
+makespacesi:
+ movf FSR,w
+ 
+
+ FAR_CALL makespacesi , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL makespacesi,parm
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J2 
+ 
+
+ movlw .32
+ PUSH 
+
+
+ FAR_CALL makespacesi,printch
+
+
+ movlw -.1
+ PUSH 
+
+
+ FAR_CALL makespacesi,add
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL makespacesi,makespacesi
+
+ 
+ goto hlllb51J3
+ 
+
+hlllb51J2:
+
+
+hlllb51J3:
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt455 CODE
+wrapstringA:
+ movf FSR,w
+ 
+
+ FAR_CALL wrapstringA , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringA,stringA
+
+ PUSH 
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringA,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringA,parm
+
+
+ FAR_CALL wrapstringA,printchxy
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringA,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringA,parm
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw -.1
+ PUSH 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringA,parm
+
+
+ FAR_CALL wrapstringA,add
+
+
+ FAR_CALL wrapstringA,wrapstringAi
+
+
+ FAR_CALL wrapstringA,kpop
+
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ return
+ 
+
+hllt456 CODE
+copy:
+ movf FSR,w
+ 
+
+ FAR_CALL copy , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL copy,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL copy,parm
+
+
+ FAR_CALL copy,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL copy , kpush
+ 
+
+ POP
+ FAR_CALL copy , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ FAR_CALL copy , kpop
+
+ PUSH 
+
+
+ FAR_CALL copy , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4519 CODE
+wrapstringAi:
+ movf FSR,w
+ 
+
+ FAR_CALL wrapstringAi , kpush
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,wrapstringAif
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J7 
+ 
+
+ FAR_CALL wrapstringAi,eat
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+ 
+ goto hlllb51J8
+ 
+
+hlllb51J7:
+
+
+hlllb51J8:
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J15 
+ 
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ movlw .47
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,geu
+
+
+ movlw .58 
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,geu
+
+
+ FAR_CALL wrapstringAi,andb
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ movlw .64
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,geu
+
+
+ movlw .156 
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,geu
+
+
+ FAR_CALL wrapstringAi,andb
+
+
+ FAR_CALL wrapstringAi,orb
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J13 
+ 
+
+ movlw .45
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .13
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .10
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ movlw .32
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J9 
+ 
+
+ movlw -.1
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,add
+
+
+ FAR_CALL wrapstringAi,makespaces
+
+ 
+ goto hlllb51J10
+ 
+
+hlllb51J9:
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,makespaces
+
+
+hlllb51J10:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ FAR_CALL wrapstringAi,eat
+
+
+ movlw -.1
+ PUSH 
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,add
+
+ 
+ goto hlllb51J14
+ 
+
+hlllb51J13:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .13
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .10
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,add
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ movlw .32
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J11 
+ 
+
+ movlw -.1
+ PUSH 
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,add
+
+
+ FAR_CALL wrapstringAi,makespaces
+
+ 
+ goto hlllb51J12
+ 
+
+hlllb51J11:
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,makespaces
+
+
+hlllb51J12:
+
+
+ FAR_CALL wrapstringAi,eat
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+hlllb51J14:
+
+ 
+ goto hlllb51J16
+ 
+
+hlllb51J15:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,printch
+
+
+ movlw -.1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,add
+
+
+hlllb51J16:
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,parm
+
+
+ FAR_CALL wrapstringAi,add
+
+
+ FAR_CALL wrapstringAi,stringA
+
+ PUSH 
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J17 
+ 
+
+ FAR_CALL wrapstringAi,remove
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAi,add
+
+
+ FAR_CALL wrapstringAi,restore
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL wrapstringAi,wrapstringAi
+
+ 
+ goto hlllb51J18
+ 
+
+hlllb51J17:
+
+
+hlllb51J18:
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt4520 CODE
+eat:
+ movf FSR,w
+ 
+
+ FAR_CALL eat , kpush
+
+
+ FAR_CALL eat,kpop
+
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ return
+ 
+
+hllt4525 CODE
+wrapstringAif:
+ movf FSR,w
+ 
+
+ FAR_CALL wrapstringAif , kpush
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,wrapstringAifin
+
+
+ movlw .1 
+ PUSH 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ FAR_CALL wrapstringAif,add
+
+
+ FAR_CALL wrapstringAif,geu
+
+
+ movlw .0 
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ FAR_CALL wrapstringAif,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J21 
+ 
+
+ movlw .0
+ PUSH 
+
+ 
+ goto hlllb51J22
+ 
+
+hlllb51J21:
+
+
+ movlw -.1
+ PUSH 
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ FAR_CALL wrapstringAif,add
+
+
+hlllb51J22:
+
+
+ FAR_CALL wrapstringAif,stringA
+
+ PUSH 
+
+
+ movlw .32
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,eq
+
+
+ FAR_CALL wrapstringAif,mul
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J23 
+ 
+
+ movlw .13
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,printch
+
+
+ movlw .10
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,printch
+
+
+ movlw .3
+ PUSH 
+
+
+ FAR_CALL wrapstringAif,parm
+
+
+ FAR_CALL wrapstringAif,makespaces
+
+
+ movlw .1
+	  
+ PUSH 
+
+ 
+ goto hlllb51J24
+ 
+
+hlllb51J23:
+
+
+ movlw .0
+ PUSH 
+
+
+hlllb51J24:
+
+
+ FAR_CALL wrapstringAif,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL wrapstringAif , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL wrapstringAif , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4528 CODE
+wrapstringAifin:
+ movf FSR,w
+ 
+
+ FAR_CALL wrapstringAifin , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,parm
+
+
+ FAR_CALL wrapstringAifin,add
+
+
+ FAR_CALL wrapstringAifin,stringA
+
+ PUSH 
+
+
+ movlw .32
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,eq
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,parm
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,parm
+
+
+ FAR_CALL wrapstringAifin,add
+
+
+ FAR_CALL wrapstringAifin,stringA
+
+ PUSH 
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,eq
+
+
+ FAR_CALL wrapstringAifin,add
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J26 
+ 
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,parm
+
+ 
+ goto hlllb51J27
+ 
+
+hlllb51J26:
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL wrapstringAifin,add
+
+ ;~IFTR~KDISCARD 
+
+
+ FAR_CALL wrapstringAifin,wrapstringAifin
+
+
+hlllb51J27:
+
+
+ KDISCARD
+
+
+ return
+ 
+
+hllt4529 CODE
+eqresult:
+ movf FSR,w
+ 
+
+ FAR_CALL eqresult , kpush
+
+
+ movlw .0
+ PUSH 
+
+
+ FAR_CALL eqresult,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL eqresult,geu
+
+
+ movlw .1
+ PUSH 
+
+
+ FAR_CALL eqresult,parm
+
+
+ movlw .2
+ PUSH 
+
+
+ FAR_CALL eqresult,geu
+
+
+ FAR_CALL eqresult,eq
+
+
+ FAR_CALL eqresult,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL eqresult , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ 
+;LOAD POINTER
+ movwf FSR
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL eqresult , kpop
+
+ PUSH 
+
+
+ return
+ 
+
+hllt4530 CODE
+ HLTABLE  stringA
+
+
+ retlw .79
+ 
+
+ retlw .83
+ 
+
+ retlw .57
+ 
+
+ retlw .32
+ 
+
+ retlw .39
+ 
+
+ retlw .39
+ 
+
+ retlw .54
+ 
+
+ retlw .56
+ 
+
+ retlw .48
+ 
+
+ retlw .57
+ 
+
+ retlw .39
+ 
+
+ retlw .39
+ 
+
+ retlw .32
+ 
+
+ retlw .114
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .32
+ 
+
+ retlw .111
+ 
+
+ retlw .110
+ 
+
+ retlw .32
+ 
+
+ retlw .77
+ 
+
+ retlw .111
+ 
+
+ retlw .116
+ 
+
+ retlw .111
+ 
+
+ retlw .114
+ 
+
+ retlw .111
+ 
+
+ retlw .108
+ 
+
+ retlw .97
+ 
+
+ retlw .32
+ 
+
+ retlw .69
+ 
+
+ retlw .88
+ 
+
+ retlw .79
+ 
+
+ retlw .82
+ 
+
+ retlw .98
+ 
+
+ retlw .117
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .121
+ 
+
+ retlw .115
+ 
+
+ retlw .116
+ 
+
+ retlw .101
+ 
+
+ retlw .109
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .117
+ 
+
+ retlw .115
+ 
+
+ retlw .105
+ 
+
+ retlw .110
+ 
+
+ retlw .103
+ 
+
+ retlw .32
+ 
+
+ retlw .116
+ 
+
+ retlw .104
+ 
+
+ retlw .101
+ 
+
+ retlw .32
+ 
+
+ retlw .77
+ 
+
+ retlw .111
+ 
+
+ retlw .116
+ 
+
+ retlw .111
+ 
+
+ retlw .114
+ 
+
+ retlw .111
+ 
+
+ retlw .108
+ 
+
+ retlw .97
+ 
+
+ retlw .32
+ 
+
+ retlw .54
+ 
+
+ retlw .56
+ 
+
+ retlw .48
+ 
+
+ retlw .57
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .83
+ 
+
+ retlw .53
+ 
+
+ retlw .48
+ 
+
+ retlw .32
+ 
+
+ retlw .66
+ 
+
+ retlw .117
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .100
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .83
+ 
+
+ retlw .45
+ 
+
+ retlw .53
+ 
+
+ retlw .48
+ 
+
+ retlw .67
+ 
+
+ retlw .32
+ 
+
+ retlw .98
+ 
+
+ retlw .117
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .121
+ 
+
+ retlw .115
+ 
+
+ retlw .116
+ 
+
+ retlw .101
+ 
+
+ retlw .109
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .102
+ 
+
+ retlw .114
+ 
+
+ retlw .111
+ 
+
+ retlw .109
+ 
+
+ retlw .32
+ 
+
+ retlw .99
+ 
+
+ retlw .111
+ 
+
+ retlw .109
+ 
+
+ retlw .112
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .105
+ 
+
+ retlw .101
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .117
+ 
+
+ retlw .99
+ 
+
+ retlw .104
+ 
+
+ retlw .32
+ 
+
+ retlw .97
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .87
+ 
+
+ retlw .84
+ 
+
+ retlw .80
+ 
+
+ retlw .67
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .84
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .111
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .71
+ 
+
+ retlw .105
+ 
+
+ retlw .109
+ 
+
+ retlw .105
+ 
+
+ retlw .120
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .77
+ 
+
+ retlw .105
+ 
+
+ retlw .100
+ 
+
+ retlw .119
+ 
+
+ retlw .101
+ 
+
+ retlw .115
+ 
+
+ retlw .116
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .99
+ 
+
+ retlw .105
+ 
+
+ retlw .101
+ 
+
+ retlw .110
+ 
+
+ retlw .116
+ 
+
+ retlw .105
+ 
+
+ retlw .102
+ 
+
+ retlw .105
+ 
+
+ retlw .99
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .100
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .109
+ 
+
+ retlw .111
+ 
+
+ retlw .107
+ 
+
+ retlw .101
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .105
+ 
+
+ retlw .103
+ 
+
+ retlw .110
+ 
+
+ retlw .97
+ 
+
+ retlw .108
+ 
+
+ retlw .32
+ 
+
+ retlw .66
+ 
+
+ retlw .114
+ 
+
+ retlw .111
+ 
+
+ retlw .97
+ 
+
+ retlw .100
+ 
+
+ retlw .99
+ 
+
+ retlw .97
+ 
+
+ retlw .115
+ 
+
+ retlw .116
+ 
+
+ retlw .105
+ 
+
+ retlw .110
+ 
+
+ retlw .103
+ 
+
+ retlw .44
+ 
+
+ retlw .32
+ 
+
+ retlw .97
+ 
+
+ retlw .110
+ 
+
+ retlw .100
+ 
+
+ retlw .32
+ 
+
+ retlw .83
+ 
+
+ retlw .84
+ 
+
+ retlw .68
+ 
+
+ retlw .45
+ 
+
+ retlw .98
+ 
+
+ retlw .117
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .54
+ 
+
+ retlw .56
+ 
+
+ retlw .48
+ 
+
+ retlw .57
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .121
+ 
+
+ retlw .115
+ 
+
+ retlw .116
+ 
+
+ retlw .101
+ 
+
+ retlw .109
+ 
+
+ retlw .115
+ 
+
+ retlw .32
+ 
+
+ retlw .102
+ 
+
+ retlw .114
+ 
+
+ retlw .111
+ 
+
+ retlw .109
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .101
+ 
+
+ retlw .118
+ 
+
+ retlw .101
+ 
+
+ retlw .114
+ 
+
+ retlw .97
+ 
+
+ retlw .108
+ 
+
+ retlw .32
+ 
+
+ retlw .115
+ 
+
+ retlw .117
+ 
+
+ retlw .112
+ 
+
+ retlw .112
+ 
+
+ retlw .108
+ 
+
+ retlw .105
+ 
+
+ retlw .101
+ 
+
+ retlw .114
+ 
+
+ retlw .115
+ 
+
+ retlw .46
+ 
+
+ retlw .0

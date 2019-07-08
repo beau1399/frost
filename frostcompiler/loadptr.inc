@@ -1,0 +1,4 @@
+
+;LOAD POINTER
+ movwf FSR
+ 

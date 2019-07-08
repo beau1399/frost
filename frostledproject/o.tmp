@@ -1,0 +1,35 @@
+event 1 is
+
+
+
+ 
+ .add[1 .mul[-1 @cval]]    > cval
+ @cval > portc
+;
+
+
+
+
+0 > cval
+
+
+.oru[112 @osccon] > osccon
+
+
+
+0>trisc
+
+
+0>portc
+
+
+.clearbit[tmr1cs .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon 
+
+
+
+
