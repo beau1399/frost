@@ -14,7 +14,6 @@ Some salient features of the Frost language and its HLOE runtime are listed belo
 * Serial I/O and ANSI terminal support   
 * Support for string literals and look-up tables  
 * Modular, expandable runtime library 
-* Macros  
 * Full support for PIC features (timers, analog sensing and signal generation, etc.) 
 * Extensive facilities for portability, e.g. between "mid-range" and "enhanced mid-range" devices, and to other Microchip Technology devices 
 
@@ -89,7 +88,14 @@ With these steps complete, you should be able to program from the shell terminal
 
 Above, the -P parameter is followed by the PIC device name. The -M parameter tells pk2cmd to overwrite all memory. The -T parameter instructs pk2cmd to leave the target device powered on. Finally, -F is followed by the file name, which will always be "hloe.hex" for Frost development.
 
+If these steps do not work for you, you may found [this discussion](https://askubuntu.com/questions/434948/install-archlinux-package-pk2cmd-plus-on-ubuntu-12-04-64bit) useful. The steps documented there are not exactly what I did, but do seem to work for many people.
+
 ## Some Notes on the Linux Version
+
+The Frost cross-compiler has always been built using GNU development tools, like Bison and GCC. Though these were originally run on Cygwin and MinGW, respectively, not Linux *per se*, porting to code to a true Linux environment was not very difficult. Here is a list of some of the steps that were required:
+
+* In once case, a search for the newline character (10) had to be augmented to consider the return character (13) as well.
+* The contents of the "make.bat" generated and executed to translate the Frost output assembly language into a useful ".hex" file are different. The commands look similar, and the file retains its ".bat" extension, but these commands are now wrapped in a call to Wine. This allows them to invoke the (Windows) MPASM / MPLINK tools. 
 
 BUILDING THE FROST OCMPILER
 BAT FILES
