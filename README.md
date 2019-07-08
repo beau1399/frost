@@ -96,6 +96,7 @@ The Frost cross-compiler has always been built using GNU development tools, like
 
 * In once case, a search for the newline character (10) had to be augmented to consider the return character (13) as well.
 * The contents of the "make.bat" generated and executed to translate the Frost output assembly language into a useful ".hex" file are different. The commands look similar, and the file retains its ".bat" extension, but these commands are now wrapped in a call to Wine. This allows them to invoke the (Windows) MPASM / MPLINK tools. 
+* The Linux version of the script used to build the cross-compiler, **xmake.sh**, is slightly different from the analogous MinGW / Windows batch file (**winfinalmake.bat**).
 
 ### Building the Cross-Compiler
 
