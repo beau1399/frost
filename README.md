@@ -1,10 +1,12 @@
+## Note
+
+**This repository holds the Linux-hosted version of the Frost cross-compiler. The Windows version is hosted with my blog, [here](http://beauscode.blogspot.com/2013/02/language-and-development-tool-for.html). The blog also contains detailed discussion of the Frost language, which is not duplicated here.** 
+
+If you are trying to ascertain the nature and capabilitied of Frost, its cross-compiler, and its runtime, consult the blog. Then, for specifics about how to use these things in a Linux environment, continue reading below.
+
 ## Overview
 
-**Frost** is a new language specifically tailored to the capabilities of Microchip Technology PIC microcontrollers, and to the real-time, embedded, and low-cost / low budget millieus in which they have traditionally been most at home. 
-
-This repository holds the Linux-hosted version of the Frost cross-compiler. The Windows version is hosted with my blog, [here](http://beauscode.blogspot.com/2013/02/language-and-development-tool-for.html). 
-
-The blog also contains detailed discussion of the Frost language, which is not duplicated here. Both this Git archive and the downloads available at the blog contain the canonical large Frost application, which is a PID controller of the sort one might use for an autopilot, cruise control, robot, or other cybernetic control system. 
+**Frost** is a new language specifically tailored to the capabilities of Microchip Technology PIC microcontrollers, and to the real-time, embedded, and low-cost / low budget millieus in which they have traditionally been most at home. Both this Git archive and the downloads available at the blog contain the canonical large Frost application, which is a PID controller of the sort one might use for an autopilot, cruise control, robot, or other cybernetic control system. 
 
 Some salient features of the Frost language and its HLOE runtime are listed below:
 
