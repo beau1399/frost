@@ -9,7 +9,7 @@ The blog also contains detailed discussion of the Frost language, which is not d
 Some salient features of the Frost language and its HLOE runtime are listed below:
 
 * Subroutines, functions and parameters    
-* A 16-bit, general-purpose real number type (SFP, also available from [its own repository](https://github.com/beau1399/frost))
+* A 16-bit, general-purpose real number type (SFP, also available from [its own repository](https://github.com/beau1399/sfp))
 * Event handlers, with automatic preemption and constant interrupt latency 
 * Serial I/O and ANSI terminal support   
 * Support for string literals and look-up tables  
