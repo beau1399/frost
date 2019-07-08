@@ -42,9 +42,11 @@ The small disadvantage is that all Frost projects developed must reside in subfo
 
 Once you have cloned the Git archive and met the prerequisite requirements, you can drill down into any of the sample project folders and invoke executable **frostcompiler** to generate the correct binary, e.g.:
 
-```dell@dell-Latitude-E6420:~/frost/frostledproject$ ../frostcompiler/frostcompiler file ./led.frost board lpc proc 16F690```
+```$ ../frostcompiler/frostcompiler file ./led.frost board lpc proc 16F690```
+
+This is the appropriate build command for the sample project found in the "frostledproject" folder, which blinks an LED. The "lpc" and "16F690" parameters reflect the use of the Microchip "Low Pin Count" demo board and the 16F690 processor it hosts. For more information about the various "board" and "proc" values available for development, see the blog.
+
+TODO - case implications for processor e.g. above
 
 
 
-
-FOLDER STRUCTURE - UNDER LINUX
