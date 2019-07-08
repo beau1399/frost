@@ -97,7 +97,13 @@ The Frost cross-compiler has always been built using GNU development tools, like
 * In once case, a search for the newline character (10) had to be augmented to consider the return character (13) as well.
 * The contents of the "make.bat" generated and executed to translate the Frost output assembly language into a useful ".hex" file are different. The commands look similar, and the file retains its ".bat" extension, but these commands are now wrapped in a call to Wine. This allows them to invoke the (Windows) MPASM / MPLINK tools. 
 
-BUILDING THE FROST OCMPILER
-BAT FILES
+### Building the Cross-Compiler
 
+This process begins with a Flex (lexer) / Bison (compiler-maker) step, executed from a shell session in the "frost/frostcompiler" folder of the archive:
+
+```$ ./fmak```
+
+Finally, a C++ build step must be performed, from the same folder:
+
+```$ ./xmake.sh```
 
