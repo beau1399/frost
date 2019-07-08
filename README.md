@@ -85,10 +85,11 @@ Finally, make the relevant file executable. Again, edit this command to reflect 
 
 With these steps complete, you should be able to program from the shell terminal, directly from the folder in which the "hloe.hex" folder that the Frost cross-compiler generates, e.g.
 
-$ pk2cmd -PPIC16F690 -M -T -Fhloe.hex
+```$ pk2cmd -PPIC16F690 -M -T -Fhloe.hex```
 
 Above, the -P parameter is followed by the PIC device name. The -M parameter tells pk2cmd to overwrite all memory. The -T parameter instructs pk2cmd to leave the target device powered on. Finally, -F is followed by the file name, which will always be "hloe.hex" for Frost development.
 
+## Some Notes on the Linux Version
 
 BUILDING THE FROST OCMPILER
 BAT FILES
