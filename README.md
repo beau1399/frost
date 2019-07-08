@@ -1,6 +1,6 @@
 **This repository holds the Linux-hosted version of the Frost cross-compiler. The Windows version is hosted on my blog, [here](http://beauscode.blogspot.com/2013/02/language-and-development-tool-for.html). The blog also contains detailed discussion of the Frost language, which is not duplicated here.** 
 
-If you are trying to ascertain the nature and capabilitied of Frost, its cross-compiler, and its runtime, consult the blog. Then, for specifics about how to use these things in a Linux environment, continue reading below.
+If you are trying to ascertain the nature and capabilities of Frost, consult the blog. Then, for specifics about how to use these things in a Linux environment, continue reading below.
 
 ## Overview
 
