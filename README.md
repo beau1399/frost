@@ -34,7 +34,7 @@ The operation of the Frost cross-compiler relies on an environment variable call
 
 ```export FROST='../frostcompiler/'```
 
-The advantage of expressing this variable as a relative path is that is works for both the Linux and Windows (Wine) components of the Frost development stack; an absolute path would look different in Linux vs. Windows / Wine.
+The advantage of expressing this variable as a relative path is that is works for both the Linux and Windows (Wine) components of the Frost development stack; an absolute path would look different in Linux vs. Windows / Wine. Of course, editing ".bashrc" in this manner will, at a minimum, require you to close and re-open your terminal window, if not log off altogether.
 
 The small disadvantage is that all Frost projects developed must reside in subfolders of the "Frost" folder into which the instant Git repository residers. Note that the sample projects supplied with the repository already respect this structure.
 
