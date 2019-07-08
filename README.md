@@ -1,6 +1,3 @@
-# frost
-Higher-level language and runtime for 8-bit Microchip Technology PIC microcontrollers
-
 ## Overview
 
 **Frost** is a new language specifically tailored to the capabilities of Microchip Technology PIC microcontrollers, and to the real-time, embedded, and low-cost / low budget millieus in which they have traditionally been most at home. This repository holds the Linux-hosted version of the Frost cross-compiler; the Windows version is hosted in my blog hosted at [here](http://beauscode.blogspot.com/2013/02/language-and-development-tool-for.html).
