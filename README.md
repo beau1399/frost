@@ -99,6 +99,9 @@ The Frost cross-compiler has always been built using GNU development tools, like
 * In once case, a search for the newline character (10) had to be augmented to consider the return character (13) as well.
 * The contents of the "make.bat" generated and executed to translate the Frost output assembly language into a useful ".hex" file are different. The commands look similar, and the file retains its ".bat" extension, but these commands are now wrapped in a call to Wine. This allows them to invoke the (Windows) MPASM / MPLINK tools. 
 * The Linux version of the script used to build the cross-compiler, **xmake.sh**, is slightly different from the analogous MinGW / Windows batch file (**winfinalmake.bat**).
+* Some processor-specific files were renamed to conform to the lower-case convention used for processor names under Linux.
+
+Note that many of the source files in the "frostcompiler" folder still use MS-DOS line ending conventions. If you open these in certain Linux editors, you will see ^M control character indications at line ends. These have not been removed since things seem to be working as-is. However, should you find need to edit these files, or create new files (e.g. for new boards or processors), you should not need to include any extra MS-DOS line terminators.
 
 ### Building the Cross-Compiler
 
