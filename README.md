@@ -23,7 +23,7 @@ To use this archive, you must have both the MPLAB IDE installed and the Wine emu
 
 The instructions below give very specific information about how I have been able to use the Frost cross-compiler and all of the Microchip programs it relies on using an Ubuntu 18.04 installation. The general steps will be similar for other distributions, though these will require you to place the steps into the context of your own installation, e.g. using your distribution's own package manager to install things.
 
-Note that the "MPLAB X" IDE is not what you need; rather, its predecessor IDE (which is not branded as "X") is what is required. I am using version 8.92 of MPLAB, which is available [here](http://ww1.microchip.com/downloads/en/DeviceDoc/MPLAB_IDE_8_92.zip). 
+Note that the "MPLAB X" IDE is not what you need; rather, its predecessor IDE (which is not branded as "X") is what is required. I am using version 8.50 of MPLAB, which is available [here](http://ww1.microchip.com/downloads/en/DeviceDoc/MPLAB_IDE_8_50.zip). This version seems to offer the best overall compatibility with the devices I have attempted to target. 
 
 The MPLAB installation CD you likely received with you Microchip Technology programmer or starter board should suffice as well. If you choose to use the link supplied, though, you will need to create a free Microchip account.
 
@@ -43,9 +43,11 @@ The small disadvantage is that all Frost projects developed must reside in subfo
 
 Once you have cloned the Git archive and met the prerequisite requirements, you can drill down into any of the sample project folders and invoke executable **frostcompiler** to generate the correct binary, e.g.:
 
-```$ ../frostcompiler/frostcompiler file ./led.frost board lpc proc 16F690```
+```$ ../frostcompiler/frostcompiler file ./led.frost board lpc proc 16f690```
 
-This is the appropriate build command for the sample project found in the "frostledproject" folder, which blinks an LED. The "lpc" and "16F690" parameters reflect the use of the Microchip "Low Pin Count" demo board and the 16F690 processor it hosts. For more information about the various "board" and "proc" values available for development, see the blog.
+This is the appropriate build command for the sample project found in the "frostledproject" folder, which blinks an LED. The "lpc" and "16f690" parameters reflect the use of the Microchip "Low Pin Count" demo board and the 16F690 processor it hosts. For more information about the various "board" and "proc" values available for development, see the blog.
+
+Note that it is important not to capitalize the "f" in the "16f690" parameter. This was not an issue in the Windows version of Frost, but Linux is case-sensitive for file names, and the relevant files used by the Frost cross-compiler all use the lower-case letter F.
 
 TODO - case implications for processor e.g. above
 
