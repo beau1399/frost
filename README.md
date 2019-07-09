@@ -23,7 +23,7 @@ To use this archive, you must have both the MPLAB IDE installed and the Wine emu
 
 The instructions below give very specific information about how I have been able to use the Frost cross-compiler and all of the Microchip programs it relies on using an Ubuntu 18.04 installation. The general steps will be similar for other distributions, though these will require you to place the steps into the context of your own installation, e.g. using your distribution's own package manager to install things.
 
-Note that the "MPLAB X" IDE is not what you need; rather, its predecessor IDE (which is not branded as "X") is what is required. I am using version 8.00 of MPLAB, which is available [here](http://ww1.microchip.com/downloads/en/DeviceDoc/mpl610full.zip). 
+Note that the "MPLAB X" IDE is not what you need; rather, its predecessor IDE (which is not branded as "X") is what is required. I am using version 8.92 of MPLAB, which is available [here](http://ww1.microchip.com/downloads/en/DeviceDoc/MPLAB_IDE_8_92.zip). 
 
 The MPLAB installation CD you likely received with you Microchip Technology programmer or starter board should suffice as well. If you choose to use the link supplied, though, you will need to create a free Microchip account.
 
