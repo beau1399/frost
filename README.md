@@ -90,6 +90,8 @@ With these steps complete, you should be able to program from the shell terminal
 
 Above, the -P parameter is followed by the PIC device name. The -M parameter tells pk2cmd to overwrite all memory. The -T parameter instructs pk2cmd to leave the target device powered on. Finally, -F is followed by the file name, which will always be "hloe.hex" for Frost development.
 
+You may need to include the -R flag as well, to release MCLR, e.g. for boards that aren't as fully wired as the LPC.
+
 If these steps do not work for you, you may found [this discussion](https://askubuntu.com/questions/434948/install-archlinux-package-pk2cmd-plus-on-ubuntu-12-04-64bit) useful. The steps documented there are not exactly what I did, but do seem to work for many people.
 
 ## Some Notes on the Linux Version
