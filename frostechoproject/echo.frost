@@ -10,16 +10,9 @@ frost300baud
 /.clearbit[sckp @baudcon] > baudcon
 /.clearbit[sckp @baudctl] > baudctl
 
-/.printch['A']
-/.printch['B']
-/.printch['C']
-/.printch['D']
-
-
 .dofunc[]
 
 d .dofunc is
  .printch[.getch[]] 
- /.printch['A']
  .dofunc[] 
 ;
