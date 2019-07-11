@@ -2,25 +2,18 @@ var cval
 
 /Timer 1 tick event 
 event 1 is
-
- subi(12)(@cval) > cval
- @cval > portb
+ subi(1)(@cval) > cval
+ @cval > portc
 ;
 
-
 /Main Task
-
 0 > cval
 
 / Insert board-specific clock setup routine
 insert clock
 
 / Make PORTC (LPC demo board LEDs) output
-0>trisb
-0>anselb
-
-/ Clear PORTC
-0>portb
+0>trisc
 
 / Start the 6hz timer
 insert slowtimer
