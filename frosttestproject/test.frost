@@ -2,7 +2,7 @@ calls printf,divf
 
 insert clock
 
-frost115200bps
+frost115200baud
 
 .printch[13] .printch[10]
 .printf[.divf[-999999.9 9.0]]

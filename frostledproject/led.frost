@@ -3,10 +3,8 @@ var cval
 /Timer 1 tick event 
 event 1 is
 
-/ Set PORTC to (1 - PORTC)
-/ will result in single led blink
- subi(1)(@cval) > cval
- @cval > portc
+ subi(12)(@cval) > cval
+ @cval > portb
 ;
 
 
@@ -18,10 +16,11 @@ event 1 is
 insert clock
 
 / Make PORTC (LPC demo board LEDs) output
-0>trisc
+0>trisb
+0>anselb
 
 / Clear PORTC
-0>portc
+0>portb
 
 / Start the 6hz timer
 insert slowtimer

@@ -1,8 +1,8 @@
 
 #include "hloe.inc"
 
- __config (_INTRC_OSC_NOCLKOUT & _WDT_OFF & _PWRTE_ON & _MCLRE_OFF & _CP_OFF & _BOR_ON & _IESO_OFF & _FCMEN_OFF)
-
+ __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
+ __config  _CONFIG2,_PLLEN_ON & _STVREN_ON
 
 
 
@@ -18,13 +18,19 @@ ISR:
 
  PREEMPT
 #endif
+
+
+
+
+
+
+
 #ifdef HLLMULTITASK
 ExitISR:    
-
-  RESUME
-  
-  
-  retfie
+ 
+ RESUME
+ 
+ retfie
 #endif
 
 mainvars udata_shr	
@@ -35,30 +41,40 @@ pbaseisr res .1
 pbase res .1
 #endif
 
-PC_Save res .1
-
 main code
 hloego:
 
- 
   clrf in_isr
  
-  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
-  movwf FSR 
-  movlw alt_stack-1
-  movwf alt_fsr 
-  
-  
-  clrf softstack0
+  movlw LOW (stack-1)		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR0L 
+  movlw HIGH (stack-1)
+  movwf FSR0H
  
- bankisel stack
+  
+ movlw LOW (alt_stack-1)
+ movwf FSR1L
+ movlw HIGH (alt_stack-1)
+ movwf FSR1H
+ 
+ 
+ clrf softstack0 
+ 
+ 
  pagesel hlluserprog
  goto hlluserprog
+
 hllupuser CODE
 hlluserprog: 
  
 
  movlw .112 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+
+ movlw .247 
 
    
  FAR_CALL hlluserprog ,safepush
@@ -73,81 +89,15 @@ hlluserprog:
 
 
  
+ HALF_FAR_CALL andu
+
+
+ 
  FAR_CALL hlluserprog,oru
 
  POP
  banksel OSCCON
  movwf OSCCON
- 
-
-
- movlw .17 
-
-   
- FAR_CALL hlluserprog ,safepush
-
- POP
- banksel SPBRG
- movwf SPBRG
- 
-
-
- movlw .0 
-
-   
- FAR_CALL hlluserprog ,safepush
-
- POP
- banksel SPBRGH
- movwf SPBRGH
- 
-
-
- movlw SYNC
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel TXSTA
-   movfw TXSTA
-   
-   
-
-   
- HALF_FAR_CALL safepush
-
-
- 
- FAR_CALL hlluserprog,clearbit
-
- POP
- banksel TXSTA
- movwf TXSTA
- 
-
-
- movlw CREN
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel RCSTA
-   movfw RCSTA
-   
-   
-
-   
- HALF_FAR_CALL safepush
-
-
- 
- FAR_CALL hlluserprog,clearbit
-
- POP
- banksel RCSTA
- movwf RCSTA
  
 
 
@@ -172,6 +122,146 @@ hlluserprog:
  POP
  banksel RCSTA
  movwf RCSTA
+ 
+
+
+ movlw BRGH
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel BAUDCON
+   movfw BAUDCON
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCON
+ movwf BAUDCON
+ 
+
+
+ movlw .64 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .3 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw TX9
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+
+ movlw TXEN
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+
+ movlw SYNC
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ HALF_FAR_CALL clearbit
+
+
+ 
+ HALF_FAR_CALL setbit
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw SCKP
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel BAUDCON
+   movfw BAUDCON
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCON
+ movwf BAUDCON
  
 
 
@@ -199,28 +289,13 @@ hlluserprog:
  
 
 
- movlw TXEN
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-
- movlw TX9
-
+ movlw .5 
 
    
  FAR_CALL hlluserprog ,safepush
 
-
- movlw BRGH
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel TXSTA
-   movfw TXSTA
+   banksel TRISB
+   movfw TRISB
    
    
 
@@ -229,27 +304,82 @@ hlluserprog:
 
 
  
- HALF_FAR_CALL setbit
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TRISB
+ movwf TRISB
+ 
+
+
+ movlw .5 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   
+ HALF_FAR_CALL safepush
 
 
  
- HALF_FAR_CALL clearbit
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw .1 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw TXCKSEL
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel APFCON1
+   movfw APFCON1
+   
+   
+
+   
+ HALF_FAR_CALL safepush
 
 
  
  FAR_CALL hlluserprog,setbit
 
  POP
- banksel TXSTA
- movwf TXSTA
+ banksel APFCON1
+ movwf APFCON1
  
-
-
- movlw BRG16
-
-
-   
- FAR_CALL hlluserprog ,safepush
 
 
  movlw SCKP
@@ -258,82 +388,21 @@ hlluserprog:
    
  FAR_CALL hlluserprog ,safepush
 
-   banksel BAUDCTL
-   movfw BAUDCTL
+   banksel BAUDCON
+   movfw BAUDCON
    
    
 
    
  HALF_FAR_CALL safepush
-
-
- 
- HALF_FAR_CALL setbit
-
-
- 
- FAR_CALL hlluserprog,setbit
-
- POP
- banksel BAUDCTL
- movwf BAUDCTL
- 
-
-
- movlw .0 
-
-   
- FAR_CALL hlluserprog ,safepush
-
- POP
- banksel ANSELH
- movwf ANSELH
- 
-
-
- movlw .0 
-
-   
- FAR_CALL hlluserprog ,safepush
-
- POP
- banksel ANSEL
- movwf ANSEL
- 
-
-
- movlw RCIE
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-
- movlw TXIE
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel PIE1
-   movfw PIE1
-   
-   
-
-   
- HALF_FAR_CALL safepush
-
-
- 
- HALF_FAR_CALL clearbit
 
 
  
  FAR_CALL hlluserprog,clearbit
 
  POP
- banksel PIE1
- movwf PIE1
+ banksel BAUDCON
+ movwf BAUDCON
  
 
 
@@ -353,7 +422,8 @@ hllprogend:
 
 hllt450 CODE
 abcs:
- movf FSR,w
+
+ movf FSR0L,w
  
 
  
@@ -384,7 +454,8 @@ abcs:
 
 hllt453 CODE
 build:
- movf FSR,w
+
+ movf FSR0L,w
  
 
  
@@ -457,7 +528,8 @@ hlllb51J2:
 
 hllt456 CODE
 pstr:
- movf FSR,w
+
+ movf FSR0L,w
  
 
  
@@ -511,6 +583,24 @@ hlllb51J5:
 hllprgen2:
  goto hllprgen2
  
+
+
+
+
+
+ 
+
+ 
+hlog1h CODE
+andu: 
+ POP
+ andwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+ 
+
+
 
 
 

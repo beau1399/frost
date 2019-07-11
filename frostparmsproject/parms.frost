@@ -2,7 +2,7 @@ calls printu,negti
 
 insert clock
 
-frost115200bps
+frost115200baud
 
 .printu[  .subtr[4 3] ]
 

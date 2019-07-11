@@ -1,16 +1,8 @@
 
 #include "hloe.inc"
 
-
-;
-; R O B O T
-;
-; C O N F I G
-;
-
-
- __config (_EXTRC_OSC_NOCLKOUT& _WDT_OFF  & _MCLRE_OFF & _IESO_OFF & _FCMEN_OFF  & _PWRTE_ON & _BOR_OFF)
-
+ __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
+ __config  _CONFIG2,_PLLEN_ON & _STVREN_ON
 
 
 
@@ -27,17 +19,18 @@ ISR:
  PREEMPT
 #endif
 
-;
-; R O B O T
-;
-; H E A D E R
-;
+
+
+
+
+
 
 #ifdef HLLMULTITASK
 ExitISR:    
- RESUME 
  
-  retfie
+ RESUME
+ 
+ retfie
 #endif
 
 mainvars udata_shr	
@@ -47,36 +40,89 @@ pbaseisr res .1
 #else
 pbase res .1
 #endif
-PC_Save res .1
 
 main code
 hloego:
 
- 
-
-  
   clrf in_isr
  
-  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
-  movwf FSR 
-  movlw alt_stack-1
-  movwf alt_fsr 
+  movlw LOW (stack-1)		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR0L 
+  movlw HIGH (stack-1)
+  movwf FSR0H
+ 
+  
+ movlw LOW (alt_stack-1)
+ movwf FSR1L
+ movlw HIGH (alt_stack-1)
+ movwf FSR1H
  
  
  clrf softstack0 
  
- bankisel stack
+ 
  pagesel hlluserprog
  goto hlluserprog
+
 hllupuser CODE
 hlluserprog: 
  
 
- movlw SYNC
+ movlw .112 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+
+ movlw .247 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel OSCCON
+   movfw OSCCON
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ HALF_FAR_CALL andu
+
+
+ 
+ FAR_CALL hlluserprog,oru
+
+ POP
+ banksel OSCCON
+ movwf OSCCON
+ 
+
+
+ movlw CREN
 
 
    
  FAR_CALL hlluserprog ,safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
 
 
  movlw BRGH
@@ -95,11 +141,7 @@ hlluserprog:
 
 
  
- HALF_FAR_CALL setbit
-
-
- 
- FAR_CALL hlluserprog,clearbit
+ FAR_CALL hlluserprog,setbit
 
  POP
  banksel TXSTA
@@ -113,67 +155,8 @@ hlluserprog:
    
  FAR_CALL hlluserprog ,safepush
 
-
- movlw SCKP
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel BAUDCTL
-   movfw BAUDCTL
-   
-   
-
-   
- HALF_FAR_CALL safepush
-
-
- 
- HALF_FAR_CALL setbit
-
-
- 
- FAR_CALL hlluserprog,setbit
-
- POP
- banksel BAUDCTL
- movwf BAUDCTL
- 
-
-
- movlw CREN
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel RCSTA
-   movfw RCSTA
-   
-   
-
-   
- HALF_FAR_CALL safepush
-
-
- 
- FAR_CALL hlluserprog,clearbit
-
- POP
- banksel RCSTA
- movwf RCSTA
- 
-
-
- movlw CREN
-
-
-   
- FAR_CALL hlluserprog ,safepush
-
-   banksel RCSTA
-   movfw RCSTA
+   banksel BAUDCON
+   movfw BAUDCON
    
    
 
@@ -185,12 +168,12 @@ hlluserprog:
  FAR_CALL hlluserprog,setbit
 
  POP
- banksel RCSTA
- movwf RCSTA
+ banksel BAUDCON
+ movwf BAUDCON
  
 
 
- movlw .50  
+ movlw .42 
 
    
  FAR_CALL hlluserprog ,safepush
@@ -201,7 +184,7 @@ hlluserprog:
  
 
 
- movlw .0  
+ movlw .104 
 
    
  FAR_CALL hlluserprog ,safepush
@@ -212,6 +195,13 @@ hlluserprog:
  
 
 
+ movlw TX9
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+
  movlw TXEN
 
 
@@ -219,7 +209,7 @@ hlluserprog:
  FAR_CALL hlluserprog ,safepush
 
 
- movlw TX9
+ movlw SYNC
 
 
    
@@ -239,11 +229,39 @@ hlluserprog:
 
 
  
- FAR_CALL hlluserprog,setbit
+ HALF_FAR_CALL setbit
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
 
  POP
  banksel TXSTA
  movwf TXSTA
+ 
+
+
+ movlw SCKP
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel BAUDCON
+   movfw BAUDCON
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCON
+ movwf BAUDCON
  
 
 
@@ -268,6 +286,123 @@ hlluserprog:
  POP
  banksel RCSTA
  movwf RCSTA
+ 
+
+
+ movlw .5 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel TRISB
+   movfw TRISB
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TRISB
+ movwf TRISB
+ 
+
+
+ movlw .5 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw .1 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw TXCKSEL
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel APFCON1
+   movfw APFCON1
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel APFCON1
+ movwf APFCON1
+ 
+
+
+ movlw SCKP
+
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+   banksel BAUDCON
+   movfw BAUDCON
+   
+   
+
+   
+ HALF_FAR_CALL safepush
+
+
+ 
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel BAUDCON
+ movwf BAUDCON
  
 
 
@@ -297,6 +432,24 @@ dofunc:
 hllprgen2:
  goto hllprgen2
  
+
+
+
+
+
+ 
+
+ 
+hlog1h CODE
+andu: 
+ POP
+ andwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+ 
+
+
 
 
 
@@ -645,7 +798,9 @@ printch:
  btfss PIR1,TXIF  
  goto $-1  
  return  
- 
+
+
+
 
 hllkrna04 CODE
  
@@ -920,6 +1075,26 @@ dispose:
  DISCARD
  return 
  
+ 
+
+
+
+
+
+
+ 
+ 
+
+ 
+hlog1d CODE
+
+oru: 
+ POP
+ iorwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+
  
 
 

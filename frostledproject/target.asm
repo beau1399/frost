@@ -1,8 +1,8 @@
 
 #include "hloe.inc"
 
- __config (_INTRC_OSC_NOCLKOUT & _WDT_OFF & _PWRTE_ON & _MCLRE_OFF & _CP_OFF & _BOR_ON & _IESO_OFF & _FCMEN_OFF)
-
+ __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
+ __config  _CONFIG2,_PLLEN_ON & _STVREN_ON
 
 hllv2cval UDATA
 hllcvall RES .1
@@ -29,7 +29,7 @@ ISR:
  bcf PIR1,TMR1IF
 
 
- movlw .1 
+ movlw .12 
 
    
  FAR_CALL ISR ,safepush
@@ -70,20 +70,26 @@ ISR:
  FAR_CALL ISR ,safepush
 
  POP
- banksel PORTC
- movwf PORTC
+ banksel PORTB
+ movwf PORTB
  
 
 
 hllnotisr49:
 
+
+
+
+
+
+
+
 #ifdef HLLMULTITASK
 ExitISR:    
-
-  RESUME
-  
-  
-  retfie
+ 
+ RESUME
+ 
+ retfie
 #endif
 
 mainvars udata_shr	
@@ -94,25 +100,29 @@ pbaseisr res .1
 pbase res .1
 #endif
 
-PC_Save res .1
-
 main code
 hloego:
 
- 
   clrf in_isr
  
-  movlw stack-1		;Set up stack starting position based on literals det. by incremental linker
-  movwf FSR 
-  movlw alt_stack-1
-  movwf alt_fsr 
-  
-  
-  clrf softstack0
+  movlw LOW (stack-1)		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR0L 
+  movlw HIGH (stack-1)
+  movwf FSR0H
  
- bankisel stack
+  
+ movlw LOW (alt_stack-1)
+ movwf FSR1L
+ movlw HIGH (alt_stack-1)
+ movwf FSR1H
+ 
+ 
+ clrf softstack0 
+ 
+ 
  pagesel hlluserprog
  goto hlluserprog
+
 hllupuser CODE
 hlluserprog: 
  
@@ -133,6 +143,12 @@ hlluserprog:
    
  FAR_CALL hlluserprog ,safepush
 
+
+ movlw .247 
+
+   
+ FAR_CALL hlluserprog ,safepush
+
    banksel OSCCON
    movfw OSCCON
    
@@ -140,6 +156,10 @@ hlluserprog:
 
    
  HALF_FAR_CALL safepush
+
+
+ 
+ HALF_FAR_CALL andu
 
 
  
@@ -157,8 +177,8 @@ hlluserprog:
  FAR_CALL hlluserprog ,safepush
 
  POP
- banksel TRISC
- movwf TRISC
+ banksel TRISB
+ movwf TRISB
  
 
 
@@ -168,12 +188,23 @@ hlluserprog:
  FAR_CALL hlluserprog ,safepush
 
  POP
- banksel PORTC
- movwf PORTC
+ banksel ANSELB
+ movwf ANSELB
  
 
 
- movlw TMR1CS
+ movlw .0
+
+   
+ FAR_CALL hlluserprog ,safepush
+
+ POP
+ banksel PORTB
+ movwf PORTB
+ 
+
+
+ movlw TMR1CS0
 
 
    
@@ -354,6 +385,24 @@ hllprogend:
 hllprgen2:
  goto hllprgen2
  
+
+
+
+
+
+ 
+
+ 
+hlog1h CODE
+andu: 
+ POP
+ andwf HLINDF,w
+ decf HLFSR,f 
+ PUSH
+ return
+ 
+
+
 
 
 
@@ -890,7 +939,7 @@ hllkrna06 CODE
 getch:
  banksel PIR1
 geth2: 
- btfss PIR1,RCIF
+ btfsc PIR1,RCIF
  goto geth2
  banksel RCREG
  movf RCREG,w

@@ -8,7 +8,7 @@
 calls printu,printch,gti,notb,geu,debugptru,orb,divu,powf,mulf,logf,printf,utof,ftou,addf
  
 insert clock
-frost115200bps
+frost115200baud
 
 .printch[13]
 .maing[2] /First prime tested is 2

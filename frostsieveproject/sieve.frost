@@ -17,7 +17,7 @@ calls modu
 /calls fastmodu
  
 insert clock
-frost115200bps
+frost115200baud
 
 .printch[13]
 .maing[2] /First number tested is 2

@@ -1,14 +1,25 @@
-calls printch,getch
-
-
-
+calls printch,clearbit,getch,setbit
 
 insert clock
-frost57600bps
+
+frost300baud
+
+/One of these will be necess. for hardware
+/ that uses a MAX-232. (The other won't
+/ compile.)
+/.clearbit[sckp @baudcon] > baudcon
+/.clearbit[sckp @baudctl] > baudctl
+
+/.printch['A']
+/.printch['B']
+/.printch['C']
+/.printch['D']
+
 
 .dofunc[]
 
 d .dofunc is
  .printch[.getch[]] 
+ /.printch['A']
  .dofunc[] 
 ;

@@ -1,7 +1,7 @@
 calls printch
 
 insert clock
-frost115200bps
+frost115200baud
 .dowork[]
  
 d .dowork is

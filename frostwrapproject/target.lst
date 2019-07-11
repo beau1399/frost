@@ -1,4 +1,4 @@
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  1
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -15,7 +15,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00007 #define HLOE_STACK2_SIZE .20
                       00008 
                       00009 
-                      00010 #include <p16F690.inc>
+                      00010 #include <p16f690.inc>
                       00001         LIST
                       00002 ; P16F690.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
                       00607         LIST
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00035 
                       00036 ;Call destination residing within a different code page... does not restore the caller's
                       00037 ; code page after return, which may be OK (e.g. if the next operation is another 'Far'
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  2
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00088  movwf FSR 
                       00089  movfw softstack1+1
                       00090  incf alt_fsr,f 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  3
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00139  pagesel ISR
                       00140  bankisel stack 
                       00141  movf FSR,w           ;Restore "softstack" if main thread was using 2nd stack
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  4
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                             MEN_OFF)
                       00005 
                       00006 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  5
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0008   2???           00056  goto hlluserprog
                       00057 hllupuser CODE
 0000                  00058 hlluserprog: 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  6
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001B   1683 1303      00098    banksel TXSTA
 001D   0818           00099    movfw TXSTA
                       00100    
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  7
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00135 
                       00136  PUSH 
 0039   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  8
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0057   0098           00170  movwf RCSTA
                       00171  
                       00172 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE  9
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 006E   0384               M  decf FSR,f 
 006F   1683 1303      00207  banksel TXSTA
 0071   0098           00208  movwf TXSTA
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 10
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00246 
                       00247 
 008B   3000           00248  movlw .0 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 11
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00286  PUSH 
 00A5   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 00A6   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 12
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00324  
                       00325  FAR_CALL hlluserprog,longf
 00BF   ????               M  pagesel longf
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 13
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -765,7 +765,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00361 
                       00362 hllt451 CODE
 0000                  00363 makespaces:
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 14
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -824,7 +824,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00401  
                       00402  FAR_CALL makespacesi ,kpush
 0001   ????               M  pagesel kpush
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 15
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -883,7 +883,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00434 
                       00435 
                       00436  KDISCARD 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 16
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -942,7 +942,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0011   ????               M  pagesel wrapstringA ;This one restores the caller's code page
                       00471 
                       00472 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 17
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1001,7 +1001,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00504 
 0029   30FF           00505  movlw -.1
                       00506  PUSH 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 18
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1060,7 +1060,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 003C   0008           00541  return
                       00542  
                       00543 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 19
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1119,7 +1119,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00579 #else          ; thread, and speeding up isr execution helps this problem. In most of
 0012   00??           00580  movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
                       00581 #endif 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 20
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1178,7 +1178,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00616 
                       00617 
                       00618  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 21
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1237,7 +1237,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00651 
 0010   3001           00652  movlw .1
                       00653  PUSH 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 22
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 22
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1296,7 +1296,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00685  
                       00686  FAR_CALL wrapstringAi,parm
 0029   ????               M  pagesel parm
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 23
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1355,7 +1355,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00721 
                       00722 
                       00723  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 24
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1414,7 +1414,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0057   2???               M  call stringA
 0058   ????               M  pagesel wrapstringAi ;This one restores the caller's code page
                       00755 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 25
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1473,7 +1473,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 006E   2???               M  call geu
 006F   ????               M  pagesel wrapstringAi ;This one restores the caller's code page
                       00787 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 26
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1532,7 +1532,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0085   0384               M  decf FSR,f 
 0086   3A00           00819  xorlw .0
 0087   1903           00820  btfsc STATUS,Z
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 27
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 27
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1591,7 +1591,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 009E   ????               M  pagesel parm           
 009F   2???               M  call parm
                       00854 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 28
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 28
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1650,7 +1650,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00887  
                       00888  HALF_FAR_CALL add
 00B8   ????               M  pagesel add            
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 29
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 29
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1709,7 +1709,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00924  
                       00925  FAR_CALL wrapstringAi,stringA
 00CB   ????               M  pagesel stringA
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 30
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 30
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1768,7 +1768,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00958 
                       00959 
 00E1   3001           00960  movlw .1
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 31
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 31
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1827,7 +1827,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00F7   ????               M  pagesel printch
 00F8   2???               M  call printch
 00F9   ????               M  pagesel wrapstringAi ;This one restores the caller's code page
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 32
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 32
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1886,7 +1886,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 010F   0800               M  movfw INDF ; preserve the safety of this code under interruptible conditions. 
 0110   0384               M  decf FSR,f 
 0111   3A00           01024  xorlw .0
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 33
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 33
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1945,7 +1945,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0126   2???               M  call parm
                       01061 
                       01062 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 34
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 34
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2004,7 +2004,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01098 
                       01099  
                       01100  FAR_CALL wrapstringAi,stringA
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 35
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 35
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2063,7 +2063,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01132  
                       01133  HALF_FAR_CALL add
 014F   ????               M  pagesel add            
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 36
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 36
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2122,7 +2122,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0164   03??               M  decf alt_fsr,f 
 0165   0008           01169  return 
                       01170 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 37
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 37
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2181,7 +2181,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0007   ????               M  pagesel parm
 0008   2???               M  call parm
 0009   ????               M  pagesel wrapstringAif ;This one restores the caller's code page
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 38
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 38
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2240,7 +2240,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01242 
                       01243 
                       01244  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 39
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 39
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2299,7 +2299,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0037   30FF           01279  movlw -.1
                       01280  PUSH 
 0038   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 40
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 40
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2358,7 +2358,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 004C   ????               M  pagesel mul
 004D   2???               M  call mul
 004E   ????               M  pagesel wrapstringAif ;This one restores the caller's code page
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 41
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 41
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2417,7 +2417,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0066   2???               M  call makespaces
 0067   ????               M  pagesel wrapstringAif ;This one restores the caller's code page
                       01347 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 42
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 42
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2476,7 +2476,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01386 #ifdef HLLMULTITASK 
                       01387  movf in_isr,f ;In shared RAM, no need for BANKSEL
                       01388  btfsc STATUS,Z
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 43
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 43
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2535,7 +2535,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0001   ????               M  pagesel kpush
 0002   2???               M  call kpush
 0003   ????               M  pagesel wrapstringAifin ;This one restores the caller's code page
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 44
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 44
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2594,7 +2594,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01462  
                       01463  FAR_CALL wrapstringAifin,eq
 0019   ????               M  pagesel eq
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 45
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 45
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2653,7 +2653,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01494 
                       01495 
                       01496  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 46
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 46
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2712,7 +2712,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01530  ;
                       01531 
                       01532  KDISCARD 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 47
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 47
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2771,7 +2771,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0011   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 0012   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
                       01568 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 48
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 48
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2830,7 +2830,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0024   2???               M  call kpush
 0025   ????               M  pagesel eqresult  ;This one restores the caller's code page
                       01604  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 49
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 49
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2889,7 +2889,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                           M  ;retlw K, retlw K, etc. go here
                       01638 
                       01639 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 50
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 50
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -2948,7 +2948,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01690 
 0019   346F           01691  retlw .111
                       01692  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 51
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 51
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3007,7 +3007,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01743  
                       01744 
 002B   3473           01745  retlw .115
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 52
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 52
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3066,7 +3066,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 003C   3468           01796  retlw .104
                       01797  
                       01798 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 53
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 53
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3125,7 +3125,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01849 
 004E   3453           01850  retlw .83
                       01851  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 54
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 54
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3184,7 +3184,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01902  
                       01903 
 0060   3443           01904  retlw .67
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 55
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 55
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3243,7 +3243,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0071   346D           01955  retlw .109
                       01956  
                       01957 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 56
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 56
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3302,7 +3302,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02008 
 0083   3473           02009  retlw .115
                       02010  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 57
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 57
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3361,7 +3361,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02061  
                       02062 
 0095   3469           02063  retlw .105
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 58
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 58
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3420,7 +3420,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00A6   3474           02114  retlw .116
                       02115  
                       02116 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 59
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 59
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3479,7 +3479,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02167 
 00B8   3469           02168  retlw .105
                       02169  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 60
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 60
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3538,7 +3538,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02220  
                       02221 
 00CA   342C           02222  retlw .44
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 61
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 61
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3597,7 +3597,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00DB   3439           02273  retlw .57
                       02274  
                       02275 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 62
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 62
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3656,7 +3656,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02326 
 00ED   3465           02327  retlw .101
                       02328  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 63
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 63
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3715,7 +3715,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02379 
                       02380 
                       02381  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 64
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 64
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3774,7 +3774,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02432 #endif 
                       02433 
                       02434 cprntuc CODE
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 65
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 65
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3833,7 +3833,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02485  
                       02486  FAR_CALL printu,modu
                       02487  POP
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 66
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 66
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3892,7 +3892,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0018   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 0019   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
 001A   3064           02522  movlw .100 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 67
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 67
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -3951,7 +3951,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02545  
                       02546  FAR_CALL printu,printch  
 003E   ????               M  pagesel printch
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 68
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 68
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4010,7 +4010,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0014   2???               M  call printu
 0015   ????               M  pagesel printchxy ;This one restores the caller's code page
 0016   3048           02578  movlw 'H'
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 69
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 69
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4069,7 +4069,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02622 tff00h: 
                       02623  
                       02624  xorlw .1
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 70
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 70
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4128,7 +4128,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02675  goto tff99h
                       02676 tff07h: 
                       02677  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 71
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 71
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4187,7 +4187,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0018   39FB           02724  andlw .255-.4
 0019   2???           02725  goto hllHAAAA
 001A                  02726 hllCAAAA: 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 72
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 72
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4246,7 +4246,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02775 
                       02776 
                       02777 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 73
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 73
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4305,7 +4305,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0019   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 001A   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
                       02808  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 74
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 74
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4364,7 +4364,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 003A   2???               M  call printch
 003B   ????               M  pagesel cls       ;This one restores the caller's code page
 003C   304A           02833  movlw 'J'
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 75
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 75
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4423,7 +4423,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 005B   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 005C   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
                       02859  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 76
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 76
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4482,7 +4482,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 007C   2???               M  call printch
 007D   ????               M  pagesel cls       ;This one restores the caller's code page
 007E   304A           02884  movlw 'J'
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 77
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 77
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4541,7 +4541,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02930  return
                       02931 mxhbm:
                       02932  movlw .0
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 78
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 78
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4600,7 +4600,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02975 
                       02976 
                       02977 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 79
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 79
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4659,7 +4659,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03028 #ifdef HLLMULTITASK
                       03029 softstack1isr res 1
                       03030 #endif
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 80
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 80
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4718,7 +4718,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03081 mul0:
                       03082 #endif
                       03083 #endif
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 81
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 81
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4777,7 +4777,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0002   1283 1303      03126  banksel TXREG
 0004   0099           03127  movwf TXREG  
                       03128  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 82
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 82
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4836,7 +4836,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03179 
                       03180 
                       03181 #undefine mdiv
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 83
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 83
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4895,7 +4895,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03226 
                       03227 
                       03228 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 84
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 84
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -4954,7 +4954,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03279 
                       03280 
                       03281 #define mquot hllblss02+1
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 85
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 85
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5013,7 +5013,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0007   0A84               M  incf FSR,f ; The "incf" op serves as an allocator; it happens first so that interrupting
 0008   0080               M  movwf INDF ; code of any sort will not overwrite the data. 
 0009   0008           03326  return
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 86
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 86
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5072,7 +5072,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03373 hllkrna08 CODE  
 0000                  03374 parm:
                       03375  KPOP 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 87
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 87
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5131,7 +5131,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                           M                    
 0022   00??               M  movwf sstack0
 0023   0800               M  movfw HLINDF
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 88
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 88
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5190,7 +5190,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001B   08??               M  movfw softstack0  ;Restore user stack ptr 
 001C   0084               M  movwf FSR 
 001D   01??               M  clrf softstack0
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 89
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 89
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5249,7 +5249,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03415 
                       03416 
                       03417  
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 90
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 90
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5308,7 +5308,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0001   0384               M  decf FSR,f 
 0002   0400           03459  iorwf HLINDF,w
 0003   0384           03460  decf HLFSR,f 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 91
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 91
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5367,7 +5367,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001B   0080               M  movwf INDF 
 001C   08??               M  movfw softstack0
 001D   0084               M  movwf FSR 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 92
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 92
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5426,7 +5426,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001D   01??               M  clrf softstack0
 001E   08??               M  movfw softstack1  ;Bring back popped value for ret urn 
 001F   ????               M  bankisel stack
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 93
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 93
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5485,7 +5485,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03549 tcf01h: 
                       03550  xorlw .1
                       03551  xorlw .2
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 94
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 94
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5544,7 +5544,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03602 
                       03603 
                       03604 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 95
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 95
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5603,7 +5603,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001F   3808           03651  iorlw .8
 0020   2???           03652  goto hllRAAAA
 0021                  03653 hllNAAAA: 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 96
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 96
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -5650,8 +5650,8 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       03690 
                       03691 #undefine margp2
                       03692 
-                      03693  end
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 97
+33C4                  03693  end
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 97
 
 
 SYMBOL TABLE
@@ -5710,7 +5710,7 @@ C                                 00000000
 C1CH0                             00000000
 C1CH1                             00000001
 C1IE                              00000005
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 98
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 98
 
 
 SYMBOL TABLE
@@ -5769,7 +5769,7 @@ ECCPAS0                           00000004
 ECCPAS1                           00000005
 ECCPAS2                           00000006
 ECCPASE                           00000007
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 99
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 99
 
 
 SYMBOL TABLE
@@ -5828,7 +5828,7 @@ IOCB                              00000116
 IOCB4                             00000004
 IOCB5                             00000005
 IOCB6                             00000006
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 100
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 100
 
 
 SYMBOL TABLE
@@ -5887,7 +5887,7 @@ PIR2                              0000000D
 POP                               
 PORTA                             00000005
 PORTB                             00000006
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 101
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 101
 
 
 SYMBOL TABLE
@@ -5946,7 +5946,7 @@ SSPCON                            00000014
 SSPEN                             00000005
 SSPIE                             00000003
 SSPIF                             00000003
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 102
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 102
 
 
 SYMBOL TABLE
@@ -6005,7 +6005,7 @@ TRISA                             00000085
 TRISA0                            00000000
 TRISA1                            00000001
 TRISA2                            00000002
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 103
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 103
 
 
 SYMBOL TABLE
@@ -6064,7 +6064,7 @@ WPUA0                             00000000
 WPUA1                             00000001
 WPUA2                             00000002
 WPUA4                             00000004
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 104
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 104
 
 
 SYMBOL TABLE
@@ -6123,7 +6123,7 @@ _hllkrna04_000C                   0000000C
 _hllkrna04_000E                   0000000E
 _hllkrna05_000C                   0000000C
 _hllkrna05_000E                   0000000E
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 105
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 105
 
 
 SYMBOL TABLE
@@ -6182,7 +6182,7 @@ hlllb51J13                        000000E1
 hlllb51J14                        00000133
 hlllb51J15                        00000134
 hlllb51J16                        00000147
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 106
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 106
 
 
 SYMBOL TABLE
@@ -6238,7 +6238,7 @@ wrapstringAifin                   00000000
 zzorz1                            00000008
 zzorz2                            00000011
 
-MPASM  5.14                        TARGET.ASM   7-7-2019  20:21:07         PAGE 107
+MPASM  5.35                        TARGET.ASM   7-9-2019  0:00:55         PAGE 107
 
 
 

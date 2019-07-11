@@ -1,5 +1,5 @@
 calls printch
 insert clock
-frost115200bps
+frost115200baud
 .puthelloworld[]
 blurb(helloworld)(13 10 'Hello, World!')

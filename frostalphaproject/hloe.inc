@@ -7,5 +7,5 @@
 #define HLOE_STACK2_SIZE .20
 
 
-#include <p16F690.inc>
-#include "../frostcompiler/kernel.inc"
+#include <p16f1827.inc>
+#include "../frostcompiler/kernel16f1827.inc"

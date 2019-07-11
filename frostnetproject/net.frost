@@ -1,5 +1,5 @@
 /
-/ Scrapnet is a synchronous serial network running at 115,200 bps (this can actually
+/ Scrapnet is a synchronous serial network running at 115,200 baud (this can actually
 /  vary easily; it is a figure that is independent of the fixed clocking / framing 
 /  calculations below. It supports multiple senders and receivers, with each numbered 
 /  'node' operating as one or both of these. (There is no overlap b/w senders and 
@@ -79,7 +79,7 @@ event 1 is
 .clearbit[rcie .clearbit[txie @pie1]] > pie1
 
 
-frost115200bps
+frost115200baud
 
 if netid,,
  1 > wasnight 

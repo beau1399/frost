@@ -1,13 +1,31 @@
- .clearbit[sync .setbit[brgh @txsta]] > txsta
- .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
- .clearbit[cren @rcsta] > rcsta
- .setbit[cren @rcsta] > rcsta
- 50  > spbrg
- 0  > spbrgh
- .setbit[txen .clearbit[tx9 @txsta]] > txsta
- .setbit[spen @rcsta] > rcsta .dofunc[]
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+
+
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  42 > spbrg
+  104 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   
+  .clearbit[5 @anselb] > anselb    
+  .clearbit[1 @anselb] > anselb    
+  .setbit[txcksel @apfcon1] > apfcon1 .clearbit[sckp @baudcon] > baudcon
+
+
+
+
+
+
+
+
+.dofunc[]
 
 d .dofunc is
  .printch[.getch[]] 
+ 
  .dofunc[] 
 ;

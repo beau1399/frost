@@ -2,7 +2,7 @@ calls printch,add,parm
 
 insert clock
 
-frost115200bps
+frost115200baud
 
 .printch[13].printch[10]
 ffor(.printch['B'])(9)

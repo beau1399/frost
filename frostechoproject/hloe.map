@@ -1,191 +1,184 @@
-MPLINK 4.37, Linker
-Linker Map File - Created Sat Feb 02 15:45:13 2013
+MPLINK 4.35, Linker
+Linker Map File - Created Wed Jul 10 20:16:55 2019
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    Resetv       code   0x000000    program   0x000006
                    .cinit    romdata   0x000003    program   0x000004
-                hllupuser       code   0x000005    program   0x00011c
-                   hlog1b       code   0x000093    program   0x000076
-                   hlog1a       code   0x0000ce    program   0x000076
-                hllkrna08       code   0x000109    program   0x000060
-                hllkrna09       code   0x000139    program   0x000042
-                hllkrna10       code   0x00015a    program   0x00003e
-                hllkrn444       code   0x000179    program   0x000030
-                hllkrna05       code   0x000191    program   0x000026
-                hllkrna04       code   0x0001a4    program   0x000026
-                hllkrna00       code   0x0001b7    program   0x000018
-                hllkrna07       code   0x0001c3    program   0x000014
-                hllkrna06       code   0x0001cd    program   0x000014
-                hllkrna03       code   0x0001d7    program   0x000014
-                     main       code   0x0001e1    program   0x000012
-                  hllt450       code   0x0001ea    program   0x00000e
-                hllkrna01       code   0x0001f1    program   0x00000e
-                hllkrna02       code   0x0001f8    program   0x000006
-                hllkrna11       code   0x0001fb    program   0x000004
-    .config_2007_TARGET.O       code   0x002007    program   0x000002
+                hllupuser       code   0x000005    program   0x000198
+                   hlog1b       code   0x0000d1    program   0x00006e
+                   hlog1a       code   0x000108    program   0x00006e
+                hllkrn444       code   0x00013f    program   0x00002c
+                hllkrna08       code   0x000155    program   0x000022
+                hllkrna05       code   0x000166    program   0x00001e
+                hllkrna04       code   0x000175    program   0x00001e
+                     main       code   0x000184    program   0x000018
+                hllkrna00       code   0x000190    program   0x000014
+                hllkrna07       code   0x00019a    program   0x000010
+                  hllt450       code   0x0001a2    program   0x00000e
+                hllkrna06       code   0x0001a9    program   0x00000e
+                hllkrna03       code   0x0001b0    program   0x00000e
+                   hlog1h       code   0x0001b7    program   0x00000a
+                   hlog1d       code   0x0001bc    program   0x00000a
+                hllkrna01       code   0x0001c1    program   0x00000a
+                hllkrna02       code   0x0001c6    program   0x000006
+                hllkrna11       code   0x0001c9    program   0x000004
+                hllkrna10       code   0x0001cb    program   0x000004
+                hllkrna09       code   0x0001cd    program   0x000004
+    .config_8007_TARGET.O       code   0x008007    program   0x000002
+    .config_8008_TARGET.O       code   0x008008    program   0x000002
                    ukrnl2      udata   0x000020       data   0x000050
                    ukrshr      udata   0x000070       data   0x000009
-                 mainvars      udata   0x000079       data   0x000002
-                   ukrnl3      udata   0x0000a0       data   0x000014
-                   ukernl      udata   0x0000b4       data   0x000003
+                 mainvars      udata   0x000079       data   0x000001
+                   ukrnl3      udata   0x000220       data   0x000014
+                   ukernl      udata   0x000234       data   0x000003
 
 
 
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x0001fc      
-                            0x002007    0x002007      
-            510 out of 4358 program addresses used, program memory utilization is 11%
+                            0x000000    0x0001ce      
+                            0x008007    0x008008      
+            465 out of 4359 program addresses used, program memory utilization is 10%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-          _hllkrna00_0009   0x0001c0    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna03_0008   0x0001df    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna04_000C   0x0001b0    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna04_000E   0x0001b2    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna05_000C   0x00019d    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna05_000E   0x00019f    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna08_0003   0x00010c    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna08_0011   0x00011a    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna09_0003   0x00013c    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna09_0011   0x00014a    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna10_0003   0x00015d    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna10_0010   0x00016a    program     static F:\beau\frostechoproject\target.asm
-                      add   0x0001f1    program     static F:\beau\frostechoproject\target.asm
-                 clearbit   0x0000ce    program     static F:\beau\frostechoproject\target.asm
-                  dispose   0x0001fb    program     static F:\beau\frostechoproject\target.asm
-                     divu   0x000191    program     static F:\beau\frostechoproject\target.asm
-                   dmm445   0x00018a    program     static F:\beau\frostechoproject\target.asm
-                   dofunc   0x0001ea    program     static F:\beau\frostechoproject\target.asm
-                       eq   0x0001c3    program     static F:\beau\frostechoproject\target.asm
-                    getch   0x0001cd    program     static F:\beau\frostechoproject\target.asm
-                    geth2   0x0001cf    program     static F:\beau\frostechoproject\target.asm
-                 hllAAAAA   0x0000db    program     static F:\beau\frostechoproject\target.asm
-                 hllBAAAA   0x0000e1    program     static F:\beau\frostechoproject\target.asm
-                 hllCAAAA   0x0000e8    program     static F:\beau\frostechoproject\target.asm
-                 hllDAAAA   0x0000ef    program     static F:\beau\frostechoproject\target.asm
-                 hllEAAAA   0x0000f6    program     static F:\beau\frostechoproject\target.asm
-                 hllFAAAA   0x0000fd    program     static F:\beau\frostechoproject\target.asm
-                 hllGAAAA   0x000104    program     static F:\beau\frostechoproject\target.asm
-                 hllHAAAA   0x000106    program     static F:\beau\frostechoproject\target.asm
-                 hllIAAAA   0x0000a0    program     static F:\beau\frostechoproject\target.asm
-                 hllJAAAA   0x0000a6    program     static F:\beau\frostechoproject\target.asm
-                 hllKAAAA   0x0000ad    program     static F:\beau\frostechoproject\target.asm
-                 hllLAAAA   0x0000b4    program     static F:\beau\frostechoproject\target.asm
-                 hllMAAAA   0x0000bb    program     static F:\beau\frostechoproject\target.asm
-                 hllNAAAA   0x0000c2    program     static F:\beau\frostechoproject\target.asm
-                 hllOAAAA   0x0000c9    program     static F:\beau\frostechoproject\target.asm
-                 hllPAAAA   0x0000cb    program     static F:\beau\frostechoproject\target.asm
-                hllprgen2   0x0001f0    program     static F:\beau\frostechoproject\target.asm
-               hllprogend   0x000092    program     static F:\beau\frostechoproject\target.asm
-              hlluserprog   0x000005    program     static F:\beau\frostechoproject\target.asm
-                   hloego   0x0001e1    program     static F:\beau\frostechoproject\target.asm
-                     kpop   0x000139    program     static F:\beau\frostechoproject\target.asm
-                    kpush   0x00015a    program     static F:\beau\frostechoproject\target.asm
-                   kspox5   0x000181    program     static F:\beau\frostechoproject\target.asm
-                     modu   0x0001a4    program     static F:\beau\frostechoproject\target.asm
-                      mul   0x0001b7    program     static F:\beau\frostechoproject\target.asm
-                    negti   0x0001f8    program     static F:\beau\frostechoproject\target.asm
-                     parm   0x000109    program     static F:\beau\frostechoproject\target.asm
-                  printch   0x0001d7    program     static F:\beau\frostechoproject\target.asm
-                 safepush   0x000179    program     static F:\beau\frostechoproject\target.asm
-                   setbit   0x000093    program     static F:\beau\frostechoproject\target.asm
-                  sperr11   0x000188    program     static F:\beau\frostechoproject\target.asm
-                 ALT_Save   0x000077       data     static F:\beau\frostechoproject\target.asm
-                 FSR_Save   0x000076       data     static F:\beau\frostechoproject\target.asm
-                  PC_Save   0x00007a       data     static F:\beau\frostechoproject\target.asm
-              STATUS_Save   0x000075       data     static F:\beau\frostechoproject\target.asm
-                   W_Save   0x000074       data     static F:\beau\frostechoproject\target.asm
-                  alt_fsr   0x000073       data     static F:\beau\frostechoproject\target.asm
-                alt_stack   0x0000a0       data     static F:\beau\frostechoproject\target.asm
-                hllblss00   0x0000b4       data     static F:\beau\frostechoproject\target.asm
-                hllblss01   0x0000b5       data     static F:\beau\frostechoproject\target.asm
-                hllblss02   0x0000b6       data     static F:\beau\frostechoproject\target.asm
-                   in_isr   0x000078       data     static F:\beau\frostechoproject\target.asm
-                    pbase   0x000079       data     static F:\beau\frostechoproject\target.asm
-               softstack0   0x000070       data     static F:\beau\frostechoproject\target.asm
-               softstack1   0x000071       data     static F:\beau\frostechoproject\target.asm
-               softstack2   0x000072       data     static F:\beau\frostechoproject\target.asm
-                    stack   0x000020       data     static F:\beau\frostechoproject\target.asm
+          _hllkrna00_0007   0x000197    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna03_0005   0x0001b5    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna04_0009   0x00017e    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna04_000B   0x000180    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna05_0009   0x00016f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna05_000B   0x000171    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      add   0x0001c1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     andu   0x0001b7    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 clearbit   0x000108    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  dispose   0x0001c9    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     divu   0x000166    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   dmm445   0x00014f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   dofunc   0x0001a2    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                       eq   0x00019a    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    getch   0x0001a9    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    geth2   0x0001aa    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllAAAAA   0x000112    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllBAAAA   0x000118    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllCAAAA   0x00011f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllDAAAA   0x000126    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllEAAAA   0x00012d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllFAAAA   0x000134    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllGAAAA   0x00013b    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllHAAAA   0x00013d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllIAAAA   0x0000db    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllJAAAA   0x0000e1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllKAAAA   0x0000e8    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllLAAAA   0x0000ef    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllMAAAA   0x0000f6    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllNAAAA   0x0000fd    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllOAAAA   0x000104    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllPAAAA   0x000106    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllprgen2   0x0001a8    program     static Z:\home\dell\frost\frostechoproject\target.asm
+               hllprogend   0x0000d0    program     static Z:\home\dell\frost\frostechoproject\target.asm
+              hlluserprog   0x000005    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   hloego   0x000184    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     kpop   0x0001cd    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    kpush   0x0001cb    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   kspox5   0x000146    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     modu   0x000175    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      mul   0x000190    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    negti   0x0001c6    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      oru   0x0001bc    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     parm   0x000155    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  printch   0x0001b0    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 safepush   0x00013f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   setbit   0x0000d1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  sperr11   0x00014d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 ALT_Save   0x000077       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                 FSR_Save   0x000076       data     static Z:\home\dell\frost\frostechoproject\target.asm
+              STATUS_Save   0x000075       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                   W_Save   0x000074       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                  alt_fsr   0x000073       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                alt_stack   0x000220       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss00   0x000234       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss01   0x000235       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss02   0x000236       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                   in_isr   0x000078       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                    pbase   0x000079       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack0   0x000070       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack1   0x000071       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack2   0x000072       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                    stack   0x000020       data     static Z:\home\dell\frost\frostechoproject\target.asm
 
 
 
                               Symbols - Sorted by Address
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-              hlluserprog   0x000005    program     static F:\beau\frostechoproject\target.asm
-               hllprogend   0x000092    program     static F:\beau\frostechoproject\target.asm
-                   setbit   0x000093    program     static F:\beau\frostechoproject\target.asm
-                 hllIAAAA   0x0000a0    program     static F:\beau\frostechoproject\target.asm
-                 hllJAAAA   0x0000a6    program     static F:\beau\frostechoproject\target.asm
-                 hllKAAAA   0x0000ad    program     static F:\beau\frostechoproject\target.asm
-                 hllLAAAA   0x0000b4    program     static F:\beau\frostechoproject\target.asm
-                 hllMAAAA   0x0000bb    program     static F:\beau\frostechoproject\target.asm
-                 hllNAAAA   0x0000c2    program     static F:\beau\frostechoproject\target.asm
-                 hllOAAAA   0x0000c9    program     static F:\beau\frostechoproject\target.asm
-                 hllPAAAA   0x0000cb    program     static F:\beau\frostechoproject\target.asm
-                 clearbit   0x0000ce    program     static F:\beau\frostechoproject\target.asm
-                 hllAAAAA   0x0000db    program     static F:\beau\frostechoproject\target.asm
-                 hllBAAAA   0x0000e1    program     static F:\beau\frostechoproject\target.asm
-                 hllCAAAA   0x0000e8    program     static F:\beau\frostechoproject\target.asm
-                 hllDAAAA   0x0000ef    program     static F:\beau\frostechoproject\target.asm
-                 hllEAAAA   0x0000f6    program     static F:\beau\frostechoproject\target.asm
-                 hllFAAAA   0x0000fd    program     static F:\beau\frostechoproject\target.asm
-                 hllGAAAA   0x000104    program     static F:\beau\frostechoproject\target.asm
-                 hllHAAAA   0x000106    program     static F:\beau\frostechoproject\target.asm
-                     parm   0x000109    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna08_0003   0x00010c    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna08_0011   0x00011a    program     static F:\beau\frostechoproject\target.asm
-                     kpop   0x000139    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna09_0003   0x00013c    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna09_0011   0x00014a    program     static F:\beau\frostechoproject\target.asm
-                    kpush   0x00015a    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna10_0003   0x00015d    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna10_0010   0x00016a    program     static F:\beau\frostechoproject\target.asm
-                 safepush   0x000179    program     static F:\beau\frostechoproject\target.asm
-                   kspox5   0x000181    program     static F:\beau\frostechoproject\target.asm
-                  sperr11   0x000188    program     static F:\beau\frostechoproject\target.asm
-                   dmm445   0x00018a    program     static F:\beau\frostechoproject\target.asm
-                     divu   0x000191    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna05_000C   0x00019d    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna05_000E   0x00019f    program     static F:\beau\frostechoproject\target.asm
-                     modu   0x0001a4    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna04_000C   0x0001b0    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna04_000E   0x0001b2    program     static F:\beau\frostechoproject\target.asm
-                      mul   0x0001b7    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna00_0009   0x0001c0    program     static F:\beau\frostechoproject\target.asm
-                       eq   0x0001c3    program     static F:\beau\frostechoproject\target.asm
-                    getch   0x0001cd    program     static F:\beau\frostechoproject\target.asm
-                    geth2   0x0001cf    program     static F:\beau\frostechoproject\target.asm
-                  printch   0x0001d7    program     static F:\beau\frostechoproject\target.asm
-          _hllkrna03_0008   0x0001df    program     static F:\beau\frostechoproject\target.asm
-                   hloego   0x0001e1    program     static F:\beau\frostechoproject\target.asm
-                   dofunc   0x0001ea    program     static F:\beau\frostechoproject\target.asm
-                hllprgen2   0x0001f0    program     static F:\beau\frostechoproject\target.asm
-                      add   0x0001f1    program     static F:\beau\frostechoproject\target.asm
-                    negti   0x0001f8    program     static F:\beau\frostechoproject\target.asm
-                  dispose   0x0001fb    program     static F:\beau\frostechoproject\target.asm
-                    stack   0x000020       data     static F:\beau\frostechoproject\target.asm
-               softstack0   0x000070       data     static F:\beau\frostechoproject\target.asm
-               softstack1   0x000071       data     static F:\beau\frostechoproject\target.asm
-               softstack2   0x000072       data     static F:\beau\frostechoproject\target.asm
-                  alt_fsr   0x000073       data     static F:\beau\frostechoproject\target.asm
-                   W_Save   0x000074       data     static F:\beau\frostechoproject\target.asm
-              STATUS_Save   0x000075       data     static F:\beau\frostechoproject\target.asm
-                 FSR_Save   0x000076       data     static F:\beau\frostechoproject\target.asm
-                 ALT_Save   0x000077       data     static F:\beau\frostechoproject\target.asm
-                   in_isr   0x000078       data     static F:\beau\frostechoproject\target.asm
-                    pbase   0x000079       data     static F:\beau\frostechoproject\target.asm
-                  PC_Save   0x00007a       data     static F:\beau\frostechoproject\target.asm
-                alt_stack   0x0000a0       data     static F:\beau\frostechoproject\target.asm
-                hllblss00   0x0000b4       data     static F:\beau\frostechoproject\target.asm
-                hllblss01   0x0000b5       data     static F:\beau\frostechoproject\target.asm
-                hllblss02   0x0000b6       data     static F:\beau\frostechoproject\target.asm
+              hlluserprog   0x000005    program     static Z:\home\dell\frost\frostechoproject\target.asm
+               hllprogend   0x0000d0    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   setbit   0x0000d1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllIAAAA   0x0000db    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllJAAAA   0x0000e1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllKAAAA   0x0000e8    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllLAAAA   0x0000ef    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllMAAAA   0x0000f6    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllNAAAA   0x0000fd    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllOAAAA   0x000104    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllPAAAA   0x000106    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 clearbit   0x000108    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllAAAAA   0x000112    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllBAAAA   0x000118    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllCAAAA   0x00011f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllDAAAA   0x000126    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllEAAAA   0x00012d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllFAAAA   0x000134    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllGAAAA   0x00013b    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 hllHAAAA   0x00013d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                 safepush   0x00013f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   kspox5   0x000146    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  sperr11   0x00014d    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   dmm445   0x00014f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     parm   0x000155    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     divu   0x000166    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna05_0009   0x00016f    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna05_000B   0x000171    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     modu   0x000175    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna04_0009   0x00017e    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna04_000B   0x000180    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   hloego   0x000184    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      mul   0x000190    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna00_0007   0x000197    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                       eq   0x00019a    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                   dofunc   0x0001a2    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllprgen2   0x0001a8    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    getch   0x0001a9    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    geth2   0x0001aa    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  printch   0x0001b0    program     static Z:\home\dell\frost\frostechoproject\target.asm
+          _hllkrna03_0005   0x0001b5    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     andu   0x0001b7    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      oru   0x0001bc    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                      add   0x0001c1    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    negti   0x0001c6    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                  dispose   0x0001c9    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    kpush   0x0001cb    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                     kpop   0x0001cd    program     static Z:\home\dell\frost\frostechoproject\target.asm
+                    stack   0x000020       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack0   0x000070       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack1   0x000071       data     static Z:\home\dell\frost\frostechoproject\target.asm
+               softstack2   0x000072       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                  alt_fsr   0x000073       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                   W_Save   0x000074       data     static Z:\home\dell\frost\frostechoproject\target.asm
+              STATUS_Save   0x000075       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                 FSR_Save   0x000076       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                 ALT_Save   0x000077       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                   in_isr   0x000078       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                    pbase   0x000079       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                alt_stack   0x000220       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss00   0x000234       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss01   0x000235       data     static Z:\home\dell\frost\frostechoproject\target.asm
+                hllblss02   0x000236       data     static Z:\home\dell\frost\frostechoproject\target.asm
 
 

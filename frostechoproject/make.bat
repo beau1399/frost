@@ -1,13 +1,6 @@
 
-@echo off
+echo ASSEMBLING TARGET...
+wine 'c:/Program Files (x86)/Microchip/MPASM Suite/MPASMWIN.exe' /w2 /q /p16f1827 "target.asm" /l"target.lst" /e"target.err" /otarget.o
+cat target.err
 
-REM "w2" option squelches warnings, shows errors
-
-echo ASSEMBLING TARGET... 
-
-"C:\Program Files\Microchip\MPASM Suite\MPAsmWin.exe" /w2 /q /p16f690 "target.asm" /l"target.lst" /e"target.err" /o"target.o"
-
-type target.err
-
-
-"C:\Program Files\Microchip\MPASM Suite\MPLink.exe" "f:\beau\frostcompiler\hloe16f690.lkr"  /p16f690 "target.o"  /o"hloe.hex" /M"hloe.map" /W
+wine 'c:/Program Files (x86)/Microchip/MPASM Suite/MPLink.exe' "../frostcompiler/hloe16f1827.lkr"  target.o  /o"hloe.hex" /M"hloe.map" /W

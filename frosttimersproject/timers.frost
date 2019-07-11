@@ -1,6 +1,3 @@
-
-
-
 calls printch,add,parm,eq,start,divu,sample,setbit,clearbit,oru,andu
 
 event 1 is
@@ -9,9 +6,7 @@ event 1 is
 
 insert clock
 
-	
-frost115200bps
-
+frost115200baud
 
 0 > intcon
 .setbit[c1on @cm1con0] > cm1con0

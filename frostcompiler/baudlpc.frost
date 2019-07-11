@@ -1,9 +1,34 @@
-
-
-
 calls setbit,clearbit
  
-macro frost9600bps is
+macro frost300baud is
+  10 > spbrg
+  26 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1
+end macro
+ 
+macro frost2400baud is
+  64 > spbrg
+  3 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
+  .setbit[cren @rcsta] > rcsta
+  .setbit[spen @rcsta] > rcsta
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1
+end macro
+ 
+macro frost9600baud is
   207 > spbrg
   0 > spbrgh
   .clearbit[sync @txsta] > txsta
@@ -17,7 +42,7 @@ macro frost9600bps is
   .clearbit[rcie .clearbit[txie @pie1]] > pie1
 end macro
 
-macro frost57600bps is
+macro frost57600baud is
   34 > spbrg
   0 > spbrgh
   .clearbit[sync @txsta] > txsta
@@ -31,7 +56,7 @@ macro frost57600bps is
   .clearbit[rcie .clearbit[txie @pie1]] > pie1
 end macro
 
-macro frost115200bps is
+macro frost115200baud is
   17 > spbrg
   0 > spbrgh
   .clearbit[sync @txsta] > txsta
