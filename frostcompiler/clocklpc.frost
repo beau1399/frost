@@ -1,2 +1,4 @@
+calls oru
+
 / Full 8mhz internal osc
 .oru[112 @osccon] > osccon
