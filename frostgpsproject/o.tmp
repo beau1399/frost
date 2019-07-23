@@ -1,0 +1,109 @@
+event 1 is
+ .add[1 @scaler] > scaler
+ if .eq[20 @scaler],
+  0 >scaler
+  .printf[@latdeg @latdegb]
+  .printch[' ']
+  .printf[@latmin @latminb]
+  .printch[' ']
+  .printf[@latsubmin @latsubminb]
+  .printch[13].printch[10]
+  ,,
+;
+
+
+
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  64 > spbrg
+  3 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   
+  .clearbit[5 @anselb] > anselb    
+  .clearbit[1 @anselb] > anselb    
+  .setbit[txcksel @apfcon1] > apfcon1 .clearbit[sckp @baudcon] > baudcon
+0 > isgll
+0 > scaler
+
+.clearbit[tmr1cs0 .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon 
+
+0.0 > latsubminb > latsubmin
+.mainloop[]
+
+
+
+d .mainloop is
+ .dofunc[]
+ .mainloop[]
+;
+
+d .dofunc 0 0 is
+ .receive[0 .getch[] 1]
+;
+
+d .receive * is
+ if .eq[.parm[1] ','],
+
+    if .geu[@isgll 2],
+
+
+
+
+       .add[-1 @isgll]>isgll  
+
+ .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]] 1 , 
+
+     if .eq[@isgll 1],
+         0>isgll .purge[],
+
+      if .andb[ .eq[.parm[2] 'L']  .eq[.parm[3] 'L'] ],
+          4>isgll  ,,
+    ,,
+ , 
+
+ .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]] ,
+;
+
+
+
+
+
+
+
+
+d .purge * is
+ .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[26]]]
+ ] > latdegb > latdeg
+ .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[24]]]
+ ] > latminb > latmin
+
+ .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+     .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]]
+     .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]]
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[20]]]]]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[19]]]]]
+     .utof[.add[.mul[-1 '0'].parm[18]]]] 100000.0]
+  > tempb > temp
+
+  if .notb[.iszerof[@latsubmin @latsubminb]],
+   .addf[.mulf[0.5 @temp @tempb] .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
+   @tempb > latsubminb @temp > latsubmin
+   ,
+;

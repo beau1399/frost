@@ -1,0 +1,27 @@
+event 1 is
+ .add[1 @scaler] > scaler
+ if .eq[50 @scaler], 0 >scaler  .add[8 .mul[-1 @bval]]    > bval @bval > portb,,
+;
+
+
+0 > bval
+0 > scaler
+
+
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+
+
+0>trisb
+
+
+.clearbit[tmr1cs0 .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon 
+
+
+
+

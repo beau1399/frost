@@ -1,0 +1,98 @@
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb
+altstack is 40
+var stor,isgll,latdeg,latdegb,latmin,latminb,latsubmin,latsubminb,scaler,temp,tempb
+
+event 1 is
+ .add[1 @scaler] > scaler
+ if .eq[20 @scaler],
+  0 >scaler
+  .printf[@latdeg @latdegb]
+  .printch[' ']
+  .printf[@latmin @latminb]
+  .printch[' ']
+  .printf[@latsubmin @latsubminb]
+  .printch[13].printch[10]
+  ,,
+;
+
+/////////////////////////////////////////////////////////////////////////
+
+insert clock
+frost9600baud
+/For MAX-232. We are using a 5V-to-RS232 bridge so we don't need tricks to make serial work.
+.clearbit[sckp @baudcon] > baudcon
+0 > isgll
+0 > scaler
+/ Start the 6hz timer
+insert slowtimer
+insert starttimer
+0.0 > latsubminb > latsubmin
+.mainloop[]
+
+/////////////////////////////////////////////////////////////////////////
+
+d .mainloop is
+ .dofunc[]
+ .mainloop[]
+;
+
+d .dofunc 0 0 is
+ .receive[0 .getch[] 1]
+;
+
+macro readchar is
+/ .printch['.']
+ .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]]
+end macro
+
+d .receive * is
+ if .eq[.parm[1] ','],
+
+    if .geu[@isgll 2],
+
+/The 1 below is to force a real call vs. tail recursion.
+/ We need to actually return here once required units have been read so that
+/ we don't reach function bottom and return to dofunc early.
+       .add[-1 @isgll]>isgll  readchar 1 , 
+
+     if .eq[@isgll 1],
+         0>isgll .purge[],
+
+      if .andb[ .eq[.parm[2] 'L']  .eq[.parm[3] 'L'] ],
+          4>isgll  ,,
+    ,,
+ , readchar,
+;
+
+/d .purge * is
+/ if .eq[.parm[0] 0],
+/    .printch[13].printch[10],
+/    .printch[.parm[.parm[0]]] .add[-1] .purge[]
+/ ,
+/;
+
+d .purge * is
+ .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[26]]]
+ ] > latdegb > latdeg
+ .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[24]]]
+ ] > latminb > latmin
+
+ .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+     .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]]
+     .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]]
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[20]]]]]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[19]]]]]
+     .utof[.add[.mul[-1 '0'].parm[18]]]] 100000.0]
+  > tempb > temp
+
+  if .notb[.iszerof[@latsubmin @latsubminb]],
+   .addf[.mulf[0.5 @temp @tempb] .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
+   @tempb > latsubminb @temp > latsubmin
+   ,
+;

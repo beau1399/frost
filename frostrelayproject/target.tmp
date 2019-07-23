@@ -1,0 +1,398 @@
+
+#include "hloe.inc"
+
+ __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
+ __config  _CONFIG2,_PLLEN_ON & _STVREN_ON
+
+hllv2bval UDATA
+hllbvall RES .1
+
+#define bval hllbvall
+
+hllv2scaler UDATA
+hllscalerl RES .1
+
+#define scaler hllscalerl
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+ banksel PIR1
+ btfss PIR1,TMR1IF
+ goto hllnotisr49	
+ bcf PIR1,TMR1IF
+
+
+ movlw .1 
+
+   FAR_CALL ISR , safepush
+
+   banksel scaler
+   movfw scaler
+   
+   
+
+   FAR_CALL ISR , safepush
+
+
+ FAR_CALL ISR,add
+
+ POP
+ banksel scaler
+ movwf scaler
+ 
+
+
+ movlw .50 
+
+   FAR_CALL ISR , safepush
+
+   banksel scaler
+   movfw scaler
+   
+   
+
+   FAR_CALL ISR , safepush
+
+
+ FAR_CALL ISR,eq
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J0 
+ 
+
+ movlw .0 
+
+   FAR_CALL ISR , safepush
+
+ POP
+ banksel scaler
+ movwf scaler
+ 
+
+
+ movlw .8 
+
+   FAR_CALL ISR , safepush
+
+
+ movlw -.1
+
+   FAR_CALL ISR , safepush
+
+   banksel bval
+   movfw bval
+   
+   
+
+   FAR_CALL ISR , safepush
+
+
+ FAR_CALL ISR,mul
+
+
+ FAR_CALL ISR,add
+
+ POP
+ banksel bval
+ movwf bval
+ 
+
+   banksel bval
+   movfw bval
+   
+   
+
+   FAR_CALL ISR , safepush
+
+ POP
+ banksel PORTB
+ movwf PORTB
+ 
+
+ 
+ goto hlllb51J1
+ 
+
+hlllb51J0:
+
+
+hlllb51J1:
+
+
+hllnotisr49:
+
+
+
+
+
+
+
+
+#ifdef HLLMULTITASK
+ExitISR:    
+ 
+ RESUME
+ 
+ retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+
+main code
+hloego:
+
+  clrf in_isr
+ 
+  movlw LOW (stack-1)		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR0L 
+  movlw HIGH (stack-1)
+  movwf FSR0H
+ 
+  
+ movlw LOW (alt_stack-1)
+ movwf FSR1L
+ movlw HIGH (alt_stack-1)
+ movwf FSR1H
+ 
+ 
+ clrf softstack0 
+ 
+ 
+ pagesel hlluserprog
+ goto hlluserprog
+
+hllupuser CODE
+hlluserprog: 
+ 
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel bval
+ movwf bval
+ 
+
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel scaler
+ movwf scaler
+ 
+
+
+ movlw .112 
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw .247 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel OSCCON
+   movfw OSCCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,andu
+
+
+ FAR_CALL hlluserprog,oru
+
+ POP
+ banksel OSCCON
+ movwf OSCCON
+ 
+
+
+ movlw .0
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel TRISB
+ movwf TRISB
+ 
+
+
+ movlw TMR1CS0
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw TMR1GE
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1CKPS1
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1CKPS0
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw NOT_T1SYNC
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1OSCEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw TMR1IE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw PEIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ movlw TMR1ON
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw GIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+    
+hllprogend:
+ goto hllprogend
+ 

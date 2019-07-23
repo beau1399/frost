@@ -1,0 +1,22 @@
+calls printch,getch,utof,printf,addf,mulf,eq
+
+insert clock
+frost9600baud
+.clearbit[sckp @baudcon] > baudcon
+
+.outer[]
+
+d .outer is
+ .dofunc[.getch[] 0.0]
+ .outer[]
+;
+
+d .dofunc 2 0 is
+ if .eq[.parm[2] ' '] ,.printf[  parmf(0)   ] .printch[13].printch[10],
+  .dofunc[ .getch[]
+     .addf[
+      .mulf[ parmf(0) 10.0]
+      .utof[subi(.parm[2])('0')]
+     ]
+  ],
+;
