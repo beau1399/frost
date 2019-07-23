@@ -1,5 +1,5 @@
 calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb
-altstack is 40
+altstack is 80
 var stor,isgll,latdeg,latdegb,latmin,latminb,latsubmin,latsubminb,scaler,temp,tempb
 
 event 1 is
@@ -72,18 +72,18 @@ d .receive * is
 /;
 
 d .purge * is
- .addf[
+ if .eq[.parm[0] 27],
+  .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[26]]]
- ] > latdegb > latdeg
- .addf[
+  ] > latdegb > latdeg
+  .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[24]]]
- ] > latminb > latmin
-
- .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+  ] > latminb > latmin
+  .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]]
      .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[20]]]]]
@@ -95,4 +95,5 @@ d .purge * is
    .addf[.mulf[0.5 @temp @tempb] .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
    @tempb > latsubminb @temp > latsubmin
    ,
+ ,,
 ;
