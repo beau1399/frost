@@ -344,10 +344,21 @@ hllkrna06 CODE
  
  
 getch:
- banksel PIR1
-geth2: 
- btfss PIR1,RCIF
+ banksel RCSTA
+ btfss RCSTA,OERR
  goto geth2
+ bcf RCSTA,CREN
+ bsf RCSTA,CREN
+geth2:
+ btfss RCSTA,FERR
+ goto geth4
+ bcf RCSTA,SPEN
+ bsf RCSTA,SPEN
+geth4:
+ banksel PIR1
+geth3: 
+ btfss PIR1,RCIF
+ goto geth3
  banksel RCREG
  movf RCREG,w
  PUSH 

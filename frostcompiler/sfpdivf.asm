@@ -598,12 +598,12 @@ divf0:
 
  clrf loop_count
 
-hllECAAA:
+hllDCAAA:
 
  movf loop_count,w
  xorlw .16
  btfsc STATUS,Z
- goto hllJCAAA
+ goto hllICAAA
 
 
  movf min,w
@@ -619,12 +619,12 @@ hllECAAA:
 
 
  btfss STATUS,C
- goto hllFCAAA
+ goto hllECAAA
 
 
  incf min2_lower,f
 
-hllFCAAA:
+hllECAAA:
 
 
  LSHIFT min
@@ -643,7 +643,7 @@ hllFCAAA:
 
  movf a_hi_msb,f
  btfsc STATUS,Z
- goto hllGCAAA
+ goto hllFCAAA
 
 
  incf run_total,f
@@ -652,7 +652,7 @@ hllFCAAA:
  btfsc STATUS,Z
  incf min2_lower,f
 
-hllGCAAA:
+hllFCAAA:
 
 
  clrf big_c 
@@ -675,7 +675,7 @@ hllGCAAA:
 
 
  btfss min2_lower,7
- goto hllHCAAA
+ goto hllGCAAA
 
 
 
@@ -704,22 +704,22 @@ hllGCAAA:
  andwf quotient_lo,f
 
 
- goto hllICAAA
-hllHCAAA:
+ goto hllHCAAA
+hllGCAAA:
 
 
  movlw .1
  iorwf quotient_lo,f
-hllICAAA:
+hllHCAAA:
 
 
 
  incf loop_count,f
 
 
- goto hllECAAA
+ goto hllDCAAA
 
-hllJCAAA:
+hllICAAA:
 
 
  movf quotient_lo,w
@@ -737,17 +737,17 @@ hllJCAAA:
  movfw run_total
  subwf term,w    
  btfsc STATUS,C 
- goto hllKCAAA   
+ goto hllJCAAA   
  incf mout,f 
  bsf rounded,0 
  
-hllKCAAA:
+hllJCAAA:
  
 
 
  movf multiplier,f
  btfsc STATUS,Z
- goto hllNCAAA
+ goto hllMCAAA
  
 
 
@@ -755,11 +755,11 @@ hllKCAAA:
 
  
  btfss mout,0
- goto hllLCAAA
+ goto hllKCAAA
 
  
  btfsc rounded,0
- goto hllLCAAA
+ goto hllKCAAA
  
  
 
@@ -769,30 +769,30 @@ hllKCAAA:
  incf mout,f
 
 
- goto hllMCAAA
+ goto hllLCAAA
 
-hllLCAAA:
+hllKCAAA:
 
 
  RSHIFT mout
  
-hllMCAAA:
+hllLCAAA:
 
 
  bsf mout,7
 
- goto hllOCAAA
-hllNCAAA:
+ goto hllNCAAA
+hllMCAAA:
  decf util,f 
-hllOCAAA:
+hllNCAAA:
  movfw mout 
 
-hllPCAAA: 
+hllOCAAA: 
 
   addlw -.128 
   movwf exam 
   btfss exam,7 
-  goto hllQCAAA 
+  goto hllPCAAA 
   addlw .128    
 
  
@@ -801,9 +801,9 @@ hllPCAAA:
  
  LSHIFT mout
  movfw mout 
- goto hllPCAAA 
+ goto hllOCAAA 
 
-hllQCAAA: 
+hllPCAAA: 
 
 
  movwf mout
@@ -813,15 +813,15 @@ hllQCAAA:
  
  
  btfsc neg,0
- goto hllRCAAA 
+ goto hllQCAAA 
  btfss neg,1
- goto hllTCAAA 
  goto hllSCAAA 
-hllRCAAA: 
+ goto hllRCAAA 
+hllQCAAA: 
  btfsc neg,1
- goto hllTCAAA 
+ goto hllSCAAA 
 
-hllSCAAA: 
+hllRCAAA: 
 
  
  
@@ -832,7 +832,7 @@ hllSCAAA:
  movwf mout 
  
 
-hllTCAAA: 
+hllSCAAA: 
  movfw mout 
  PUSH
  banksel min

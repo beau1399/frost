@@ -115,70 +115,70 @@ setbit0:
  POP
  xorlw .0
  btfss STATUS,Z
- goto hllIAAAA
+ goto hllKAAAA
  
  movfw  margp2
  iorlw .1
- goto hllPAAAA
-hllIAAAA: 
- 
- xorlw .1
- btfss STATUS,Z
- goto hllJAAAA
- 
- movfw  margp2
- iorlw .2
- goto hllPAAAA
-hllJAAAA: 
- xorlw .1
- xorlw .2
- btfss STATUS,Z
- goto hllKAAAA
- 
- movfw margp2
- iorlw .4
- goto hllPAAAA
+ goto hllRAAAA
 hllKAAAA: 
- xorlw .2
- xorlw .3
+ 
+ xorlw .1
  btfss STATUS,Z
  goto hllLAAAA
  
- movfw margp2
- iorlw .8
- goto hllPAAAA
+ movfw  margp2
+ iorlw .2
+ goto hllRAAAA
 hllLAAAA: 
- xorlw .3
- xorlw .4
+ xorlw .1
+ xorlw .2
  btfss STATUS,Z
  goto hllMAAAA
  
  movfw margp2
- iorlw .16
- goto hllPAAAA
+ iorlw .4
+ goto hllRAAAA
 hllMAAAA: 
- xorlw .4
- xorlw .5
+ xorlw .2
+ xorlw .3
  btfss STATUS,Z
  goto hllNAAAA
  
  movfw margp2
- iorlw .32
- goto hllPAAAA
+ iorlw .8
+ goto hllRAAAA
 hllNAAAA: 
- xorlw .5
- xorlw .6
+ xorlw .3
+ xorlw .4
  btfss STATUS,Z
  goto hllOAAAA
  
  movfw margp2
- iorlw .64
- goto hllPAAAA
+ iorlw .16
+ goto hllRAAAA
 hllOAAAA: 
+ xorlw .4
+ xorlw .5
+ btfss STATUS,Z
+ goto hllPAAAA
+ 
+ movfw margp2
+ iorlw .32
+ goto hllRAAAA
+hllPAAAA: 
+ xorlw .5
+ xorlw .6
+ btfss STATUS,Z
+ goto hllQAAAA
+ 
+ movfw margp2
+ iorlw .64
+ goto hllRAAAA
+hllQAAAA: 
  
  movfw margp2
  iorlw .128 
-hllPAAAA:  
+hllRAAAA:  
  PUSH 
  return
 

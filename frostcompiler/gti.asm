@@ -105,12 +105,12 @@ gti0:
  movwf mkarg2 
  btfss mkarg2,7
  
- goto hllKAAAA
+ goto hllIAAAA
  movlw .0
  PUSH
  
  return
- hllKAAAA: subwf mkarg1,w 
+ hllIAAAA: subwf mkarg1,w 
  btfsc STATUS,C    
  goto $+5
  movlw .1
