@@ -1,0 +1,44 @@
+;
+; HLOE Logical and Bit Operations
+;
+
+
+ GLOBAL getbit 
+  
+hlog1cz CODE
+HLTHUNK hllblss,getbit,margp2,margp3,margp4
+ POP
+ banksel margp4
+ movwf  margp4
+ movlw .1
+ banksel margp2
+ movwf  margp2
+ POP
+ banksel margp3
+ movwf margp3
+rhik3sz:
+ btfsc STATUS,Z
+ goto shik3sz
+ bcf STATUS,C
+ banksel margp2
+ rlf margp2,f
+ banksel margp3
+ decf margp3,f
+ bra rhik3sz
+shik3sz:
+ banksel margp4
+ movfw  margp4
+ banksel margp2
+ andwf margp2
+ btfss STATUS,Z
+ goto shi98e4
+ movlw .0
+ PUSH
+ return
+shi98e4:
+ movlw .1
+ PUSH
+ return
+HLEND
+
+
