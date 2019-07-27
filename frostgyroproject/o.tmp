@@ -1,0 +1,190 @@
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+.clearbit[gie @intcon] > intcon
+
+
+
+.clearbit[sspen @ssp1con1] > ssp1con1
+
+
+
+8 > ssp1con1
+
+
+
+0 > ssp1con2
+
+
+
+19 > ssp1add
+
+
+128 > ssp1stat
+
+
+
+18 > trisb
+
+
+
+.clearbit[ansb4 @anselb] > anselb
+
+
+
+.clearbit[ansb1 @anselb] > anselb
+
+
+
+
+.setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3
+
+
+
+.setbit[sspen @ssp1con1] > ssp1con1
+
+
+
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  64 > spbrg
+  3 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  .setbit[sckp @baudcon] > baudcon
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   
+  .clearbit[5 @anselb] > anselb    
+  .clearbit[1 @anselb] > anselb    
+  .setbit[txcksel @apfcon1] > apfcon1 .printch['O'].printch['K']
+
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+210 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+107 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+0 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+.delay[]
+
+.loop[]
+
+
+
+d .loop is
+ .clearbit[ackstat @ssp1con2] > ssp1con2
+ .iicstart[]
+ .clearinterrupt[]
+ 210 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ 61 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rsen @ssp1con2] > ssp1con2
+ .clearinterrupt[]
+ 211 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ .printu[@ssp1buf]
+ .clearbit[bf @ssp1stat] > ssp1stat
+ .nack[]
+ .clearinterrupt[]
+ .iicend[]
+ .clearinterrupt[]
+
+ .printch[13] .printch[10]
+ .loop[]
+;
+
+d .clearinterruptin is
+ if .getbit[ssp1if @pir1],,.clearinterruptin[], 
+;
+
+d .clearinterrupt is
+ .clearinterruptin[]
+ .clearbit[3 @pir1] > pir1
+;
+
+d .clearfill is
+ if .getbit[bf @ssp1stat],,.clearfill[], 
+;
+
+d .ack is
+ .clearbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .nack is
+ .setbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .checkack 0 0 is
+ if .notb[.getbit[6 @ssp1con2]],,.printch['E'].printch['R'].printch['R']  .checkack[], 
+;
+
+d .delay is
+ 
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  
+ .printch[' '] 
+  ;
+
+d .iicstart is
+ .setbit[sen @ssp1con2] > ssp1con2
+;
+
+d .iicend is
+ .setbit[pen @ssp1con2] > ssp1con2
+;

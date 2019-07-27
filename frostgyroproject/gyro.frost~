@@ -1,0 +1,144 @@
+calls printu,orb,notb
+
+insert clock
+
+frost9600baud
+
+/Necessary to use MAX-232
+/.clearbit[sckp @baudcon] > baudcon
+/ Wire.begin(); Wire.beginTransmission(MPU_addr); Wire.write(0x6B); Wire.write(0); Wire.endTransmission(true);
+
+ffor(.printch[' '])(20) /Delay 
+
+.iicinit[]
+.iicbegin[]
+.iicwrite[208]   / Address 104, read =0
+.iicwrite[107]
+.iicwrite[0]
+.iicend[]
+
+
+.loop[]
+
+//////////////////////////
+
+d .loop is
+ 
+ .iicbegin[]
+ .iicwrite[208]  /Address 104, read=0
+ .iicwrite[59]
+ .iicend[]
+ .iicbegin[]
+ .iicwrite[209]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .printu[.iicread[]]
+ .iicend[]
+  ffor(.printch[' '])(20) /Delay 
+ .loop[]
+;
+
+d .iicinit is
+ /Set SDA and SCL as input using TRIS
+ .setbit[1 @trisb]>trisb
+ .setbit[4 @trisb]>trisb
+
+ /0 > anselb
+
+ /Set up SSPCON regs
+ /1000 = I 2 C Master mode, clock = F OSC /(4 * (SSPxADD+1)) 
+ .clearbit[sspm0 @ssp1con1] > ssp1con1 
+ .clearbit[sspm1 @ssp1con1] > ssp1con1 
+ .clearbit[sspm2 @ssp1con1] > ssp1con1 
+ .setbit[sspm3 @ssp1con1] > ssp1con1 
+
+ .setbit[5 @ssp1con1] > ssp1con1  /Enable - ssp1en
+
+ /Set clock speed using SSPADD
+ 99 > ssp1add /TODO?
+
+ 128 >ssp1con2 /Top bit = slew rate control for fast bps
+
+ /Zero SSPSTAT
+ 0 > ssp1stat
+
+ /.clearbit[acken @ssp1con2] > ssp1con2
+
+/GIE = 1;               //Enable all unmasked interrupts
+/   PEIE = 1;              //Enable all peripheral interrupts
+/   SSPIF = 0;             //Clear SSP interrupt flag
+/   SSPIE = 1;             //Enable SSP interrupt
+/ .setbit[peie @intcon] > intcon
+/ .clearbit[8 @pir1] > pir1
+/ .setbit[8 @pie1] > pie1
+
+/ .clearbit[gie @intcon] > intcon
+
+;
+
+d .iichold is
+
+ /Hold while 1) any of bottom 5 bits of SSPCON *or* 2) bit 2 of SSPSTAT
+ if .notb[.orb[.andu[31 @ssp1con2] .andu[4 @ssp1stat]]],,.printch['!'] .iichold[],
+/ .clearbit[ssp1if @pir1] > pir1
+;
+
+d .iicbegin is
+ /Call hold
+ .iichold[]
+ /Set SEN
+ .setbit[sen @ssp1con2] > ssp1con2 
+;
+
+d .iicend is
+ /Call hold
+ .iichold[]
+ /Set PEN
+ .setbit[pen @ssp1con2] > ssp1con2
+;
+
+d .iicwrite 1 0 is
+ /Hold
+ .iichold[]
+ /Set SSPBUF
+ .parm[0] > ssp1buf
+/ if .andu[@ssp1con1 128],.printch['*'].printch['*'].printch['*'].printch['*'].printch['*'],,
+
+
+
+;
+
+d .iicread 0 1 is
+ /Hold
+ .iichold[]
+ /Set RCEN
+ .setbit[rcen @ssp1con2] > ssp1con2
+ /Hold
+ .iichold[]
+ /Read SSPBUF
+ @ssp1buf
+
+ /if .andu[@ssp1con1 128],.printch['*'].printch['*'].printch['*'].printch['*'].printch['*'],,
+
+
+/Hold
+ .iichold[]
+ /ACK?
+
+/Master sets ACK value sent to slave in ACKDT
+/bit of the SSPxCON2 register and initiates the
+/ACK by setting the ACKEN bit.
+
+/ .clearbit[ackdt @ssp1con2] > ssp1con2
+/ .setbit[acken @ssp1con2] > ssp1con2
+
+/ .iichold[]
+
+
+;

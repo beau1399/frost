@@ -1,0 +1,142 @@
+calls printu,orb,notb
+
+insert clock
+.clearbit[gie @intcon] > intcon
+
+/   SSP1CON1bits.SSPEN=0;
+
+.clearbit[sspen @ssp1con1] > ssp1con1
+
+/   SSP1CON1 = 0x08;        //I2C Master mode, SDA and SCL pins enabled
+
+8 > ssp1con1
+
+/   SSP1CON2 = 0;           //Default settings
+
+0 > ssp1con2
+
+/   SSP1ADD = 19;          //32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
+
+19 > ssp1add
+/   SSP1STAT = 0x80;        //Default settings + slew control off for slow clk
+
+128 > ssp1stat
+
+/   TRISB = 18;             //SCL and SDA as inputs
+
+18 > trisb
+
+/   ANSELBbits.ANSB4=0;     //Non-analok SCL and SDA
+
+.clearbit[ansb4 @anselb] > anselb
+
+/   ANSELBbits.ANSB1=0;
+
+.clearbit[ansb1 @anselb] > anselb
+
+/   SSP1CON3bits.PCIE=1;    //Stop flagging on
+/   SSP1CON3bits.SCIE=1;    //Start flagging on
+
+.setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3
+
+/   SSP1CON1bits.SSPEN=1;   //Turn on I2C
+
+.setbit[sspen @ssp1con1] > ssp1con1
+
+
+frost9600baud
+
+.printch['O'].printch['K']
+
+/Necessary to use MAX-232
+/.clearbit[sckp @baudcon] > baudcon
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+210 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+107 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+0 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+.delay[]
+
+.loop[]
+
+////////////////////////////////////////////////////
+
+d .loop is
+ .clearbit[ackstat @ssp1con2] > ssp1con2
+ .iicstart[]
+ .clearinterrupt[]
+ 210 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ 61 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rsen @ssp1con2] > ssp1con2
+ .clearinterrupt[]
+ 211 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ .printu[@ssp1buf]
+ .clearbit[bf @ssp1stat] > ssp1stat
+ .nack[]
+ .clearinterrupt[]
+ .iicend[]
+ .clearinterrupt[]
+/ .delay[]
+ .printch[13] .printch[10]
+ .loop[]
+;
+
+d .clearinterruptin is
+ if .getbit[ssp1if @pir1],,.clearinterruptin[], 
+;
+
+d .clearinterrupt is
+ .clearinterruptin[]
+ .clearbit[3 @pir1] > pir1
+;
+
+d .clearfill is
+ if .getbit[bf @ssp1stat],,.clearfill[], 
+;
+
+d .ack is
+ .clearbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .nack is
+ .setbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .checkack 0 0 is
+ if .notb[.getbit[6 @ssp1con2]],,.printch['E'].printch['R'].printch['R']  .checkack[],
+;
+
+d .delay is
+ ffor(.printch[' '])(20) /Delay 
+;
+
+d .iicstart is
+ .setbit[sen @ssp1con2] > ssp1con2
+;
+
+d .iicend is
+ .setbit[pen @ssp1con2] > ssp1con2
+;
