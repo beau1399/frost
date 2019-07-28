@@ -1,0 +1,20 @@
+calls utof,addf,mulf,printf,xoru
+
+
+d .itof 1 2 is
+ .add[128]
+ .utof[.parm[0]]
+ .addf[-128.0]
+;
+
+d .itoflong 2 2 is
+ if .andu[128 .parm[1]],
+     .itof[.negti[.parm[1]]]
+     .mulf[-256.0]
+     .addf[.utof[.parm[0]]]
+    ,
+     .itof[.parm[1]]
+     .mulf[256.0]
+     .addf[.utof[.parm[0]]]
+    ,
+;
