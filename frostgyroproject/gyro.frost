@@ -1,14 +1,21 @@
-calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose,negti
+calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose,negti,graphx,ftou,gtf,andb,copyf,gtf
 altstack is 80
 var scaler,ym,ye
 
 event 1 is
  .add[1 @scaler] > scaler
- if .eq[1 @scaler],
+ if .eq[2 @scaler],
   0 >scaler
-  .printch['*']
-  .printf[@ym @ye]
-  .printch[13]  .printch[10]
+/  .graphx[120 .ftou[.addf[.addf[@ym @ye -350.0] 40.0]] 2 2]
+
+
+   .maybeshow[.addf[5.0  .divf[@ym @ye 50.0]]]
+
+/   if .andb[.gtf[256.0 .addf[.addf[@ym @ye -350.0] 40.0]] .gtf[.addf[.addf[@ym @ye -350.0] 40.0] 0.0]          ],
+/     .printu[.ftou[.addf[.addf[@ym @ye -350.0] 40.0]]]
+/       .printch[13] .printch[10], .printch['B'],
+ 
+   .printch[13] .printch[10]
  ,,
 ;
 
@@ -54,10 +61,10 @@ frost9600baud
 210 > ssp1buf
 .clearinterrupt[]
 .checkack[]
-26 > ssp1buf      /5 hertz sampling for more stability
+26 > ssp1buf      
 .clearinterrupt[]
 .checkack[]
-6 > ssp1buf
+6 > ssp1buf		/Low-pass filter (6 is max)
 .clearinterrupt[]
 .checkack[]
 .iicend[]
@@ -153,6 +160,13 @@ d .iicend is
 
 d .copy 1 2 is
  .parm[0] .parm[0]
+;
+
+d .maybeshow 2 0 is
+   if .andb[.gtf[120.5 parmf(0)] .gtf[ parmf(0) 0.0]],   
+     .printu[ .ftou[ parmf(0)]]
+     .graphx[120 .ftou[parmf(0)] 2 2],
+     .printch['B'] .printf[ parmf(0)],
 ;
 
 insert itof
