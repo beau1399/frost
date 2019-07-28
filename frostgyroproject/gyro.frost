@@ -1,17 +1,16 @@
-calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose
+calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose,negti
 altstack is 80
 var scaler,ym,ye
 
 event 1 is
  .add[1 @scaler] > scaler
- if .eq[2 @scaler],
+ if .eq[1 @scaler],
   0 >scaler
-/  .printch['*']
+  .printch['*']
   .printf[@ym @ye]
   .printch[13]  .printch[10]
-,,
+ ,,
 ;
-
 
 insert clock
 .clearbit[gie @intcon] > intcon
@@ -33,8 +32,6 @@ frost9600baud
 /Necessary to use MAX-232
 /.clearbit[sckp @baudcon] > baudcon
 
-
-
 .iicstart[]
 .clearinterrupt[]
 .checkack[]
@@ -50,9 +47,6 @@ frost9600baud
 .iicend[]
 .clearinterrupt[]
 .delay[]
-
-
-
 
 .iicstart[]
 .clearinterrupt[]
@@ -74,7 +68,6 @@ frost9600baud
 insert slowtimer
 insert starttimer
 
-
 .loop[]
 
 ////////////////////////////////////////////////////
@@ -83,7 +76,6 @@ d .loop is
 
  .iicstart[]
  .clearinterrupt[]
-
 
  210 > sspbuf
  .clearinterrupt[]
@@ -100,11 +92,8 @@ d .loop is
  .clearfill[]
  .clearinterrupt[]
  .clearbit[ssp1if @pir1] > pir1
-/ .printu[@ssp1buf]
- .copy[@ssp1buf]
- .printu[] .printch[' ']
+ @ssp1buf
  .clearbit[bf @ssp1stat] > ssp1stat
-
 
  .ack[]
  .clearinterrupt[]
@@ -112,21 +101,14 @@ d .loop is
  .clearfill[]
  .clearinterrupt[]
  .clearbit[ssp1if @pir1] > pir1
-/ .printu[@ssp1buf]
-
-/.addf[ .itof[] .divf[ .itof[@ssp1buf] 256.0]] > ye > ym
- .dispose[@ssp1buf]
- .itof[]  > ye > ym
-
+ @ssp1buf
+ .itoflong[]  > ye > ym
  .clearbit[bf @ssp1stat] > ssp1stat
-
-
 
  .nack[]
  .clearinterrupt[]
  .iicend[]
  .clearinterrupt[]
-/ .printch[13] .printch[10]
  .loop[]
 ;
 
@@ -169,12 +151,8 @@ d .iicend is
  .setbit[pen @ssp1con2] > ssp1con2
 ;
 
-d .itof 1 2 is
- .add[128]
- .utof[.parm[0]]
- .addf[-128.0]
-;
-
 d .copy 1 2 is
  .parm[0] .parm[0]
 ;
+
+insert itof
