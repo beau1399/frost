@@ -1,48 +1,30 @@
-calls printu,orb,notb
+calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose
+altstack is 80
+var scaler,ym,ye
+
+event 1 is
+ .add[1 @scaler] > scaler
+ if .eq[2 @scaler],
+  0 >scaler
+/  .printch['*']
+  .printf[@ym @ye]
+  .printch[13]  .printch[10]
+,,
+;
+
 
 insert clock
 .clearbit[gie @intcon] > intcon
-
-/   SSP1CON1bits.SSPEN=0;
-
 .clearbit[sspen @ssp1con1] > ssp1con1
 
-/   SSP1CON1 = 0x08;        //I2C Master mode, SDA and SCL pins enabled
-
-8 > ssp1con1
-
-/   SSP1CON2 = 0;           //Default settings
-
-0 > ssp1con2
-
-/   SSP1ADD = 19;          //32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
-
-19 > ssp1add
-/   SSP1STAT = 0x80;        //Default settings + slew control off for slow clk
-
-128 > ssp1stat
-
-/   TRISB = 18;             //SCL and SDA as inputs
-
-18 > trisb
-
-/   ANSELBbits.ANSB4=0;     //Non-analok SCL and SDA
-
-.clearbit[ansb4 @anselb] > anselb
-
-/   ANSELBbits.ANSB1=0;
-
+8 > ssp1con1   		    /I2C aster mode
+0 > ssp1con2		    /Default settings
+19 > ssp1add  		    /32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
+18 > trisb		    /SCL and SDA as inputs
+.clearbit[ansb4 @anselb] > anselb    /SCL and SDA non-analog
 .clearbit[ansb1 @anselb] > anselb
-
-/   SSP1CON3bits.PCIE=1;    //Stop flagging on
-/   SSP1CON3bits.SCIE=1;    //Start flagging on
-
-.setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3
-
-/   SSP1CON1bits.SSPEN=1;   //Turn on I2C
-
-.setbit[sspen @ssp1con1] > ssp1con1
-
+.setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3	/Start and Stop bit flagging on
+.setbit[sspen @ssp1con1] > ssp1con1   /Start I2C
 
 frost9600baud
 
@@ -50,6 +32,8 @@ frost9600baud
 
 /Necessary to use MAX-232
 /.clearbit[sckp @baudcon] > baudcon
+
+
 
 .iicstart[]
 .clearinterrupt[]
@@ -60,22 +44,47 @@ frost9600baud
 107 > ssp1buf
 .clearinterrupt[]
 .checkack[]
-0 > ssp1buf
+0 > ssp1buf		/I think this is necess. to turn on the internal clock
 .clearinterrupt[]
 .checkack[]
 .iicend[]
 .clearinterrupt[]
-
 .delay[]
+
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+210 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+26 > ssp1buf      /5 hertz sampling for more stability
+.clearinterrupt[]
+.checkack[]
+6 > ssp1buf
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+.delay[]
+
+0>scaler
+insert slowtimer
+insert starttimer
+
 
 .loop[]
 
 ////////////////////////////////////////////////////
 
 d .loop is
- .clearbit[ackstat @ssp1con2] > ssp1con2
+
  .iicstart[]
  .clearinterrupt[]
+
+
  210 > sspbuf
  .clearinterrupt[]
  .checkack[]
@@ -91,14 +100,33 @@ d .loop is
  .clearfill[]
  .clearinterrupt[]
  .clearbit[ssp1if @pir1] > pir1
- .printu[@ssp1buf]
+/ .printu[@ssp1buf]
+ .copy[@ssp1buf]
+ .printu[] .printch[' ']
  .clearbit[bf @ssp1stat] > ssp1stat
+
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+/ .printu[@ssp1buf]
+
+/.addf[ .itof[] .divf[ .itof[@ssp1buf] 256.0]] > ye > ym
+ .dispose[@ssp1buf]
+ .itof[]  > ye > ym
+
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+
+
  .nack[]
  .clearinterrupt[]
  .iicend[]
  .clearinterrupt[]
-/ .delay[]
- .printch[13] .printch[10]
+/ .printch[13] .printch[10]
  .loop[]
 ;
 
@@ -139,4 +167,14 @@ d .iicstart is
 
 d .iicend is
  .setbit[pen @ssp1con2] > ssp1con2
+;
+
+d .itof 1 2 is
+ .add[128]
+ .utof[.parm[0]]
+ .addf[-128.0]
+;
+
+d .copy 1 2 is
+ .parm[0] .parm[0]
 ;
