@@ -1,11 +1,32 @@
+/
+/ GPS to UART program
+/ Latitude only for now
+/ On start, pauses until position fix obtained
+/ Continues to print position once fix is obtained; if fix is lost,
+/  last fix will keep printing
+/ Fractional part of minutes are smoothing while continuously fixed
+/
+/ TODO: latitude; reset smooting if whole minute changes
+/
+
+/// Directives ////////////////////////////////////////////////////////////
+
 calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb
+
 altstack is 80
-var stor,isgll,latdeg,latdegb,latmin,latminb,latsubmin,latsubminb,scaler,temp,tempb
+
+var stor,isgll,latdeg,latdegb,latmin,latminb,latsubmin,
+    latsubminb,scaler,temp,tempb,filtervalid,fix
+
+macro filter-factor is 0.5 end macro
+macro one-minus-filter is 0.5 end macro
+
+/// event() ///////////////////////////////////////////////////////////////
 
 event 1 is
  .add[1 @scaler] > scaler
- if .eq[20 @scaler],
-  0 >scaler
+ if .andb[ @fix .eq[20 @scaler]],
+  0 > scaler
   .printf[@latdeg @latdegb]
   .printch[' ']
   .printf[@latmin @latminb]
@@ -15,8 +36,10 @@ event 1 is
   ,,
 ;
 
-/////////////////////////////////////////////////////////////////////////
+/// main() ////////////////////////////////////////////////////////////////
 
+0 > filtervalid
+0 > fix
 insert clock
 frost9600baud
 /For MAX-232. We are using a 5V-to-RS232 bridge so we don't need tricks to make serial work.
@@ -29,7 +52,7 @@ insert starttimer
 0.0 > latsubminb > latsubmin
 .mainloop[]
 
-/////////////////////////////////////////////////////////////////////////
+/// functions //////////////////////////////////////////////////////////////
 
 d .mainloop is
  .dofunc[]
@@ -41,36 +64,33 @@ d .dofunc 0 0 is
 ;
 
 macro readchar is
-/ .printch['.']
  .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]]
 end macro
 
 d .receive * is
- if .eq[.parm[1] ','],
+ if .eq[.parm[1] ','],  
 
-    if .geu[@isgll 2],
+////////////// COMMA HANDLER ////
+     if .geu[@isgll 2],   /Are we working through the middle of a GLL string?
 
-/The 1 below is to force a real call vs. tail recursion.
-/ We need to actually return here once required units have been read so that
-/ we don't reach function bottom and return to dofunc early.
-       .add[-1 @isgll]>isgll  readchar 1 , 
+        /Yes; the 1 below is to force a real call vs. tail recursion.
+        / We need to actually return here once required units have been read so that
+        / we don't reach function bottom and return to dofunc early.
+        .add[-1 @isgll]>isgll  readchar 1 , 
 
-     if .eq[@isgll 1],
-         0>isgll .purge[],
-
-      if .andb[ .eq[.parm[2] 'L']  .eq[.parm[3] 'L'] ],
-          4>isgll  ,,
-    ,,
- , readchar,
+        /No; but are we at the end of a GLL string?
+        if .eq[@isgll 1],
+               /Yes... process!
+               0>isgll .purge[],
+               /Not in GLL string... look for new GLL string (or do nothing & continue if not found)
+               if .andb[.eq[.parm[2] 'L']  .eq[.parm[3] 'L']],4>isgll,,,,,
+////////////////////////////////
+ 
+ /Didn't find comma this character
+ if .geu[.parm[0] 28], 0 > filtervalid, readchar,,  /Just accumulate, unless GLL hasn't been timely
 ;
 
-/d .purge * is
-/ if .eq[.parm[0] 0],
-/    .printch[13].printch[10],
-/    .printch[.parm[.parm[0]]] .add[-1] .purge[]
-/ ,
-/;
-
+// GLL input processor /////////
 d .purge * is
  if .eq[.parm[0] 27],
   .addf[
@@ -90,10 +110,12 @@ d .purge * is
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[19]]]]]
      .utof[.add[.mul[-1 '0'].parm[18]]]] 100000.0]
   > tempb > temp
-
-  if .notb[.iszerof[@latsubmin @latsubminb]],
-   .addf[.mulf[0.5 @temp @tempb] .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
-   @tempb > latsubminb @temp > latsubmin
-   ,
- ,,
+   if @fix,
+    .addf[  /Active fix available... smooth
+     .mulf[one-minus-filter @temp @tempb]
+     .mulf[filter-factor @latsubmin @latsubminb]]  >latsubminb >latsubmin,
+    /No active fix; don't smooth, but if we are here we now have a fix
+    @tempb > latsubminb @temp > latsubmin  1 > filtervalid 1 > fix,
+ , /If arg count is not correct (27), do nothing
+ ,
 ;
