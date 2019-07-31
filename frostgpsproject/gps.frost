@@ -6,17 +6,18 @@
 /  last fix will keep printing
 / Fractional part of minutes are smoothing while continuously fixed
 /
-/ TODO: latitude; reset smooting if whole minute changes
+/ TODO: latitude; reset smoothing if whole minute changes
 /
 
 /// Directives ////////////////////////////////////////////////////////////
 
-calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof
 
 altstack is 80
 
-var stor,isgll,latdeg,latdegb,latmin,latminb,latsubmin,
-    latsubminb,scaler,temp,tempb,filtervalid,fix
+var isgll,latdeg,latdegb,latmin,latminb,latsubmin,
+    latsubminb,scaler,temp,tempb,filtervalid,fix,
+    londeg,londegb,lonmin,lonminb,lonsubmin,lonsubminb
 
 macro filter-factor is 0.5 end macro
 macro one-minus-filter is 0.5 end macro
@@ -32,6 +33,12 @@ event 1 is
   .printf[@latmin @latminb]
   .printch[' ']
   .printf[@latsubmin @latsubminb]
+  .printch[13].printch[10]
+  .printf[@londeg @londegb]
+  .printch[' ']
+  .printf[@lonmin @lonminb]
+  .printch[' ']
+  .printf[@lonsubmin @lonsubminb]
   .printch[13].printch[10]
   ,,
 ;
@@ -49,7 +56,7 @@ frost9600baud
 / Start the 6hz timer
 insert slowtimer
 insert starttimer
-0.0 > latsubminb > latsubmin
+/0.0 > latsubminb > latsubmin
 .mainloop[]
 
 /// functions //////////////////////////////////////////////////////////////
@@ -64,7 +71,7 @@ d .dofunc 0 0 is
 ;
 
 macro readchar is
- .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]]
+ .parm[0]>temp .dispose[] .receive[.getch[] .add[1 @temp]]
 end macro
 
 d .receive * is
@@ -93,16 +100,45 @@ d .receive * is
 // GLL input processor /////////
 d .purge * is
  if .eq[.parm[0] 27],
+
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[26]]]
-  ] > latdegb > latdeg
+   ] > latdegb > latdeg
+
+  .addf[
+  .addf[
+   .addf[0.0
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[14]]] ] ]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[13]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[12]]]
+   ] > londegb > londeg
+
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[24]]]
-  ] > latminb > latmin
+  ] > tempb > temp
+
+  /Examine mantissa of minutes (middle of the three terms in
+  / order of significance) and bust smooting if there was a
+  / change.
+  if .eq[@temp @latmin],, 0 > filtervalid,
+  
+  @tempb > latminb
+  @temp > latmin
+
+  .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[10]]]
+  ] > tempb > temp
+
+  @tempb > lonminb
+  @temp > lonmin
+
+
   .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]]
@@ -110,12 +146,29 @@ d .purge * is
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[19]]]]]
      .utof[.add[.mul[-1 '0'].parm[18]]]] 100000.0]
   > tempb > temp
-   if @fix,
+  if @filtervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor @latsubmin @latsubminb]]  >latsubminb >latsubmin,
-    /No active fix; don't smooth, but if we are here we now have a fix
-    @tempb > latsubminb @temp > latsubmin  1 > filtervalid 1 > fix,
+    /No continuous fix; don't smooth
+    @tempb > latsubminb @temp > latsubmin ,
+
+
+ .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+     .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[8]]]]]
+     .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[7]]]]]
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[6]]]]]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[5]]]]]
+     .utof[.add[.mul[-1 '0'].parm[4]]]] 100000.0]
+  > tempb > temp
+  if @filtervalid,
+    .addf[  /Active fix available... smooth
+     .mulf[one-minus-filter @temp @tempb]
+     .mulf[filter-factor @lonsubmin @lonsubminb]]  >lonsubminb >lonsubmin,
+    /No continuous fix; don't smooth, but if we are here we now have a fix
+    @tempb > lonsubminb @temp > lonsubmin  1 > filtervalid 1 > fix,
+
+
  , /If arg count is not correct (27), do nothing
  ,
 ;
