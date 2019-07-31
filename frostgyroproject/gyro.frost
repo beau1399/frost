@@ -1,21 +1,13 @@
 calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose,negti,graphx,ftou,gtf,andb,copyf,gtf
 altstack is 80
-var scaler,ym,ye
+var scaler,ym,ye,xm,xe
 
 event 1 is
  .add[1 @scaler] > scaler
  if .eq[2 @scaler],
   0 >scaler
-/  .graphx[120 .ftou[.addf[.addf[@ym @ye -350.0] 40.0]] 2 2]
-
-
-   .maybeshow[.addf[5.0  .divf[@ym @ye 50.0]]]
-
-/   if .andb[.gtf[256.0 .addf[.addf[@ym @ye -350.0] 40.0]] .gtf[.addf[.addf[@ym @ye -350.0] 40.0] 0.0]          ],
-/     .printu[.ftou[.addf[.addf[@ym @ye -350.0] 40.0]]]
-/       .printch[13] .printch[10], .printch['B'],
- 
-   .printch[13] .printch[10]
+  .maybeshow[2 .addf[5.0  .divf[@xm @xe 50.0]]]
+  .maybeshow[4 .addf[5.0  .divf[@ym @ye 50.0]]]
  ,,
 ;
 
@@ -23,7 +15,7 @@ insert clock
 .clearbit[gie @intcon] > intcon
 .clearbit[sspen @ssp1con1] > ssp1con1
 
-8 > ssp1con1   		    /I2C aster mode
+8 > ssp1con1   		    /I2C master mode
 0 > ssp1con2		    /Default settings
 19 > ssp1add  		    /32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
 18 > trisb		    /SCL and SDA as inputs
@@ -87,7 +79,7 @@ d .loop is
  210 > sspbuf
  .clearinterrupt[]
  .checkack[]
- 61 > sspbuf
+ 59 > sspbuf
  .clearinterrupt[]
  .checkack[]
  .setbit[rsen @ssp1con2] > ssp1con2
@@ -109,10 +101,67 @@ d .loop is
  .clearinterrupt[]
  .clearbit[ssp1if @pir1] > pir1
  @ssp1buf
+ .itoflong[]  > xe > xm
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+
+
+
+
+
+
+
+
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
  .itoflong[]  > ye > ym
  .clearbit[bf @ssp1stat] > ssp1stat
 
- .nack[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.nack[]
  .clearinterrupt[]
  .iicend[]
  .clearinterrupt[]
@@ -162,11 +211,9 @@ d .copy 1 2 is
  .parm[0] .parm[0]
 ;
 
-d .maybeshow 2 0 is
+d .maybeshow 3 0 is
    if .andb[.gtf[120.5 parmf(0)] .gtf[ parmf(0) 0.0]],   
-     .printu[ .ftou[ parmf(0)]]
-     .graphx[120 .ftou[parmf(0)] 2 2],
-     .printch['B'] .printf[ parmf(0)],
+     .graphx[120 .ftou[parmf(0)] 2 .parm[2]],,
 ;
 
 insert itof
