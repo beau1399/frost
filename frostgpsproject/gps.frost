@@ -6,8 +6,6 @@
 /  last fix will keep printing
 / Fractional part of minutes are smoothing while continuously fixed
 /
-/ TODO: latitude; reset smoothing if whole minute changes
-/
 
 /// Directives ////////////////////////////////////////////////////////////
 
