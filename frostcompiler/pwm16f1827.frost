@@ -30,37 +30,124 @@ d .pwm1on is
 ;
 
 
-d .pwmf 3 0 is /1st parm is channel 0=L/C4 and 1=R/C5
-  
- 
- /Make 8-bit high byte
- 
-  if .iszerof[parmf`1\],0,
- 
-   if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err.
- 
-      .ftou[ .divf[parmf`1\ 4.0]]
-  ,,
- > ccpr1l
- 
- 
- 
- 
- /(parmf0 mod 4)
- .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
- 
- if .gtf[.copyf[] 2.5],
-   .setbit[dc1b1 .setbit[dc1b0 @ccp1con]] > ccp1con
- ,
+d .pwm2on is
+ / Longest period possible for max res.; use a capacitor if period is too long
+ 255 > pr4
+ / PWM2 = A7
+ .setbit[ccp2sel @apfcon0] > apfcon0
+ / PWM out pin off for now
+ .setbit[trisa7 @trisa] > trisa
+ / Simple, single-output PWM mode
+ .clearbit[ p2m0 .clearbit [p2m1 @ccp2con]] > ccp2con
+ .clearbit[ccp2m0 .clearbit [ccp2m1 @ccp2con]] > ccp2con
+ .setbit[ccp2m2 .setbit [ccp2m3 @ccp2con]] > ccp2con
 
- if .gtf[.copyf[] 1.5],
-  .setbit[dc1b1  @ccp1con] > ccp1con
-  ,	  
-      if .gtf[.copyf[] 0.5],
+ /Timer 4
+ .setbit[c2tsel0 .clearbit[c2tsel1 @ccptmrs]] > ccptmrs
+ .clearbit[tmr4if @pir1] > pir1
+
+ / Minimum prescale value for timer allows for minimum period
+ /  width without reducing resolution
+ .clearbit[t4ckps0 .clearbit[t4ckps1 @t4con]] > t4con
+
+ / Timer on
+ .setbit[tmr4on @t4con] > t4con
+
+ / PWM bit is output
+ .clearbit[trisa7 @trisa] > trisa
+;
+
+
+
+
+
+
+
+
+d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
+
+
+
+
+
+
+
+ if .eq[.parm[0] 0],
+
+
+
+
+
+ 
+    /Make 8-bit high byte
+     if .iszerof[parmf`1\],0, 
+      if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err. 
+         .ftou[ .divf[parmf`1\ 4.0]]
+     ,,
+     > ccpr1l
+ 
+    .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
+ 
+    if .gtf[.copyf[] 2.5],
+      .setbit[dc1b1 .setbit[dc1b0 @ccp1con]] > ccp1con
+    ,
+
+    if .gtf[.copyf[] 1.5],
+     .setbit[dc1b1  @ccp1con] > ccp1con
+     ,	  
+         if .gtf[.copyf[] 0.5],
 	  
-	  .setbit[dc1b0  @ccp1con] > ccp1con 
-	  ,,	  
-  ,    
- , 
+   	  .setbit[dc1b0  @ccp1con] > ccp1con 
+   	  ,,	  
+     ,    
+    ,,
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+    /Make 8-bit high byte
+     if .iszerof[parmf`1\],0, 
+      if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err. 
+         .ftou[ .divf[parmf`1\ 4.0]]
+     ,,
+     > ccpr2l
+ 
+    .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr2l]]]]
+ 
+    if .gtf[.copyf[] 2.5],
+      .setbit[dc2b1 .setbit[dc2b0 @ccp1con]] > ccp2con
+    ,
+
+    if .gtf[.copyf[] 1.5],
+     .setbit[dc2b1  @ccp2con] > ccp2con
+     ,	  
+         if .gtf[.copyf[] 0.5],
+	  
+   	  .setbit[dc2b0  @ccp2con] > ccp2con 
+   	  ,,	  
+     ,    
+    ,,
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;
