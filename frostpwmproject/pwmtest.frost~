@@ -1,0 +1,7 @@
+insert clock
+
+.pwmon[]
+
+.pwmf[0 512.0]
+
+insert pwm

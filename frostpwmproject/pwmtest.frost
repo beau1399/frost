@@ -1,0 +1,8 @@
+insert clock
+
+.pwm1on[]
+.pwmf[1000.0 0]
+
+
+
+insert pwm
