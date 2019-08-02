@@ -1,0 +1,66 @@
+calls setbit,clearbit,iszerof,copyf,gtf,utof,mulf
+calls ftou,divf
+calls addf,parm
+
+d .pwm1on is
+ / Longest period possible for max res.; use a capacitor if period is too long
+ 255 > pr2
+ / PWM1 = B3
+ .clearbit[ccp1sel @apfcon0] > apfcon0
+ / PWM out pin off for now
+ .setbit[trisb3 @trisb] > trisb
+ / Simple, single-output PWM mode
+ .clearbit[ p1m0 .clearbit [p1m1 @ccp1con]] > ccp1con
+ .clearbit[ccp1m0 .clearbit [ccp1m1 @ccp1con]] > ccp1con
+ .setbit[ccp1m2 .setbit [ccp1m3 @ccp1con]] > ccp1con
+
+ / Use timer 2
+ .clearbit[c1tsel0 .clearbit[c1tsel1 @ccptmrs]] > ccptmrs
+ .clearbit[tmr2if @pir1] > pir1
+
+ / Minimum prescale value for timer allows for minimum period
+ /  width without reducing resolution
+ .clearbit[t2ckps0 .clearbit[t2ckps1 @t2con]] > t2con
+
+ / Timer on
+ .setbit[tmr2on @t2con] > t2con
+
+ / PWM bit is output
+ .clearbit[trisb3 @trisb] > trisb
+;
+
+
+d .pwmf 3 0 is /1st parm is channel 0=L/C4 and 1=R/C5
+  
+ 
+ /Make 8-bit high byte
+ 
+  if .iszerof[parmf`1\],0,
+ 
+   if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err.
+ 
+      .ftou[ .divf[parmf`1\ 4.0]]
+  ,,
+ > ccpr1l
+ 
+ 
+ 
+ 
+ /(parmf0 mod 4)
+ .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
+ 
+ if .gtf[.copyf[] 2.5],
+   .setbit[dc1b1 .setbit[dc1b0 @ccp1con]] > ccp1con
+ ,
+
+ if .gtf[.copyf[] 1.5],
+  .setbit[dc1b1  @ccp1con] > ccp1con
+  ,	  
+      if .gtf[.copyf[] 0.5],
+	  
+	  .setbit[dc1b0  @ccp1con] > ccp1con 
+	  ,,	  
+  ,    
+ , 
+
+;
