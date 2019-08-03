@@ -1,7 +1,7 @@
 macro stickyx is 10.0 end macro
-macro ptermx is 30.0 end macro
-macro itermx is 1.0 end macro
-macro dtermx is -0.5 end macro
+macro ptermx is 1.0 end macro
+macro itermx is 0.125 end macro
+macro dtermx is -0.125 end macro
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
