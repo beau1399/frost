@@ -1,10 +1,10 @@
 macro stickyx is 10.0 end macro
-macro ptermx is 3.0 end macro
-macro itermx is 1.5 end macro
+macro ptermx is 30.0 end macro
+macro itermx is 15.0 end macro
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
-var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init,errorxm,errorxe
+var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init,errorxm,errorxe,tempm,tempe
 
 0.0 > errorxe > errorxm
 insert clock
@@ -85,13 +85,14 @@ d .awaitin * is
 d .loop is
  .samplex[]
  .sampley[]
- .addf[ @errorxm @errorxe .addf[@zeroxm @zeroxe @xm @xe]] > errorxe > errorxm
+ .addf[@zeroxm @zeroxe @xm @xe] > tempe > tempm		/tempx holds error for this iteration
+ .addf[ @errorxm @errorxe @tempm @tempe] > errorxe > errorxm
 
 / if .gtf[@errorxm @errorxe imaxx],imaxx > errorxe > errorxm,
 /  if .gtf[iminx @errorxm @errorxe ],iminx > errorxe > errorxm,,,
 
- .pwmf[ .addf[stickyx            .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]   1]
- .pwmf[ .addf[stickyx .mulf[-1.0 .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]]  0]
+ .pwmf[ .addf[stickyx            .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]]]   1]
+ .pwmf[ .addf[stickyx .mulf[-1.0 .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]]]]  0]
  .setbit[3 @porta] > porta /Turn on LED for debugging
  .loop[]
 ;
