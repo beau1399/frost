@@ -91,8 +91,11 @@ d .loop is
 / if .gtf[@errorxm @errorxe imaxx],imaxx > errorxe > errorxm,
 /  if .gtf[iminx @errorxm @errorxe ],iminx > errorxe > errorxm,,,
 
- .pwmf[ .addf[stickyx            .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]]]   1]
- .pwmf[ .addf[stickyx .mulf[-1.0 .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]]]]  0]
+ /tempx holds command
+ .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]] > tempe > tempm
+
+ .pwmf[ .addf[stickyx            @tempm @tempe  ]  1]
+ .pwmf[ .addf[stickyx .mulf[-1.0 @tempm @tempe ]]  0]
  .setbit[3 @porta] > porta /Turn on LED for debugging
  .loop[]
 ;
