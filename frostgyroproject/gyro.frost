@@ -1,6 +1,6 @@
 macro centerx is 512.0 end macro
-macro maxcommandx is 724.0 end macro
-macro mincommandx is 280.0 end macro
+macro maxcommandx is 650.0 end macro
+macro mincommandx is 375.0 end macro
 macro ptermx is 2.5 end macro
 macro itermx is 1.0 end macro
 macro dtermx is -0.85 end macro
@@ -61,6 +61,7 @@ insert clock
 .clearinterrupt[]
 .delay[]
 .pwm2on[] 
+.command[centerx 1] 
 
 .await[255]
 .samplex[]
