@@ -1,6 +1,6 @@
-macro stickyx is 100.0 end macro
-macro ptermx is 0.0 end macro
-macro itermx is 0.25 end macro
+macro stickyx is 10.0 end macro
+macro ptermx is 3.0 end macro
+macro itermx is 1.5 end macro
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
@@ -63,9 +63,11 @@ insert clock
 .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
 ffor(.avgzero[])(20)
-   
-.clearbit[2 @trisa] > trisa 
-.clearbit[2 @porta] > porta /Turn on LED for debugging
+
+
+.clearbit[3 @trisa] > trisa 
+.clearbit[3 @ansela] > ansela
+/.setbit[3 @porta] > porta /Turn on LED for debugging
 
 .loop[]
 
@@ -84,8 +86,13 @@ d .loop is
  .samplex[]
  .sampley[]
  .addf[ @errorxm @errorxe .addf[@zeroxm @zeroxe @xm @xe]] > errorxe > errorxm
+
+/ if .gtf[@errorxm @errorxe imaxx],imaxx > errorxe > errorxm,
+/  if .gtf[iminx @errorxm @errorxe ],iminx > errorxe > errorxm,,,
+
  .pwmf[ .addf[stickyx            .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]   1]
  .pwmf[ .addf[stickyx .mulf[-1.0 .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]]  0]
+ .setbit[3 @porta] > porta /Turn on LED for debugging
  .loop[]
 ;
 
