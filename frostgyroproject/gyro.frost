@@ -114,19 +114,10 @@ insert clock
   .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
   .mulf[-1.0 @ym @ye] > zeroye > zeroym
 
-  .samplex[]
-  .sampley[]
-  .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
-  .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
-
-  .samplex[]
-  .sampley[]
-  .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
-  .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
-
- 
+  ffor(.avgzero[])(20)
+   
  .clearbit[2 @trisa] > trisa 
- .setbit[2 @porta] > porta
+ .clearbit[2 @porta] > porta
 
 .loop[]
 
@@ -251,6 +242,14 @@ d .sampley is
  .clearinterrupt[]
  .iicend[]
  .clearinterrupt[]
+;
+
+
+d .avgzero is
+  .samplex[]
+  .sampley[]
+  .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
+  .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
 ;
 
 insert itof

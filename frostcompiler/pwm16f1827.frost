@@ -1,4 +1,4 @@
-calls setbit,clearbit,iszerof,copyf,gtf,utof,mulf
+calls setbit,clearbit,copyf,gtf,utof,mulf /,iszerof
 calls ftou,divf
 calls addf,parm
 
@@ -29,7 +29,6 @@ d .pwm1on is
  .clearbit[trisb3 @trisb] > trisb
 ;
 
-
 d .pwm2on is
  / Longest period possible for max res.; use a capacitor if period is too long
  255 > pr4
@@ -57,33 +56,20 @@ d .pwm2on is
  .clearbit[trisa7 @trisa] > trisa
 ;
 
-
-
-
-
-
-
-
 d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
 
-
-
-
-
+ /Make 8-bit high byte
+/  if  .iszerof[parmf`1\],0,
+   if  .gtf[1.0 parmf`1\],0,
+   if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err. 
+      .ftou[ .divf[parmf`1\ 4.0]]
+  ,,
 
 
  if .eq[.parm[0] 0],
 
+ /Channel 0
 
-
-
-
- 
-    /Make 8-bit high byte
-     if .iszerof[parmf`1\],0, 
-      if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err. 
-         .ftou[ .divf[parmf`1\ 4.0]]
-     ,,
      > ccpr1l
  
     .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr1l]]]]
@@ -97,34 +83,19 @@ d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
      ,	  
          if .gtf[.copyf[] 0.5],
 	  
-   	  .setbit[dc1b0  @ccp1con] > ccp1con 
-   	  ,,	  
+   	  .setbit[dc1b0  @ccp1con] > ccp1con,
+          .clearbit[dc1b1 .clearbit[dc1b0 @ccp1con]] > ccp1con,	  
      ,    
     ,,
 
-
-
-
-
-
-
-
-
-
-
-
+ /Channel 1
  
-    /Make 8-bit high byte
-     if .iszerof[parmf`1\],0, 
-      if  .gtf[parmf`1\ 1000.0],255, /Deal w/ SFP rounding err. 
-         .ftou[ .divf[parmf`1\ 4.0]]
-     ,,
-     > ccpr2l
+    > ccpr2l
  
     .addf[parmf`1\ .mulf[-1.0 .mulf[4.0 .utof[@ccpr2l]]]]
  
     if .gtf[.copyf[] 2.5],
-      .setbit[dc2b1 .setbit[dc2b0 @ccp1con]] > ccp2con
+      .setbit[dc2b1 .setbit[dc2b0 @ccp2con]] > ccp2con
     ,
 
     if .gtf[.copyf[] 1.5],
@@ -132,22 +103,8 @@ d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
      ,	  
          if .gtf[.copyf[] 0.5],
 	  
-   	  .setbit[dc2b0  @ccp2con] > ccp2con 
-   	  ,,	  
+   	  .setbit[dc2b0  @ccp2con] > ccp2con,
+          .clearbit[dc2b1 .clearbit[dc2b0 @ccp2con]] > ccp2con ,
      ,    
     ,,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;
