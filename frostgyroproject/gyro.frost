@@ -1,11 +1,12 @@
 macro stickyx is 100.0 end macro
-macro ptermx is 0.5 end macro
+macro ptermx is 0.0 end macro
+macro itermx is 0.25 end macro
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
-var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init
+var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init,errorxm,errorxe
 
-/1 > init
+0.0 > errorxe > errorxm
 insert clock
 .clearbit[gie @intcon] > intcon
 .clearbit[sspen @ssp1con1] > ssp1con1
@@ -82,8 +83,9 @@ d .awaitin * is
 d .loop is
  .samplex[]
  .sampley[]
- .pwmf[ .addf[stickyx .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]  1]
- .pwmf[ .addf[stickyx .mulf[ptermx .mulf[-1.0 .addf[@zeroxm @zeroxe @xm @xe]]]]  0]
+ .addf[ @errorxm @errorxe .addf[@zeroxm @zeroxe @xm @xe]] > errorxe > errorxm
+ .pwmf[ .addf[stickyx            .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]   1]
+ .pwmf[ .addf[stickyx .mulf[-1.0 .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]]]  0]
  .loop[]
 ;
 
