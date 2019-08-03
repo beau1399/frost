@@ -1,7 +1,10 @@
-macro stickyx is 10.0 end macro
-macro ptermx is 1.0 end macro
-macro itermx is 0.125 end macro
-macro dtermx is -0.125 end macro
+macro stickyx is 200.0 end macro
+macro ptermx is 2.5 end macro
+macro itermx is 1.0 end macro
+macro dtermx is -0.85 end macro
+macro maxi is 150.0 end macro
+macro mini is 150.0 end macro
+
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
@@ -89,8 +92,8 @@ d .loop is
  .addf[@zeroxm @zeroxe @xm @xe] > tempe > tempm		/tempx holds error for this iteration
  .addf[ @errorxm @errorxe @tempm @tempe] > errorxe > errorxm
 
-/ if .gtf[@errorxm @errorxe imaxx],imaxx > errorxe > errorxm,
-/  if .gtf[iminx @errorxm @errorxe ],iminx > errorxe > errorxm,,,
+ if .gtf[@errorxm @errorxe maxi],maxi > errorxe > errorxm,
+  if .gtf[mini @errorxm @errorxe ],mini > errorxe > errorxm,,,
 
  /tempx holds command w/o differential part
  .addf[ .mulf[@errorxm @errorxe itermx] .mulf[ptermx @tempm @tempe ]] > tempe > tempm
@@ -98,8 +101,8 @@ d .loop is
  .addf[ @tempm @tempe
         .mulf[ .addf[ .mulf[-1.0 @commandm @commande] @tempm @tempe] dtermx ]] > commande > commandm
 
- .pwmf[ .addf[stickyx            @commandm @commande  ]  1]
- .pwmf[ .addf[stickyx .mulf[-1.0 @commandm @commande ]]  0]
+ .command[ .addf[stickyx            @commandm @commande  ]  1]
+ .command[ .addf[stickyx .mulf[-1.0 @commandm @commande ]]  0]
  .setbit[3 @porta] > porta /Turn on LED for debugging
  .loop[]
 ;
@@ -208,6 +211,12 @@ d .avgzero is
   .sampley[]
   .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
   .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
+;
+
+d .command 3 0 is
+ if .gtf[parmf(1) stickyx],
+  .pwmf[parmf(1) .parm[0]],
+  .pwmf[stickyx .parm[0]],
 ;
 
 insert itof
