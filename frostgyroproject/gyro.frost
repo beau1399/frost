@@ -1,25 +1,9 @@
+macro stickyx is 100.0 end macro
+macro ptermx is 0.5 end macro
+
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
 var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init
-
-/event 1 is
-/ .add[1 @scaler] > scaler
-/ if .eq[20 @scaler],
-/  if @init,,
-/  .samplex[]
-/  .sampley[]
-/  .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
-/  .mulf[-1.0 @ym @ye] > zeroye > zeroym
-/  1 > init
-/  ,
-/  0 >scaler
-/  .printch[13].printch[10]
-/  .printf[.addf[@zeroxm @zeroxe @xm @xe]]
-/  .printch[13].printch[10].printch[' ']
-/  .printf[.addf[@zeroym @zeroye @ym @ye]]
-/  .printch[13].printch[10]
-/ ,,
-/;
 
 /1 > init
 insert clock
@@ -35,24 +19,9 @@ insert clock
 .setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3	/Start and Stop bit flagging on
 .setbit[sspen @ssp1con1] > ssp1con1   /Start I2C
 
-
-
-
-  /Not sure why but PWM doesn't work w/o these two calls
-  .setbit[txen @txsta] > txsta
-  .setbit[spen @rcsta] > rcsta
-/ frost9600baud
-
-
-
-
-
-
-
-
-
-/Necessary to use MAX-232
-/.clearbit[sckp @baudcon] > baudcon
+/Not sure why but PWM doesn't work w/o these two calls
+.setbit[txen @txsta] > txsta
+.setbit[spen @rcsta] > rcsta
 
 .iicstart[]
 .clearinterrupt[]
@@ -85,39 +54,17 @@ insert clock
 .iicend[]
 .clearinterrupt[]
 .delay[]
-
-/0>scaler
-/insert slowtimer
-/insert starttimer
-
- 
-
-/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
-/ .printf[@zeroxm @zeroxe]
-/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
-/ .printf[@zeroym @zeroye]
-/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
-/ .printch[13].printch[10]
-
-/
-
-
-
-
 .pwm1on[] .pwm2on[]
 
-
-  .await[255]
-  
-  .samplex[]
-  .sampley[]
-  .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
-  .mulf[-1.0 @ym @ye] > zeroye > zeroym
-
-  ffor(.avgzero[])(20)
+.await[255]
+.samplex[]
+.sampley[]
+.mulf[-1.0 @xm @xe] > zeroxe > zeroxm
+.mulf[-1.0 @ym @ye] > zeroye > zeroym
+ffor(.avgzero[])(20)
    
- .clearbit[2 @trisa] > trisa 
- .clearbit[2 @porta] > porta
+.clearbit[2 @trisa] > trisa 
+.clearbit[2 @porta] > porta /Turn on LED for debugging
 
 .loop[]
 
@@ -135,14 +82,8 @@ d .awaitin * is
 d .loop is
  .samplex[]
  .sampley[]
-/ if .gtf[ .addf[@zeroxm @zeroxe @xm @xe] 0.0],.pwmf[1000.0 0] .pwmf[0.0 1],.pwmf[1000.0 1] .pwmf[0.0 0],
-
- .pwmf[ .addf[@zeroxm @zeroxe @xm @xe]  1]
-
- .pwmf[ .mulf[-1.0 .addf[@zeroxm @zeroxe @xm @xe]]  0]
-
-
-
+ .pwmf[ .addf[stickyx .mulf[ptermx .addf[@zeroxm @zeroxe @xm @xe]]]  1]
+ .pwmf[ .addf[stickyx .mulf[ptermx .mulf[-1.0 .addf[@zeroxm @zeroxe @xm @xe]]]]  0]
  .loop[]
 ;
 
