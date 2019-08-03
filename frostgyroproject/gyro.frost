@@ -1,16 +1,27 @@
-calls printu,orb,notb,utof,addf,divf,printf,ftou,add,dispose,negti,graphx,ftou,gtf,andb,copyf,gtf
+calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
-var scaler,ym,ye,xm,xe
+var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init
 
-event 1 is
- .add[1 @scaler] > scaler
- if .eq[2 @scaler],
-  0 >scaler
-  .maybeshow[2 .addf[5.0  .divf[@xm @xe 50.0]]]
-  .maybeshow[4 .addf[5.0  .divf[@ym @ye 50.0]]]
- ,,
-;
+/event 1 is
+/ .add[1 @scaler] > scaler
+/ if .eq[20 @scaler],
+/  if @init,,
+/  .samplex[]
+/  .sampley[]
+/  .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
+/  .mulf[-1.0 @ym @ye] > zeroye > zeroym
+/  1 > init
+/  ,
+/  0 >scaler
+/  .printch[13].printch[10]
+/  .printf[.addf[@zeroxm @zeroxe @xm @xe]]
+/  .printch[13].printch[10].printch[' ']
+/  .printf[.addf[@zeroym @zeroye @ym @ye]]
+/  .printch[13].printch[10]
+/ ,,
+/;
 
+/1 > init
 insert clock
 .clearbit[gie @intcon] > intcon
 .clearbit[sspen @ssp1con1] > ssp1con1
@@ -24,9 +35,21 @@ insert clock
 .setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3	/Start and Stop bit flagging on
 .setbit[sspen @ssp1con1] > ssp1con1   /Start I2C
 
-frost9600baud
 
-.printch['O'].printch['K']
+
+
+  /Not sure why but PWM doesn't work w/o these two calls
+  .setbit[txen @txsta] > txsta
+  .setbit[spen @rcsta] > rcsta
+/ frost9600baud
+
+
+
+
+
+
+
+
 
 /Necessary to use MAX-232
 /.clearbit[sckp @baudcon] > baudcon
@@ -63,108 +86,72 @@ frost9600baud
 .clearinterrupt[]
 .delay[]
 
-0>scaler
-insert slowtimer
-insert starttimer
+/0>scaler
+/insert slowtimer
+/insert starttimer
+
+ 
+
+/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
+/ .printf[@zeroxm @zeroxe]
+/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
+/ .printf[@zeroym @zeroye]
+/ .printch[13].printch[10].printch['-'] .printch['-'] .printch['-'] .printch['-'] .printch['-']
+/ .printch[13].printch[10]
+
+/
+
+
+
+
+.pwm1on[] .pwm2on[]
+
+
+  .await[255]
+  
+  .samplex[]
+  .sampley[]
+  .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
+  .mulf[-1.0 @ym @ye] > zeroye > zeroym
+
+  .samplex[]
+  .sampley[]
+  .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
+  .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
+
+  .samplex[]
+  .sampley[]
+  .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
+  .mulf[0.5 .addf[.mulf[-1.0 @ym @ye] @zeroym @zeroye]]> zeroye > zeroym
+
+ 
+ .clearbit[2 @trisa] > trisa 
+ .setbit[2 @porta] > porta
 
 .loop[]
 
 ////////////////////////////////////////////////////
 
+d .await * is
+ .awaitin[255]
+ if .notb[ .parm[0] ],,.add[-1] .await[],
+;
+
+d .awaitin * is
+ if .notb[ .parm[0] ],.dispose[],.add[-1] .awaitin[],
+;
+
 d .loop is
+ .samplex[]
+ .sampley[]
+/ if .gtf[ .addf[@zeroxm @zeroxe @xm @xe] 0.0],.pwmf[1000.0 0] .pwmf[0.0 1],.pwmf[1000.0 1] .pwmf[0.0 0],
 
- .iicstart[]
- .clearinterrupt[]
+ .pwmf[ .addf[@zeroxm @zeroxe @xm @xe]  1]
 
- 210 > sspbuf
- .clearinterrupt[]
- .checkack[]
- 59 > sspbuf
- .clearinterrupt[]
- .checkack[]
- .setbit[rsen @ssp1con2] > ssp1con2
- .clearinterrupt[]
- 211 > sspbuf
- .clearinterrupt[]
- .checkack[]
- .setbit[rcen @ssp1con2] > ssp1con2
- .clearfill[]
- .clearinterrupt[]
- .clearbit[ssp1if @pir1] > pir1
- @ssp1buf
- .clearbit[bf @ssp1stat] > ssp1stat
-
- .ack[]
- .clearinterrupt[]
- .setbit[rcen @ssp1con2] > ssp1con2
- .clearfill[]
- .clearinterrupt[]
- .clearbit[ssp1if @pir1] > pir1
- @ssp1buf
- .itoflong[]  > xe > xm
- .clearbit[bf @ssp1stat] > ssp1stat
+ .pwmf[ .mulf[-1.0 .addf[@zeroxm @zeroxe @xm @xe]]  0]
 
 
 
-
-
-
-
-
-
-
- .ack[]
- .clearinterrupt[]
- .setbit[rcen @ssp1con2] > ssp1con2
- .clearfill[]
- .clearinterrupt[]
- .clearbit[ssp1if @pir1] > pir1
- @ssp1buf
- .clearbit[bf @ssp1stat] > ssp1stat
-
-
- .ack[]
- .clearinterrupt[]
- .setbit[rcen @ssp1con2] > ssp1con2
- .clearfill[]
- .clearinterrupt[]
- .clearbit[ssp1if @pir1] > pir1
- @ssp1buf
- .itoflong[]  > ye > ym
- .clearbit[bf @ssp1stat] > ssp1stat
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.nack[]
- .clearinterrupt[]
- .iicend[]
- .clearinterrupt[]
  .loop[]
 ;
 
@@ -207,13 +194,64 @@ d .iicend is
  .setbit[pen @ssp1con2] > ssp1con2
 ;
 
-d .copy 1 2 is
- .parm[0] .parm[0]
+d .samplex is
+ .iicstart[]
+ .clearinterrupt[]
+ 210 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ 59 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rsen @ssp1con2] > ssp1con2
+ .clearinterrupt[]
+ 211 > sspbuf
+ .clearinterrupt[]
+ .checkack[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
+ .itoflong[]  > xe > xm
+ .clearbit[bf @ssp1stat] > ssp1stat
 ;
 
-d .maybeshow 3 0 is
-   if .andb[.gtf[120.5 parmf(0)] .gtf[ parmf(0) 0.0]],   
-     .graphx[120 .ftou[parmf(0)] 2 .parm[2]],,
+d .sampley is
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+ .ack[]
+ .clearinterrupt[]
+ .setbit[rcen @ssp1con2] > ssp1con2
+ .clearfill[]
+ .clearinterrupt[]
+ .clearbit[ssp1if @pir1] > pir1
+ @ssp1buf
+ .itoflong[]  > ye > ym
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+ .nack[]
+ .clearinterrupt[]
+ .iicend[]
+ .clearinterrupt[]
 ;
 
 insert itof
+insert pwm
