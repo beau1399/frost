@@ -1,10 +1,11 @@
-macro stickyx is 200.0 end macro
+macro centerx is 512.0 end macro
+macro maxcommandx is 724.0 end macro
+macro mincommandx is 280.0 end macro
 macro ptermx is 2.5 end macro
 macro itermx is 1.0 end macro
 macro dtermx is -0.85 end macro
 macro maxi is 150.0 end macro
 macro mini is 150.0 end macro
-
 
 calls printu,notb,addf,gtf,andb/,printf,gtf,andb
 altstack is 80
@@ -59,15 +60,14 @@ insert clock
 .iicend[]
 .clearinterrupt[]
 .delay[]
-.pwm1on[] .pwm2on[]
+.pwm2on[] 
 
 .await[255]
 .samplex[]
 .sampley[]
 .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
-ffor(.avgzero[])(20)
-
+ffor(.avgzero[])(100)
 
 .clearbit[3 @trisa] > trisa 
 .clearbit[3 @ansela] > ansela
@@ -101,8 +101,8 @@ d .loop is
  .addf[ @tempm @tempe
         .mulf[ .addf[ .mulf[-1.0 @commandm @commande] @tempm @tempe] dtermx ]] > commande > commandm
 
- .command[ .addf[stickyx            @commandm @commande  ]  1]
- .command[ .addf[stickyx .mulf[-1.0 @commandm @commande ]]  0]
+ .command[ .addf[centerx            @commandm @commande  ]  1]
+/ .command[ .addf[stickyx .mulf[-1.0 @commandm @commande ]]  0]
  .setbit[3 @porta] > porta /Turn on LED for debugging
  .loop[]
 ;
@@ -214,9 +214,9 @@ d .avgzero is
 ;
 
 d .command 3 0 is
- if .gtf[parmf(1) stickyx],
-  .pwmf[parmf(1) .parm[0]],
-  .pwmf[stickyx .parm[0]],
+ if .gtf[maxcommandx parmf(1)],
+    if .gtf[parmf(1) mincommandx],.pwmf[parmf(1) .parm[0]],  .pwmf[mincommandx .parm[0]], ,
+  .pwmf[maxcommandx .parm[0]],
 ;
 
 insert itof

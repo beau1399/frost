@@ -7,6 +7,8 @@ d .pwm1on is
  255 > pr2
  / PWM1 = B3
  .clearbit[ccp1sel @apfcon0] > apfcon0
+
+
  / PWM out pin off for now
  .setbit[trisb3 @trisb] > trisb
  / Simple, single-output PWM mode
@@ -32,14 +34,17 @@ d .pwm1on is
 d .pwm2on is
  / Longest period possible for max res.; use a capacitor if period is too long
  255 > pr4
- / PWM2 = A7
- .setbit[ccp2sel @apfcon0] > apfcon0
+ / PWM2 = A7 P2B = A6
+ .setbit[p2bsel .setbit[ccp2sel @apfcon0]] > apfcon0
  / PWM out pin off for now
- .setbit[trisa7 @trisa] > trisa
- / Simple, single-output PWM mode
- .clearbit[ p2m0 .clearbit [p2m1 @ccp2con]] > ccp2con
+ .setbit[trisa7.setbit[trisa6 @trisa]] > trisa
+ / Half-bridge PWM mode
+ .clearbit[ p2m0 .setbit [p2m1 @ccp2con]] > ccp2con
  .clearbit[ccp2m0 .clearbit [ccp2m1 @ccp2con]] > ccp2con
  .setbit[ccp2m2 .setbit [ccp2m3 @ccp2con]] > ccp2con
+
+ /Set dead band b/w PWM signal and its complement right in middle of range
+ .setbit[6 @pwm2con] > pwm2con
 
  /Timer 4
  .setbit[c2tsel0 .clearbit[c2tsel1 @ccptmrs]] > ccptmrs
@@ -53,7 +58,7 @@ d .pwm2on is
  .setbit[tmr4on @t4con] > t4con
 
  / PWM bit is output
- .clearbit[trisa7 @trisa] > trisa
+  .clearbit[trisa6 .clearbit[trisa7 @trisa]] > trisa
 ;
 
 d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
