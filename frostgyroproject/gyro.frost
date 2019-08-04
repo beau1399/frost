@@ -188,7 +188,7 @@ d .loop is
 
 .add[1 @scaler] > scaler
 
- .awaitin[255]
+/ .awaitin[255]
 
  .loop[]
 ;
