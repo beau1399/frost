@@ -83,7 +83,7 @@ insert clock
 .sampley[]
 .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
-ffor(.avgzero[])(60)
+.setzero[255]
 
 .pwm1on[] 
 .pwm2on[] 
@@ -236,6 +236,7 @@ d .sampley is
 ;
 
 d .avgzero is
+  .await[255]
   .samplex[]
   .sampley[]
   .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
@@ -246,6 +247,11 @@ d .command 3 0 is
  if .gtf[maxcommandx parmf(1)],
     if .gtf[parmf(1) mincommandx],.pwmf[parmf(1) .parm[0]],  .pwmf[mincommandx .parm[0]], ,
   .pwmf[maxcommandx .parm[0]],
+;
+
+d .setzero * is
+ .avgzero[]
+ if .notb[.parm[0]],.dispose[],.setzero[.add[-1]],
 ;
 
 insert itof
