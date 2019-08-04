@@ -236,7 +236,7 @@ d .sampley is
 ;
 
 d .avgzero is
-  .await[255]
+  .await[1]
   .samplex[]
   .sampley[]
   .mulf[0.5 .addf[.mulf[-1.0 @xm @xe] @zeroxm @zeroxe]]> zeroxe > zeroxm
