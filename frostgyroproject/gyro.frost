@@ -1,3 +1,5 @@
+macro networkretries is 5 end macro
+
 macro centerx is 512.0 end macro
 macro maxcommandx is 650.0 end macro
 macro mincommandx is 375.0 end macro
@@ -16,7 +18,7 @@ macro dtermy is -0.85 end macro
 macro maxiy is 150.0 end macro
 macro miniy is 150.0 end macro
 
-calls printu,notb,addf,gtf,andb/,printf,gtf,andb
+calls printu,notb,addf,gtf,andb,orb
 altstack is 80
 var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init,errorxm,errorxe,
     errorym,errorye,tempm,tempe,commandxm,commandxe,commandym,commandye
@@ -193,12 +195,12 @@ d .loop is
  .loop[]
 ;
 
-d .clearinterruptin is
- if .getbit[ssp1if @pir1],,.clearinterruptin[], 
+d .clearinterruptin * is
+ if .orb[ .notb[.parm[0]] .getbit[ssp1if @pir1]   ],,.clearinterruptin[.add[-1]], 
 ;
 
-d .clearinterrupt is
- .clearinterruptin[]
+d .clearinterrupt 0 0 is
+ .clearinterruptin[networkretries]
  .clearbit[3 @pir1] > pir1
 ;
 
