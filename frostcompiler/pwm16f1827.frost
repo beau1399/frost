@@ -24,19 +24,19 @@ d .pwm1on is
 
  / Minimum prescale value for timer allows for minimum period
  /  width without reducing resolution
- .clearbit[t2ckps0 .clearbit[t2ckps1 @t2con]] > t2con
+ /Accept default .clearbit[t2ckps0 .clearbit[t2ckps1 @t2con]] > t2con
 
  / Timer on
  .setbit[tmr2on @t2con] > t2con
 
  / PWM bit is output
  .clearbit[trisb5 .clearbit[trisb3 @trisb]] > trisb
-
 ;
 
 d .pwm2on is
  / Longest period possible for max res.; use a capacitor if period is too long
  255 > pr4
+ 
  / PWM2 = A7 P2B = A6
  .setbit[p2bsel .setbit[ccp2sel @apfcon0]] > apfcon0
  / PWM out pin off for now
@@ -56,7 +56,7 @@ d .pwm2on is
 
  / Minimum prescale value for timer allows for minimum period
  /  width without reducing resolution
- .clearbit[t4ckps0 .clearbit[t4ckps1 @t4con]] > t4con
+ /Accept defaults .clearbit[t4ckps0 .clearbit[t4ckps1 @t4con]] > t4con
 
  / Timer on
  .setbit[tmr4on @t4con] > t4con
