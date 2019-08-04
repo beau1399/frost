@@ -181,13 +181,15 @@ d .loop is
 
 
 
-/ if .eq[@scaler 127],.setbit[2 @porta] > porta,
-/   if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /DEBUG
+ if .eq[@scaler 127],.setbit[2 @porta] > porta,
+   if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /DEBUG
 
- @xm > porta
+/ @xm > porta
 
 .add[1 @scaler] > scaler
- 
+
+ .awaitin[255]
+
  .loop[]
 ;
 
