@@ -1,6 +1,6 @@
 macro centerx is 512.0 end macro
-macro maxcommandx is 900.0 end macro
-macro mincommandx is 125.0 end macro
+macro maxcommandx is 650.0 end macro
+macro mincommandx is 375.0 end macro
 macro ptermx is 2.5 end macro
 macro itermx is 1.0 end macro
 macro dtermx is -0.85 end macro
@@ -90,12 +90,12 @@ insert clock
 /.setbit[2 @porta] > porta            /DEBUG
 
 
-.await[255]
+.await[]
 .samplex[]
 .sampley[]
 .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
-ffor(.avgzero[])(10)
+ffor(.avgzero[])(3)
 
 
 /.setbit[2 @porta] > porta            /DEBUG
