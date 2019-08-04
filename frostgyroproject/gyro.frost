@@ -1,8 +1,8 @@
 macro networkretries is 5 end macro
 
 macro centerx is 512.0 end macro
-macro maxcommandx is 650.0 end macro
-macro mincommandx is 375.0 end macro
+macro maxcommandx is 1000.0 end macro
+macro mincommandx is 25.0 end macro
 macro ptermx is 2.5 end macro
 macro itermx is 1.0 end macro
 macro dtermx is -0.85 end macro
@@ -10,8 +10,8 @@ macro maxix is 150.0 end macro
 macro minix is 150.0 end macro
 
 macro centery is 512.0 end macro
-macro maxcommandy is 650.0 end macro
-macro mincommandy is 375.0 end macro
+macro maxcommandy is 1000.0 end macro
+macro mincommandy is 25.0 end macro
 macro ptermy is 2.5 end macro
 macro itermy is 1.0 end macro
 macro dtermy is -0.85 end macro
@@ -35,8 +35,6 @@ insert clock
 .clearbit[gie @intcon] > intcon
 .clearbit[sspen @ssp1con1] > ssp1con1
 
-
-
 8 > ssp1con1   		    /I2C master mode
 0 > ssp1con2		    /Default settings
 19 > ssp1add  		    /32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
@@ -49,7 +47,6 @@ insert clock
 /Not sure why but PWM doesn't work w/o these two calls
 .setbit[txen @txsta] > txsta
 .setbit[spen @rcsta] > rcsta
-/frost9600baud
 
 .iicstart[]
 .clearinterrupt[]
@@ -65,8 +62,6 @@ insert clock
 .checkack[]
 .iicend[]
 .clearinterrupt[]
-/.awaitin[255]
-
 
 .iicstart[]
 .clearinterrupt[]
@@ -82,37 +77,23 @@ insert clock
 .checkack[]
 .iicend[]
 .clearinterrupt[]
-/.awaitin[255]
-.pwm1on[] 
-.pwm2on[] 
-.command[centerx 1]
-.command[centery 0]
 
-
-/.setbit[2 @porta] > porta            /DEBUG
-
-
-.await[]
+.await[255]
 .samplex[]
 .sampley[]
 .mulf[-1.0 @xm @xe] > zeroxe > zeroxm
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
-ffor(.avgzero[])(3)
+ffor(.avgzero[])(60)
 
-
-/.setbit[2 @porta] > porta            /DEBUG
-
-/.clearbit[3 @trisa] > trisa 
-/.clearbit[3 @ansela] > ansela
-/.setbit[3 @porta] > porta /Turn on LED for debugging
-
+.pwm1on[] 
+.pwm2on[] 
 .loop[]
 
 ////////////////////////////////////////////////////
 
 d .await * is
  .awaitin[255]
- if .notb[ .parm[0] ],,.add[-1] .await[],
+ if .notb[ .parm[0] ],.dispose[],.add[-1] .await[],
 ;
 
 d .awaitin * is
@@ -122,10 +103,6 @@ d .awaitin * is
 d .loop is
  .samplex[]
  .sampley[]
-
-
-
-
 
  .addf[ @zeroxm @zeroxe @xm @xe] > tempe > tempm		/temp_ holds error for this iteration
  .addf[ @errorxm @errorxe @tempm @tempe] > errorxe > errorxm
@@ -140,21 +117,6 @@ d .loop is
         .mulf[ .addf[ .mulf[-1.0 @commandxm @commandxe] @tempm @tempe] dtermx ]] > commandxe > commandxm
 
  .command[ .addf[centerx            @commandxm @commandxe  ]  1]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
  .addf[ @zeroym @zeroye @ym @ye] > tempe > tempm		/temp_ holds error for this iteration
@@ -172,25 +134,10 @@ d .loop is
  .command[ .addf[centery            @commandym @commandye  ]  0]
 
 
-
-
-
-
-
-
-
-
-
-
-
  if .eq[@scaler 127],.setbit[2 @porta] > porta,
-   if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /DEBUG
+   if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /Watchdog LED
 
-/ @xm > porta
-
-.add[1 @scaler] > scaler
-
-/ .awaitin[255]
+ .add[1 @scaler] > scaler
 
  .loop[]
 ;
@@ -251,7 +198,6 @@ d .samplex is
  .clearbit[ssp1if @pir1] > pir1
  @ssp1buf
  .clearbit[bf @ssp1stat] > ssp1stat
-
  .ack[]
  .clearinterrupt[]
  .setbit[rcen @ssp1con2] > ssp1con2
@@ -283,13 +229,11 @@ d .sampley is
  @ssp1buf
  .itoflong[]  > ye > ym
  .clearbit[bf @ssp1stat] > ssp1stat
-
  .nack[]
  .clearinterrupt[]
  .iicend[]
  .clearinterrupt[]
 ;
-
 
 d .avgzero is
   .samplex[]
