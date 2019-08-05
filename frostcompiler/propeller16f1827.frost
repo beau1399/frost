@@ -3,7 +3,7 @@ calls ftou,divf
 calls addf,parm
 
 /TODO this should really be pwm0on
-d .pwm1on is
+d .prop0on is
  / Longest period possible for max res.; use a capacitor if period is too long
  255 > pr2
 
@@ -33,7 +33,7 @@ d .pwm1on is
  .clearbit[trisb5 .clearbit[trisb3 @trisb]] > trisb
 ;
 
-d .pwm2on is
+d .prop1on is
  / Longest period possible for max res.; use a capacitor if period is too long
  255 > pr4
  
@@ -65,7 +65,7 @@ d .pwm2on is
   .clearbit[trisa6 .clearbit[trisa7 @trisa]] > trisa
 ;
 
-d .pwmf 3 0 is /1st parm is channel 0=B3 and 1=A7
+d .propf 3 0 is /1st parm is channel 0=B3 and 1=A7
 
  /Make 8-bit high byte
 /  if  .iszerof[parmf`1\],0,
