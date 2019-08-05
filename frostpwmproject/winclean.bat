@@ -1,9 +1,0 @@
-del *.hex
-del *.asm
-del *.err
-del *.o
-del *.lst
-del *.tmp
-del *.inc
-del make.bat
-del *.map

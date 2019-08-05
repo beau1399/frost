@@ -1,9 +1,0 @@
-insert clock
-
-.pwm1on[]
-.pwm2on[]
-.pwmf[0.0 0]
-.pwmf[10.0 1]
-.pwmf[1000.0 0]
-
-insert pwm
