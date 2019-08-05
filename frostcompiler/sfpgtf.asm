@@ -323,15 +323,15 @@ gtf0:
 
  
  btfss neg,0
- goto hllIDAAA
+ goto hllFDAAA
  btfsc neg2,0
- goto hllIDAAA
+ goto hllFDAAA
  movlw .0
 
  PUSH
  
- goto hllSDAAA
-hllIDAAA:
+ goto hllPDAAA
+hllFDAAA:
 
 
 
@@ -340,14 +340,14 @@ hllIDAAA:
 
  
  btfsc neg,0
- goto hllJDAAA
+ goto hllGDAAA
  btfss neg2,0
- goto hllJDAAA
+ goto hllGDAAA
  movlw .1 
  PUSH
  
- goto hllSDAAA
-hllJDAAA:
+ goto hllPDAAA
+hllGDAAA:
 
 
 
@@ -370,75 +370,75 @@ hllJDAAA:
  
 
  btfsc karg4,7 
- goto hllKDAAA
+ goto hllHDAAA
  movf karg4,f
  btfsc STATUS,Z 
- goto hllKDAAA 
+ goto hllHDAAA 
  
 
  movf karg2,f
  btfsc STATUS,Z
- goto hllMDAAA
+ goto hllJDAAA
  btfsc karg2,7
+ goto hllJDAAA
+ goto hllIDAAA
+ 
+hllHDAAA: 
+
+ btfsc karg2,7 
+ goto hllJDAAA
+ movf karg2,f
+ btfsc STATUS,Z 
+ goto hllJDAAA 
+ goto hllODAAA
+hllIDAAA: 
+ movfw 	karg2			
+ subwf karg4,w    
+ btfsc STATUS,C    
+ goto hllJDAAA
+ goto hllODAAA
+
+
+
+hllJDAAA: 
+
+
+
+ 
+
+
+
+
+
+ btfsc karg2,7 
+ goto hllKDAAA
+ movf karg2,f
+ btfsc STATUS,Z 
+ goto hllKDAAA 
+ 
+
+ movf karg4,f
+ btfsc STATUS,Z
+ goto hllMDAAA
+ btfsc karg4,7
  goto hllMDAAA
  goto hllLDAAA
  
 hllKDAAA: 
 
- btfsc karg2,7 
+ btfsc karg4,7 
  goto hllMDAAA
- movf karg2,f
+ movf karg4,f
  btfsc STATUS,Z 
  goto hllMDAAA 
- goto hllRDAAA
-hllLDAAA: 
- movfw 	karg2			
- subwf karg4,w    
- btfsc STATUS,C    
- goto hllMDAAA
- goto hllRDAAA
-
-
-
-hllMDAAA: 
-
-
-
- 
-
-
-
-
-
- btfsc karg2,7 
  goto hllNDAAA
- movf karg2,f
- btfsc STATUS,Z 
- goto hllNDAAA 
- 
-
- movf karg4,f
- btfsc STATUS,Z
- goto hllPDAAA
- btfsc karg4,7
- goto hllPDAAA
- goto hllODAAA
- 
-hllNDAAA: 
-
- btfsc karg4,7 
- goto hllPDAAA
- movf karg4,f
- btfsc STATUS,Z 
- goto hllPDAAA 
- goto hllQDAAA
-hllODAAA: 
+hllLDAAA: 
  movfw 	karg4			
  subwf karg2,w    
  btfsc STATUS,C    
- goto hllPDAAA
- goto hllQDAAA
-hllPDAAA: 
+ goto hllMDAAA
+ goto hllNDAAA
+hllMDAAA: 
 
 
 
@@ -454,36 +454,36 @@ hllPDAAA:
  movfw karg1
  subwf karg3,w
  btfss STATUS,C 
- goto hllRDAAA 
+ goto hllODAAA 
  
  movfw karg3
  subwf karg1,w
  btfss STATUS,C 
- goto hllQDAAA
+ goto hllNDAAA
 
  
  movlw .0 
  PUSH
  
- goto hllSDAAA 
+ goto hllPDAAA 
 
  
-hllQDAAA:
+hllNDAAA:
  banksel neg
  movlw .0 
  btfsc neg,0
  movlw .1 
  PUSH
  
- goto hllSDAAA 
-hllRDAAA:
+ goto hllPDAAA 
+hllODAAA:
  banksel neg
  movlw .0 
  btfss neg,0
  movlw .1
  PUSH
  
-hllSDAAA:
+hllPDAAA:
  
  return 
  

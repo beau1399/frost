@@ -481,15 +481,15 @@ mulf0:
  movwf ein2 
  xorlw .128 
  btfss STATUS,Z
- goto hllTCAAA
+ goto hllQDAAA
  movlw .127	
  
  andwf HLINDF,w 
  
  btfsc STATUS,Z
- goto hllBDAAA
+ goto hllYDAAA
  
-hllTCAAA: 
+hllQDAAA: 
 
  
  
@@ -514,13 +514,13 @@ hllTCAAA:
  movwf ein
  xorlw .128 
  btfss STATUS,Z
- goto hllUCAAA
+ goto hllRDAAA
  movlw .127
 
  andwf HLINDF,w 
  btfsc STATUS,Z
- goto hllCDAAA
-hllUCAAA:
+ goto hllZDAAA
+hllRDAAA:
 
  POP
 
@@ -559,9 +559,9 @@ hllUCAAA:
  addlw .128 
 
  PUSH
- goto hllEDAAA 
+ goto hllBEAAA 
 
-hllVCAAA:
+hllSDAAA:
 
  
  POP
@@ -572,7 +572,7 @@ hllVCAAA:
 
  
  btfss mout,7 
- goto hllWCAAA 
+ goto hllTDAAA 
 
  
  POP
@@ -587,10 +587,10 @@ hllVCAAA:
  btfss STATUS,Z
  incf mout,f
 
- goto hllXCAAA 
+ goto hllUDAAA 
 
 
-hllWCAAA: 
+hllTDAAA: 
 
  
  
@@ -629,7 +629,7 @@ hllWCAAA:
  
 
 
-hllXCAAA: 
+hllUDAAA: 
 
  
  movfw mout 
@@ -642,15 +642,15 @@ hllXCAAA:
 
  
  btfsc neg,0
- goto hllYCAAA 
+ goto hllVDAAA 
  btfss neg,1
- goto hllADAAA 
- goto hllZCAAA 
-hllYCAAA: 
+ goto hllXDAAA 
+ goto hllWDAAA 
+hllVDAAA: 
  btfsc neg,1
- goto hllADAAA 
+ goto hllXDAAA 
 
-hllZCAAA: 
+hllWDAAA: 
 
  
  movfw mout 
@@ -662,7 +662,7 @@ hllZCAAA:
  movwf mout 
 
 
-hllADAAA: 
+hllXDAAA: 
 
  
  movfw mout 
@@ -675,15 +675,15 @@ hllADAAA:
  movfw util 
  PUSH
  
- goto hllDDAAA 
+ goto hllAEAAA 
 
-hllBDAAA: 
+hllYDAAA: 
 
  POP
  POP
 
 
-hllCDAAA:
+hllZDAAA:
  POP
 
  
@@ -693,14 +693,14 @@ hllCDAAA:
 
  
  
-hllDDAAA:
+hllAEAAA:
  
  return
  
  
  
  
-hllEDAAA: 
+hllBEAAA: 
 
  POP
  banksel factor1
@@ -718,11 +718,11 @@ hllEDAAA:
  
  clrf iterator
 
-hllFDAAA:
+hllCEAAA:
 
  
  btfss factor1,0
- goto hllGDAAA
+ goto hllDEAAA
 
  
  
@@ -734,7 +734,7 @@ hllFDAAA:
  incf hi_byte,f
 
 
-hllGDAAA:
+hllDEAAA:
  
  
  RSHIFT factor1
@@ -773,7 +773,7 @@ hllGDAAA:
  movlw .8
  xorwf iterator,w
  btfss STATUS,Z
- goto hllFDAAA
+ goto hllCEAAA
 
  
  movfw factor1 
@@ -784,7 +784,7 @@ hllGDAAA:
  movfw make_mout
  PUSH
 
- goto hllVCAAA 
+ goto hllSDAAA 
 
 
 

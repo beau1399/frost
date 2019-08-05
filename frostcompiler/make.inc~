@@ -1,1 +1,0 @@
-wine 'c:/Program Files (x86)/Microchip/MPASM Suite/MPLink.exe' "%shloe%s.lkr" target.o 

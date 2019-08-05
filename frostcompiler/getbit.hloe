@@ -24,7 +24,7 @@ rhik3sz:
  rlf margp2,f
  banksel margp3
  decf margp3,f
- bra rhik3sz
+ goto rhik3sz
 shik3sz:
  banksel margp4
  movfw  margp4

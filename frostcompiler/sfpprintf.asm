@@ -201,13 +201,13 @@ printf0:
  
  movlw '+' 
  btfss thk000,7 
- goto hllHDAAA
+ goto hllEEAAA
  
  movfw thk000
  andlw .127 
  movwf thk000 
  movlw '-' 
-hllHDAAA: 
+hllEEAAA: 
  PUSH
  FAR_CALL printf, printch 
  banksel thk000
@@ -269,13 +269,13 @@ hllHDAAA:
  
  movlw '+' 
  btfss thk001,7 
- goto hllHDAAA2 
+ goto hllEEAAA2 
  movfw thk001 
  xorlw .255 
  addlw .1
  movwf thk001 
  movlw '-' 
-hllHDAAA2: 
+hllEEAAA2: 
  PUSH
  FAR_CALL printf, printch 
  

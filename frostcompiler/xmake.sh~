@@ -1,5 +1,0 @@
-g++ -c -w ./nonbison.cpp 
-echo ok
-g++ -c -w ./frostcore.cpp 
-gcc -c -w ./lex.yy.c
-g++ -w -ofrostcompiler ./frost.tab.cpp  ./lex.yy.o ./frostcore.o ./nonbison.o -static

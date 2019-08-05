@@ -916,26 +916,26 @@ addf0:
 
 
  btfsc ein2,7  
- goto hllUAAAA
+ goto hllVAAAA
  
  btfss ein1,7
- goto hllSAAAA
+ goto hllTAAAA
  
- goto hllWAAAA
-hllSAAAA: 
+ goto hllXAAAA
+hllTAAAA: 
  
  movfw ein1
  subwf ein2,w    
  btfss STATUS,C 
- goto hllVAAAA  
-hllTAAAA:
  goto hllWAAAA  
-hllUAAAA:   
+hllUAAAA:
+ goto hllXAAAA  
+hllVAAAA:   
  
  
  btfsc ein1,7
- goto hllSAAAA  
-hllVAAAA:  
+ goto hllTAAAA  
+hllWAAAA:  
  
  
 
@@ -965,13 +965,13 @@ hllVAAAA:
  
  
  
- goto hllWAAAA_done 
-hllWAAAA: 
+ goto hllXAAAA_done 
+hllXAAAA: 
  
  
  
  clrf rev 
-hllWAAAA_done: 
+hllXAAAA_done: 
  
  
  
@@ -1018,13 +1018,13 @@ hllWAAAA_done:
 
  clrf min2_lower
  
-hllYAAAA:
+hllZAAAA:
 
 
  movfw ein1 
  xorwf ein2,w 
  btfsc STATUS,Z 
- goto hllABAAA  
+ goto hllBBAAA  
  
 
 
@@ -1036,11 +1036,11 @@ hllYAAAA:
  
 
  btfss STATUS,C
- goto hllZAAAA
+ goto hllABAAA
  
 
  bsf min_lower,7
-hllZAAAA:
+hllABAAA:
 
 
 
@@ -1048,10 +1048,10 @@ hllZAAAA:
  incf ein1,f
 
 
- goto hllYAAAA
+ goto hllZAAAA
  
 
-hllABAAA:	
+hllBBAAA:	
 
  
  
@@ -1059,7 +1059,7 @@ hllABAAA:
  
  
  btfss rev,0 
- goto hllBBAAA 
+ goto hllCBAAA 
 
 
 
@@ -1082,41 +1082,41 @@ hllABAAA:
  
  
  
-hllBBAAA: 
+hllCBAAA: 
 
  banksel min_lower
 
  
  
 
-hllCBAAA:	
+hllDBAAA:	
 
  btfss neg,0
- goto hllDBAAA
+ goto hllEBAAA
  
 
  btfss neg,1
- goto hllDBAAA
+ goto hllEBAAA
 
 
 
 
  bsf minres,0
 
- goto hllUBAAA
+ goto hllVBAAA
 
  
  
  
  
-hllDBAAA:
+hllEBAAA:
  
 
  btfss neg,0
- goto hllLBAAA 
+ goto hllMBAAA 
 
  
-hllEBAAA:
+hllFBAAA:
 
 	
 	
@@ -1127,25 +1127,25 @@ hllEBAAA:
  
  
  btfsc STATUS,C
- goto hllFBAAA		
+ goto hllGBAAA		
 		
 	
  bsf minres,0	
 	
 	
- goto hllMBAAA	
+ goto hllNBAAA	
 	
-hllFBAAA:
+hllGBAAA:
 
 	
  movf mout,f
  btfsc STATUS,Z
- goto hllACAAA	
-hllGBAAA:
+ goto hllBCAAA	
+hllHBAAA:
 
 	
  btfsc mout,7	
- goto hllIBAAA   
+ goto hllJBAAA   
 	
 	
     
@@ -1153,7 +1153,7 @@ hllGBAAA:
  
 	
  btfss min_lower,7	
- goto hllHBAAA   
+ goto hllIBAAA   
 
  
  decf mout,f	
@@ -1162,16 +1162,16 @@ hllGBAAA:
  movlw .255
  xorwf mout,w
  btfss STATUS,Z
- goto hllHBAAA	
+ goto hllIBAAA	
 	
      
  bsf minres,0
  
 	 
- goto hllMBAAA
+ goto hllNBAAA
 	 
 
-hllHBAAA:
+hllIBAAA:
 
    
  LSHIFT min_lower
@@ -1180,12 +1180,12 @@ hllHBAAA:
  decf ein1,f	
 
 	
- goto hllGBAAA
+ goto hllHBAAA
 
-hllIBAAA:
+hllJBAAA:
 	
  btfss min_lower,7	
- goto hllKBAAA   
+ goto hllLBAAA   
 		
 	
  decf mout,f
@@ -1194,21 +1194,21 @@ hllIBAAA:
  movlw .255
  xorwf mout,w
  btfss STATUS,Z
- goto hllJBAAA	
+ goto hllKBAAA	
 		
      
  bsf minres,0	 
 	 
 	 
- goto hllMBAAA	 
+ goto hllNBAAA	 
 	 
 	 
-hllJBAAA:
+hllKBAAA:
 	
  movlw .127
  xorwf mout,w
  btfss STATUS,Z
- goto hllKBAAA	
+ goto hllLBAAA	
 	
 	
 	
@@ -1220,23 +1220,23 @@ hllJBAAA:
 	
 	
  btfsc min_lower,6
- goto hllKBAAA 
+ goto hllLBAAA 
 	
 	
  incf mout,f	
 	
-hllKBAAA:
-	
- goto hllACAAA
 hllLBAAA:
+	
+ goto hllBCAAA
+hllMBAAA:
  
 
 	
  btfss neg,1
- goto hllUBAAA 
+ goto hllVBAAA 
  
 	
-hllMBAAA:
+hllNBAAA:
 
 	
  movfw fulmin2
@@ -1245,7 +1245,7 @@ hllMBAAA:
 
  
  btfsc STATUS,C
- goto hllNBAAA		
+ goto hllOBAAA		
 	
 	
 	
@@ -1253,20 +1253,20 @@ hllMBAAA:
  bsf minres,0
 	
 	
- goto hllEBAAA	
+ goto hllFBAAA	
 
-hllNBAAA:
+hllOBAAA:
 
 	
  movf mout,f 
  btfsc STATUS,Z 
- goto hllACAAA 
+ goto hllBCAAA 
 	
-hllOBAAA:
+hllPBAAA:
 
 	
  btfsc mout,7
- goto hllIBAAAb
+ goto hllJBAAAb
  
  	
 	
@@ -1275,7 +1275,7 @@ hllOBAAA:
  
 	
  btfss min2_lower,7
- goto hllPBAAA
+ goto hllQBAAA
 
 	
 	
@@ -1285,15 +1285,15 @@ hllOBAAA:
  movlw .255
  xorwf mout,w
  btfss STATUS,Z
- goto hllPBAAA	
+ goto hllQBAAA	
 	
 
  bsf minres,0
 	
 
- goto hllEBAAA
+ goto hllFBAAA
 	
-hllPBAAA:
+hllQBAAA:
 
  
  LSHIFT min2_lower
@@ -1302,12 +1302,12 @@ hllPBAAA:
  decf ein1,f
    
 	
- goto hllOBAAA	
-hllIBAAAb:
+ goto hllPBAAA	
+hllJBAAAb:
 
 	
  btfss min2_lower,7
- goto hllSBAAA
+ goto hllTBAAA
 
 	
  decf mout,f	
@@ -1316,21 +1316,21 @@ hllIBAAAb:
  movlw .255
  xorwf mout,w
  btfss STATUS,Z
- goto hllRBAAA	
+ goto hllSBAAA	
 		
 	
  bsf minres,0
  
 	
- goto hllEBAAA
-hllRBAAA:
+ goto hllFBAAA
+hllSBAAA:
 
 
 	
  movlw .127
  xorwf mout,w
  btfss STATUS,Z
- goto hllSBAAA	
+ goto hllTBAAA	
 		
 	
 	
@@ -1342,18 +1342,18 @@ hllRBAAA:
 
 	
  btfsc min2_lower,6
- goto hllSBAAA 
+ goto hllTBAAA 
  
 	
 	
  incf mout,f	
 	
-hllSBAAA:
+hllTBAAA:
 
 	
- goto hllACAAA
+ goto hllBCAAA
 
-hllTBAAA:
+hllUBAAA:
 	 
  movfw fulmin
  subwf fulmin2,w 
@@ -1364,10 +1364,10 @@ hllTBAAA:
      
  bsf minres,0	 
 	
- goto hllACAAA
+ goto hllBCAAA
 
 	
-hllUBAAA:
+hllVBAAA:
 
 
  
@@ -1385,12 +1385,12 @@ hllUBAAA:
 
 	
  btfss STATUS,C	
- goto hllVBAAA			
+ goto hllWBAAA			
 	
 	
  incf mout_hi,f	
 	
-hllVBAAA:
+hllWBAAA:
 
 
 
@@ -1398,19 +1398,19 @@ hllVBAAA:
  movf min_lower,w
  addwf min2_lower,w
  btfsc STATUS,C
- goto hllWBAAA   
+ goto hllXBAAA   
  
 
 	
 	
  andlw .128	
  btfss STATUS,Z
- goto hllWBAAA	  
+ goto hllXBAAA	  
 	
 	
- goto hllXBAAA	
+ goto hllYBAAA	
 	
-hllWBAAA:
+hllXBAAA:
 
 
 	
@@ -1419,16 +1419,16 @@ hllWBAAA:
 	
  movf mout,f
  btfss STATUS,Z
- goto hllXBAAA 
+ goto hllYBAAA 
 
 	
  incf mout_hi,f
 
-hllXBAAA:
+hllYBAAA:
 	
  movf mout_hi,f
  btfsc STATUS,Z
- goto hllACAAA 
+ goto hllBCAAA 
 
 	
 	
@@ -1445,13 +1445,13 @@ hllXBAAA:
 	
 	
  btfss big_c,0
- goto hllYBAAA
+ goto hllZBAAA
 	
 	
 	
  bsf min_lower,7	
 	
-hllYBAAA:
+hllZBAAA:
 
 	
 	
@@ -1468,29 +1468,29 @@ hllYBAAA:
 	
 	
  btfss big_c,0
- goto hllZBAAA
+ goto hllACAAA
 
 	
 	
 	
  bsf min_lower,7		
 	
-hllZBAAA:
+hllACAAA:
 
 	
  incf ein1,f	
 	
 	
- goto hllUBAAA
+ goto hllVBAAA
 
 
-hllACAAA:
+hllBCAAA:
 
  movfw mout 
  
  
  btfss STATUS,Z 
- goto hllBCAAA 
+ goto hllCCAAA 
  
  
  
@@ -1505,11 +1505,11 @@ hllACAAA:
  
  
  
- goto hllCCAAA
+ goto hllDCAAA
  
  
  
-hllBCAAA: 
+hllCCAAA: 
  
  
  
@@ -1534,7 +1534,7 @@ hllBCAAA:
 
  PUSH
  
-hllCCAAA:
+hllDCAAA:
  
  return 
 

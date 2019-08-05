@@ -209,7 +209,7 @@ utof0:
  movwf arg1
 
  btfss arg1,7
- goto hllJDAAA 
+ goto hllGEAAA 
  
  
  
@@ -223,11 +223,11 @@ utof0:
  movlw .7
  PUSH
  
- goto hllRDAAA
+ goto hllOEAAA
 
-hllJDAAA: 
+hllGEAAA: 
  btfss arg1,6
- goto hllKDAAA 
+ goto hllHEAAA 
 
 
  
@@ -247,11 +247,11 @@ hllJDAAA:
  movlw .6
  PUSH
  
- goto hllRDAAA
-hllKDAAA: 
+ goto hllOEAAA
+hllHEAAA: 
 
  btfss arg1,5
- goto hllLDAAA
+ goto hllIEAAA
 
  banksel arg1
  bcf arg1,5 
@@ -264,11 +264,11 @@ hllKDAAA:
  movlw .5
  PUSH
  
- goto hllRDAAA
-hllLDAAA: 
+ goto hllOEAAA
+hllIEAAA: 
 
  btfss arg1,4
- goto hllMDAAA
+ goto hllJEAAA
 
 
  banksel arg1
@@ -283,11 +283,11 @@ hllLDAAA:
  movlw .4
  PUSH
  
- goto hllRDAAA
-hllMDAAA: 
+ goto hllOEAAA
+hllJEAAA: 
 
  btfss arg1,3
- goto hllNDAAA
+ goto hllKEAAA
 
  banksel arg1
  bcf arg1,3 
@@ -302,12 +302,12 @@ hllMDAAA:
  movlw .3
  PUSH
  
- goto hllRDAAA
+ goto hllOEAAA
 
-hllNDAAA: 
+hllKEAAA: 
 
  btfss arg1,2
- goto hllODAAA
+ goto hllLEAAA
 
 
  banksel arg1
@@ -325,12 +325,12 @@ hllNDAAA:
  movlw .2
  PUSH
  
- goto hllRDAAA
+ goto hllOEAAA
 
-hllODAAA: 
+hllLEAAA: 
 
  btfss arg1,1
- goto hllPDAAA
+ goto hllMEAAA
 
  banksel arg1
  bcf arg1,1 
@@ -347,25 +347,25 @@ hllODAAA:
  movlw .1
  PUSH
 
- goto hllRDAAA
-hllPDAAA: 
+ goto hllOEAAA
+hllMEAAA: 
  btfss arg1,0
- goto hllQDAAA
+ goto hllNEAAA
  movlw .0
  PUSH
 
  movlw .0
  PUSH
  
- goto hllRDAAA
-hllQDAAA:
+ goto hllOEAAA
+hllNEAAA:
  movlw .0
  PUSH
 
  movlw -.128
  PUSH
  
-hllRDAAA:
+hllOEAAA:
  
  return
 

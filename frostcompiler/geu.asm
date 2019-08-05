@@ -62,15 +62,15 @@ geu0:
  POP
  subwf mkarg1,w
  btfsc STATUS,Z
- goto hllIAAAA
+ goto hllLAAAA
  btfsc STATUS,C
- goto hllJAAAA
-hllIAAAA:
+ goto hllMAAAA
+hllLAAAA:
  movlw .1
  PUSH
  
  return
-hllJAAAA:
+hllMAAAA:
  movlw .0
  PUSH
  

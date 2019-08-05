@@ -154,10 +154,10 @@ ftou0:
  
  
  btfss karg2,7
- goto hllSDAAA
+ goto hllUCAAA
  POP
- goto hllCEAAA 
-hllSDAAA:
+ goto hllEDAAA 
+hllUCAAA:
  
  POP
  addlw .128
@@ -169,49 +169,49 @@ hllSDAAA:
  
  movwf divisor 
 
- movlw high hllTDAAA 
+ movlw high hllVCAAA 
  movwf PCLATH 
- movlw low hllTDAAA
+ movlw low hllVCAAA
  addwf divisor,w 
  btfsc STATUS,C 
  incf PCLATH,f 
  movwf PCL 
 
 
-hllTDAAA:
- goto hllBEAAA
- goto hllAEAAA
- goto hllZDAAA 
- goto hllYDAAA
- goto hllXDAAA
- goto hllWDAAA
- goto hllVDAAA
- goto hllUDAAA
+hllVCAAA:
+ goto hllDDAAA
+ goto hllCDAAA
+ goto hllBDAAA 
+ goto hllADAAA
+ goto hllZCAAA
+ goto hllYCAAA
+ goto hllXCAAA
+ goto hllWCAAA
  
-hllUDAAA:
+hllWCAAA:
  RSHIFT karg1
  rrf util,f
-hllVDAAA:
+hllXCAAA:
  RSHIFT karg1
  rrf util,f
-hllWDAAA:
+hllYCAAA:
  RSHIFT karg1
  rrf util,f
-hllXDAAA:
+hllZCAAA:
  RSHIFT karg1
  rrf util,f
-hllYDAAA:
+hllADAAA:
  RSHIFT karg1
  rrf util,f
-hllZDAAA:
+hllBDAAA:
  RSHIFT karg1
  rrf util,f
-hllAEAAA:
+hllCDAAA:
  RSHIFT karg1
  rrf util,f
-hllBEAAA:
+hllDDAAA:
 
-hllCEAAA:
+hllEDAAA:
  banksel karg1
  movfw karg1 
  PUSH
