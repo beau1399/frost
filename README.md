@@ -49,8 +49,6 @@ This is the appropriate build command for the sample project found in the "frost
 
 Note that it is important not to capitalize the "f" in the "16f690" parameter. This was not an issue in the Windows version of Frost, but Linux is case-sensitive for file names, and the relevant files used by the Frost cross-compiler all use the lower-case letter F.
 
-TODO - case implications for processor e.g. above
-
 ## Programming With the PICKit 2
 
 It is possible to program PIC devices from the Ubuntu shell. I do so using the PICKit 2 development programmer, using a program called **pk2cmd**. There is also a PICKit 3 programmer, with its own **pk3cmd** utility. I imagine these operate similarly to what is described below, though I am not able to test this. 
@@ -104,6 +102,8 @@ The Frost cross-compiler has always been built using GNU development tools, like
 * Some processor-specific files were renamed to conform to the lower-case convention used for processor names under Linux.
 
 Note that many of the source files in the "frostcompiler" folder still use MS-DOS line ending conventions. If you open these in certain Linux editors, you will see ^M control character indications at line ends. These have not been removed since things seem to be working as-is. However, should you find need to edit these files, or create new files (e.g. for new boards or processors), you should not need to include any extra MS-DOS line terminators.
+
+Another issue that has been identified while using the Frost cross-compiler in a Linux environment relates to temporary files ending with a tilde, which are created by Emacs. Because of the way in which ".hloe" file dependencies are compounded based on name, files with names ending in ".hloe~" have been observed to cause problems. In particular, the presence of such files in the "frostcompiler" folder can cause inclusion of unnecessary assembly language code into the final build. These files should be removed if object code size is an issue.
 
 ### Building the Cross-Compiler
 
