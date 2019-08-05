@@ -1,4 +1,4 @@
-calls setbit,clearbit,iszerof,copyf
+calls setbit,clearbit,iszerof,copyf,gtf,utof,mulf
 calls ftou,divf
 calls addf,parm
 
