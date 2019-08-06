@@ -85,8 +85,12 @@ insert clock
 .mulf[-1.0 @ym @ye] > zeroye > zeroym
 .setzero[255]
 
+
 .prop0on[] 
 .prop1on[] 
+.propf[centery 0]
+.propf[centerx 1]
+
 .loop[]
 
 ////////////////////////////////////////////////////
