@@ -44,6 +44,11 @@ insert clock
 .setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3	/Start and Stop bit flagging on
 .setbit[sspen @ssp1con1] > ssp1con1   /Start I2C
 
+
+0 > porta  /Don't want anything PWM-driven just powering up
+0 > portb
+
+
 /Not sure why but PWM doesn't work w/o these two calls
 .setbit[txen @txsta] > txsta
 .setbit[spen @rcsta] > rcsta
@@ -97,7 +102,8 @@ insert clock
 
 d .await * is
  .awaitin[255]
- if .notb[ .parm[0] ],.dispose[],.add[-1] .await[],
+
+if .notb[ .parm[0] ],.dispose[],.add[-1] .await[],
 ;
 
 d .awaitin * is
