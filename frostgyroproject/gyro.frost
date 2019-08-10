@@ -1,5 +1,3 @@
-macro networkretries is 5 end macro
-
 macro centerx is 512.0 end macro
 macro maxcommandx is 1000.0 end macro
 macro mincommandx is 25.0 end macro
@@ -17,6 +15,13 @@ macro itermy is 1.0 end macro
 macro dtermy is -0.85 end macro
 macro maxiy is 150.0 end macro
 macro miniy is 150.0 end macro
+
+macro networkretries is 5 end macro
+macro write-i2c is 210 end macro
+macro read-i2c is 211 end macro
+macro power-mgt-register is 107 end macro
+macro config-register is 26 end macro
+macro accel-start-reg is 59 end macro
 
 calls printu,notb,addf,gtf,andb,orb,getbit
 altstack is 80
@@ -56,10 +61,10 @@ insert clock
 .iicstart[]
 .clearinterrupt[]
 .checkack[]
-210 > ssp1buf
+write-i2c > ssp1buf
 .clearinterrupt[]
 .checkack[]
-107 > ssp1buf
+power-mgt-register > ssp1buf
 .clearinterrupt[]
 .checkack[]
 0 > ssp1buf		/I think this is necess. to turn on the internal clock
@@ -71,10 +76,10 @@ insert clock
 .iicstart[]
 .clearinterrupt[]
 .checkack[]
-210 > ssp1buf
+write-i2c > ssp1buf
 .clearinterrupt[]
 .checkack[]
-26 > ssp1buf      
+config-register > ssp1buf      
 .clearinterrupt[]
 .checkack[]
 6 > ssp1buf		/Low-pass filter (6 is max)
@@ -143,7 +148,6 @@ d .loop is
 
  .command[ .addf[centery            @commandym @commandye  ]  0]
 
-
  if .eq[@scaler 127],.setbit[2 @porta] > porta,
    if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /Watchdog LED
 
@@ -179,7 +183,6 @@ d .checkack 0 0 is
  if .notb[.getbit[6 @ssp1con2]],,.printch['E'].printch['R'].printch['R']  .checkack[],
 ;
 
-
 d .iicstart is
  .setbit[sen @ssp1con2] > ssp1con2
 ;
@@ -191,15 +194,15 @@ d .iicend is
 d .samplex is
  .iicstart[]
  .clearinterrupt[]
- 210 > sspbuf
+ write-i2c > sspbuf
  .clearinterrupt[]
  .checkack[]
- 59 > sspbuf
+ accel-start-reg > sspbuf
  .clearinterrupt[]
  .checkack[]
  .setbit[rsen @ssp1con2] > ssp1con2
  .clearinterrupt[]
- 211 > sspbuf
+ read-i2c > sspbuf
  .clearinterrupt[]
  .checkack[]
  .setbit[rcen @ssp1con2] > ssp1con2
