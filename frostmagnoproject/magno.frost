@@ -369,8 +369,29 @@ d .heading is
   
  /     checkack();
   .checkack[]
-  
+
+
+
+
        //data
+/      SSP1CON2bits.RCEN=1;
+ .setbit[rcen @ssp1con2] > ssp1con2
+/       while(!SSP1STATbits.BF);
+ .clearfill[]
+/       clearinterrupt();
+ .clearinterrupt[]
+/       PIR1bits.SSP1IF=0;
+ .clearbit[ssp1if @pir1] > pir1
+/       cx=SSP1BUF;
+  @ssp1buf > ym
+/       SSP1STATbits.BF=0;
+ .clearbit[bf @ssp1stat] > ssp1stat
+/ ack();
+ .ack[]
+ .clearinterrupt[]
+
+
+       //data 2
 /      SSP1CON2bits.RCEN=1;
  .setbit[rcen @ssp1con2] > ssp1con2
 
@@ -385,7 +406,7 @@ d .heading is
 
 
 /       cx=SSP1BUF;
-  @ssp1buf > ym
+  @ssp1buf > ye
  
 /       SSP1STATbits.BF=0;
  .clearbit[bf @ssp1stat] > ssp1stat
@@ -393,16 +414,22 @@ d .heading is
 / ack();
  .nack[]
 
+       .clearinterrupt[]
+       .iicend[]
+       .clearinterrupt[]
+
+
+
+
 
 
 /       printch(cx/100+'0');
 /       printch(((cx%100)/10)+'0');
 /       printch(cx%10+'0');
 
- .printu[@ym]
+ .printu[@ym]  .printu[@ye] .printch[13] .printch[10]
 
 /       clearinterrupt();
- .clearinterrupt[]
 
        //data
 /       SSP1CON2bits.RCEN=1;
