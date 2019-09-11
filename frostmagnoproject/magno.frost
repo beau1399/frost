@@ -1,0 +1,566 @@
+macro centerx is 512.0 end macro
+macro maxcommandx is 1000.0 end macro
+macro mincommandx is 24.0 end macro
+macro ptermx is 2.5 end macro
+macro itermx is 1.0 end macro
+macro dtermx is -0.85 end macro
+macro maxix is 150.0 end macro
+macro minix is 150.0 end macro
+
+macro centery is 512.0 end macro
+macro maxcommandy is 1000.0 end macro
+macro mincommandy is 24 .0 end macro
+macro ptermy is 2.5 end macro
+macro itermy is 1.0 end macro
+macro dtermy is -0.85 end macro
+macro maxiy is 150.0 end macro
+macro miniy is 150.0 end macro
+
+macro networkretries is 5 end macro
+macro write-i2c is 210 end macro
+macro read-i2c is 211 end macro
+macro write-magno-i2c is 24 end macro
+macro read-magno-i2c is 25 end macro
+macro power-mgt-register is 107 end macro
+macro config-register is 26 end macro
+macro accel-start-reg is 59 end macro
+macro int-config-reg is 55 end macro
+macro magno-power-register is 10 end macro
+
+calls printu,notb,addf,gtf,andb,orb,getbit
+altstack is 80
+var scaler,ym,ye,xm,xe,zeroxm,zeroxe,zeroym,zeroye,init,errorxm,errorxe,
+    errorym,errorye,tempm,tempe,commandxm,commandxe,commandym,commandye
+
+
+frost9600baud
+.clearbit[sckp @baudcon] > baudcon
+
+
+.clearbit[2 @trisa] > trisa
+.clearbit[2 @ansela] > ansela
+.clearbit[2 @porta] > porta
+
+0.0 > commandxe > commandxm
+0.0 > commandye > commandym
+0.0 > errorxe > errorxm
+0.0 > errorye > errorym
+insert clock
+.clearbit[gie @intcon] > intcon
+.clearbit[sspen @ssp1con1] > ssp1con1
+
+8 > ssp1con1   		    /I2C master mode
+0 > ssp1con2		    /Default settings
+19 > ssp1add  		    /32000000/(4*(1+SSPADD)); 19 -> 400k; Slow for now
+18 > trisb		    /SCL and SDA as inputs
+.clearbit[ansb4 @anselb] > anselb    /SCL and SDA non-analog
+.clearbit[ansb1 @anselb] > anselb
+.setbit[scie .setbit[pcie @ssp1con3]] > ssp1con3	/Start and Stop bit flagging on
+.setbit[sspen @ssp1con1] > ssp1con1   /Start I2C
+
+
+0 > porta  /Don't want anything PWM-driven just powering up
+0 > portb
+
+
+/Not sure why but PWM doesn't work w/o these two calls
+.setbit[txen @txsta] > txsta
+.setbit[spen @rcsta] > rcsta
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+write-i2c > ssp1buf
+.clearinterrupt[]
+.checkack[]
+int-config-reg > ssp1buf      
+.clearinterrupt[]
+.checkack[]
+2 > ssp1buf		/Bypass mode, allow direct comm. w/ magno.
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+
+
+
+
+
+
+
+
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+write-i2c > ssp1buf
+.clearinterrupt[]
+.checkack[]
+28 > ssp1buf      
+.clearinterrupt[]
+.checkack[]
+0 > ssp1buf		/Bypass mode, allow direct comm. w/ magno.
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+
+
+
+
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+write-magno-i2c > ssp1buf
+.clearinterrupt[]
+.checkack[]
+magno-power-register > ssp1buf      
+.clearinterrupt[]
+.checkack[]
+0 > ssp1buf		/Power down
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+
+
+
+
+
+
+
+
+.iicstart[]
+.clearinterrupt[]
+.checkack[]
+write-i2c > ssp1buf
+.clearinterrupt[]
+.checkack[]
+12 > ssp1buf      
+.clearinterrupt[]
+.checkack[]
+1 > ssp1buf		/Bypass mode, allow direct comm. w/ magno.
+.clearinterrupt[]
+.checkack[]
+.iicend[]
+.clearinterrupt[]
+
+
+
+
+
+.loop[]
+
+////////////////////////////////////////////////////
+
+d .await * is
+ .awaitin[255]
+
+if .notb[ .parm[0] ],.dispose[],.add[-1] .await[],
+;
+
+d .awaitin * is
+ if .notb[ .parm[0] ],.dispose[],.add[-1] .awaitin[],
+;
+
+d .loop 0 0 is
+
+
+ .heading[]
+
+
+ .add[1 @scaler] > scaler
+
+
+ if .eq[@scaler 127],.setbit[2 @porta] > porta,
+   if .eq[@scaler 255],.clearbit[2 @porta] > porta,,,            /Watchdog LED
+
+
+
+
+ .loop[]
+;
+
+d .heading is
+/.awaitin[255]
+/.iicstart[]
+/.clearinterrupt[]
+/.checkack[]
+/write-magno-i2c > ssp1buf
+/.clearinterrupt[]
+/.checkack[]
+/magno-power-register > ssp1buf      
+/.clearinterrupt[]
+/.checkack[]
+/17 > ssp1buf		/One single 16-bit magno sample
+/.clearinterrupt[]
+/.checkack[]
+/.iicend[]
+/.clearinterrupt[]
+/.awaitin[255] /TODO - real polling
+/.iicstart[]
+/.clearinterrupt[]
+/write-magno-i2c > sspbuf
+/.clearinterrupt[]
+/.checkack[]
+/7 > sspbuf                /TODO
+/.clearinterrupt[]
+/.checkack[]
+/.setbit[rsen @ssp1con2] > ssp1con2
+/.clearinterrupt[]
+/read-magno-i2c > sspbuf
+/.clearinterrupt[]
+/.checkack[]
+/.setbit[rcen @ssp1con2] > ssp1con2
+/.clearfill[]
+/.clearinterrupt[]
+/.clearbit[ssp1if @pir1] > pir1
+/@ssp1buf
+/.printu[]
+/.clearbit[bf @ssp1stat] > ssp1stat
+/.ack[]
+/.clearinterrupt[]
+/.setbit[rcen @ssp1con2] > ssp1con2
+/.clearfill[]
+/.clearinterrupt[]
+/.clearbit[ssp1if @pir1] > pir1
+/@ssp1buf
+/.clearbit[bf @ssp1stat] > ssp1stat
+/.printu[]
+//Read ST2
+/.iicstart[]
+/.clearinterrupt[]
+/write-magno-i2c > sspbuf
+/.clearinterrupt[]
+/.checkack[]
+/9 > sspbuf                /TODO
+/.clearinterrupt[]
+/.checkack[]
+/.setbit[rsen @ssp1con2] > ssp1con2
+/.clearinterrupt[]
+/read-magno-i2c > sspbuf
+/.clearinterrupt[]
+/.checkack[]
+/.setbit[rcen @ssp1con2] > ssp1con2
+/.clearfill[]
+/.clearinterrupt[]
+/.clearbit[ssp1if @pir1] > pir1
+/@ssp1buf
+/.clearbit[bf @ssp1stat] > ssp1stat
+/.awaitin[255] 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/  SSP1CON2bits.SEN=1;
+ .iicstart[]
+ 
+/  clearinterrupt();
+ .clearinterrupt[]
+
+/  checkack();
+ .checkack[]
+ 
+/   SSP1BUF = 24;
+ 24 > ssp1buf
+ 
+/   clearinterrupt();
+ .clearinterrupt[]
+ 
+/   checkack();
+ .checkack[]
+
+/   SSP1BUF = 10;
+ 10 > ssp1buf
+ 
+/   clearinterrupt();
+ .clearinterrupt[]
+
+/  checkack();
+ .checkack[]
+ 
+/   SSP1BUF = 17;  //Single measurement, 16 bit
+ 17 > ssp1buf
+ 
+/   clearinterrupt();
+ .clearinterrupt[]
+
+/   checkack();
+ .checkack[]
+ 
+/   SSP1CON2bits.PEN=1;
+ .iicend[] 
+
+/   clearinterrupt();
+ .clearinterrupt[]
+       
+       
+
+/   __delay_ms(100);
+ .await[50]
+
+   
+/      SSP1CON2bits.ACKSTAT=0;
+ .clearbit[ackstat @ssp1con2] > ssp1con2
+ 
+
+
+       //s
+/      SSP1CON2bits.SEN=1;
+ .iicstart[]
+ 
+/      clearinterrupt();
+ .clearinterrupt[]
+ 
+       //ad+w
+/      SSP1BUF=24;
+ 24 > ssp1buf
+ 
+/      clearinterrupt();
+ .clearinterrupt[]
+ 
+/      checkack();
+ .checkack[]
+ 
+ /     SSP1BUF=7;//4 - magxh 59 - accelxh; 67 - gyroxh; 69 - gyroyh ; 61 - accelyh (pitch); 63 - accelzh;
+  5 > ssp1buf
+  
+/      clearinterrupt();
+ .clearinterrupt[]
+ 
+/      checkack();
+ .checkack[]
+ 
+       //s
+ /     SSP1CON2bits.RSEN=1;
+.setbit[rsen @ssp1con2] > ssp1con2
+
+
+
+
+/      clearinterrupt();
+ .clearinterrupt[]
+ 
+       //ad+r
+/      SSP1BUF=25;
+ 25 > ssp1buf
+ 
+ /     clearinterrupt();
+  .clearinterrupt[]
+  
+ /     checkack();
+  .checkack[]
+  
+       //data
+/      SSP1CON2bits.RCEN=1;
+ .setbit[rcen @ssp1con2] > ssp1con2
+
+/       while(!SSP1STATbits.BF);
+ .clearfill[]
+
+/       clearinterrupt();
+ .clearinterrupt[]
+ 
+/       PIR1bits.SSP1IF=0;
+ .clearbit[ssp1if @pir1] > pir1
+
+
+/       cx=SSP1BUF;
+  @ssp1buf > ym
+ 
+/       SSP1STATbits.BF=0;
+ .clearbit[bf @ssp1stat] > ssp1stat
+
+/ ack();
+ .nack[]
+
+
+
+/       printch(cx/100+'0');
+/       printch(((cx%100)/10)+'0');
+/       printch(cx%10+'0');
+
+ .printu[@ym]
+
+/       clearinterrupt();
+ .clearinterrupt[]
+
+       //data
+/       SSP1CON2bits.RCEN=1;
+/       while(!SSP1STATbits.BF);  
+/       clearinterrupt(); 
+/       PIR1bits.SSP1IF=0;       
+/       cx=SSP1BUF;
+/       SSP1STATbits.BF=0;       
+/       nack();
+/       printch(cx/100+'0');
+/       printch(((cx%100)/10)+'0');
+/       printch(cx%10+'0');        
+/       clearinterrupt();            
+/       SSP1CON2bits.PEN=1;
+/       clearinterrupt(); 
+
+
+
+
+/       //Read ST2
+/       SSP1CON2bits.SEN=1;
+/       clearinterrupt();      
+/       //ad+w
+/       SSP1BUF=24;
+/       clearinterrupt(); 
+/       checkack()
+
+ .iicstart[]
+ .clearinterrupt[]
+  24 > ssp1buf
+ .clearinterrupt[]
+ .checkack[]
+
+
+
+/       //ra
+/       //71- gyrozh - yaw movement
+/       //63- accelzh-
+/       SSP1BUF=9;//4 - magxh 59 - accelxh; 67 - gyroxh; 69 - gyroyh ; 61 - accelyh (pitch); 63 - accelzh;
+ 9 > ssp1buf
+/       clearinterrupt(); 
+/       checkack();
+ .clearinterrupt[]
+ .checkack[]
+
+/       //s
+/       SSP1CON2bits.RSEN=1;
+ .setbit[rsen @ssp1con2] > ssp1con2
+
+/       clearinterrupt();
+ .clearinterrupt[]
+/       //ad+r
+/       SSP1BUF=25;
+ 25 > ssp1buf
+ 
+/       clearinterrupt(); 
+/       checkack();       
+ .clearinterrupt[]
+ .checkack[]
+
+
+
+
+/       SSP1CON2bits.RCEN=1;
+ .setbit[rcen @ssp1con2] > ssp1con2
+/       while(!SSP1STATbits.BF);
+ .clearfill[]
+/       clearinterrupt();
+ .clearinterrupt[]
+ 
+/       PIR1bits.SSP1IF=0;
+ .clearbit[ssp1if @pir1] > pir1
+
+
+/       cx=SSP1BUF;
+ @ssp1buf > ym
+/       SSP1STATbits.BF=0;
+ .clearbit[bf @ssp1stat] > ssp1stat
+ 
+/       nack();
+ .nack[]
+/       clearinterrupt();
+ .clearinterrupt[] 
+/       SSP1CON2bits.PEN=1;
+ .iicend[]
+/       clearinterrupt(); 
+ .clearinterrupt[]
+       
+
+
+
+
+
+
+       
+/#endif
+       
+       
+       
+       
+       
+
+ /       __delay_ms(100);
+  .await[25]
+
+
+
+
+
+
+
+
+
+
+;
+
+d .clearinterruptin * is
+ if .orb[ .notb[.parm[0]] .getbit[ssp1if @pir1]   ],,.clearinterruptin[.add[-1]], 
+;
+
+d .clearinterrupt 0 0 is
+ .clearinterruptin[networkretries]
+ .clearbit[3 @pir1] > pir1
+;
+
+d .clearfill is
+ if .getbit[bf @ssp1stat],,.clearfill[], 
+;
+
+d .ack is
+ .clearbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .nack is
+ .setbit[ackdt @ssp1con2] > ssp1con2
+ .setbit[acken @ssp1con2] > ssp1con2
+;
+
+d .checkack 0 0 is
+ if .notb[.getbit[6 @ssp1con2]],,.printch['E'].printch['R'].printch['R']  .checkack[],
+;
+
+d .iicstart is
+ .setbit[sen @ssp1con2] > ssp1con2
+;
+
+d .iicend is
+ .setbit[pen @ssp1con2] > ssp1con2
+;
+
+
+d .command 3 0 is
+ if .gtf[maxcommandx parmf(1)],
+    if .gtf[parmf(1) mincommandx],.propf[parmf(1) .parm[0]],  .propf[mincommandx .parm[0]], ,
+  .propf[maxcommandx .parm[0]],
+;
+
+
+insert itof
+insert propeller
