@@ -412,7 +412,7 @@ hlluserprog:
  FAR_CALL hlluserprog ,safepush
 
 
- movlw .140
+ movlw .222
 
    
  HALF_FAR_CALL safepush
@@ -1400,14 +1400,7 @@ oru:
 readeepromhloe CODE
   
 readeeprom:
- banksel EEADRL
- POP
- movwf	EEADRL
- bcf EECON1, CFGS
- bcf EECON1, EEPGD
- bsf EECON1, RD
- movf EEDATL, W
- PUSH
+ READEEPROM
 return
 
 
@@ -1640,31 +1633,12 @@ hllSAAAA:
 
 #undefine margp2
  
-
  
 writeeepromhloe CODE
- 
- 
+  
 writeeeprom:
- banksel EEADRL
- POP
- movwf	EEDATL
- POP
- movwf	EEADRL
- bcf EECON1, CFGS
- bcf EECON1, EEPGD
- bsf EECON1, WREN
- bcf	INTCON, GIE
- movlw	55h
- movwf	EECON2
- movlw	0AAh
- movwf	EECON2
- bsf	EECON1, WR 	
- bsf	INTCON, GIE
- bcf	EECON1, WREN
- btfsc	EECON1, WR
- GOTO	$-2
- return
+ WRITEEEPROM
+return
 
 
  end

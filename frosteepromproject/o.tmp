@@ -16,7 +16,7 @@
   .setbit[txcksel @apfcon1] > apfcon1 .clearbit[sckp @baudcon] > baudcon
 
 
- .writeeeprom[44 140]
+ .writeeeprom[44 222]
  .printch['W'] .printch['R'] .printch['O'] .printch['T'] .printch['E'] .printch[13] .printch[10]
  .readit[]
 

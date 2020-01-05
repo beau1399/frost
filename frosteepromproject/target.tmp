@@ -367,7 +367,7 @@ hlluserprog:
    FAR_CALL hlluserprog , safepush
 
 
- movlw .140
+ movlw .222
 
    FAR_CALL hlluserprog , safepush
 

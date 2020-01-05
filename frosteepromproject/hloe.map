@@ -1,5 +1,5 @@
 MPLINK 4.35, Linker
-Linker Map File - Created Sat Jan 04 23:49:33 2020
+Linker Map File - Created Sun Jan 05 00:50:22 2020
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -18,17 +18,17 @@ Linker Map File - Created Sat Jan 04 23:49:33 2020
                 hllkrna05       code   0x000203    program   0x00001e
                 hllkrna04       code   0x000212    program   0x00001e
                      main       code   0x000221    program   0x000018
-                hllkrna00       code   0x00022d    program   0x000014
-           readeepromhloe       code   0x000237    program   0x000012
-                hllkrna07       code   0x000240    program   0x000010
-                hllkrna03       code   0x000248    program   0x00000e
-                   hlog1h       code   0x00024f    program   0x00000a
-                   hlog1d       code   0x000254    program   0x00000a
-                hllkrna01       code   0x000259    program   0x00000a
-                hllkrna02       code   0x00025e    program   0x000006
-                hllkrna11       code   0x000261    program   0x000004
-                hllkrna10       code   0x000263    program   0x000004
-                hllkrna09       code   0x000265    program   0x000004
+           readeepromhloe       code   0x00022d    program   0x000014
+                hllkrna00       code   0x000237    program   0x000014
+                hllkrna07       code   0x000241    program   0x000010
+                hllkrna03       code   0x000249    program   0x00000e
+                   hlog1h       code   0x000250    program   0x00000a
+                   hlog1d       code   0x000255    program   0x00000a
+                hllkrna01       code   0x00025a    program   0x00000a
+                hllkrna02       code   0x00025f    program   0x000006
+                hllkrna11       code   0x000262    program   0x000004
+                hllkrna10       code   0x000264    program   0x000004
+                hllkrna09       code   0x000266    program   0x000004
     .config_8007_TARGET.O       code   0x008007    program   0x000002
     .config_8008_TARGET.O       code   0x008008    program   0x000002
                    ukrnl2      udata   0x000020       data   0x000050
@@ -44,29 +44,29 @@ Linker Map File - Created Sat Jan 04 23:49:33 2020
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000266      
+                            0x000000    0x000267      
                             0x008007    0x008008      
-            617 out of 4359 program addresses used, program memory utilization is 14%
+            618 out of 4359 program addresses used, program memory utilization is 14%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-          _hllkrna00_0007   0x000234    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-          _hllkrna03_0005   0x00024d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+          _hllkrna00_0007   0x00023e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+          _hllkrna03_0005   0x00024e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
           _hllkrna04_0009   0x00021b    program     static Z:\home\dell\frost\frosteepromproject\target.asm
           _hllkrna04_000B   0x00021d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
           _hllkrna05_0009   0x00020c    program     static Z:\home\dell\frost\frosteepromproject\target.asm
           _hllkrna05_000B   0x00020e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
     _writeeepromhloe_0011   0x0001e0    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      add   0x000259    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                     andu   0x00024f    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      add   0x00025a    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                     andu   0x000250    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                  clearbit   0x00013b    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                  dispose   0x000261    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                  dispose   0x000262    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                      divu   0x000203    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    dmm445   0x0001c9    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                       eq   0x000240    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                       eq   0x000241    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                     getch   0x0001f3    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                     geth2   0x0001f8    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                     geth3   0x0001fd    program     static Z:\home\dell\frost\frosteepromproject\target.asm
@@ -91,17 +91,17 @@ Linker Map File - Created Sat Jan 04 23:49:33 2020
                hllprogend   0x000103    program     static Z:\home\dell\frost\frosteepromproject\target.asm
               hlluserprog   0x000005    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    hloego   0x000221    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                     kpop   0x000265    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                    kpush   0x000263    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                     kpop   0x000266    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                    kpush   0x000264    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    kspox5   0x0001c0    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                      modu   0x000212    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      mul   0x00022d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                    negti   0x00025e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      oru   0x000254    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      mul   0x000237    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                    negti   0x00025f    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      oru   0x000255    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                      parm   0x0001e2    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                  printch   0x000248    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                  printch   0x000249    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    printu   0x000172    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-               readeeprom   0x000237    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+               readeeprom   0x00022d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    readit   0x0001a3    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                  safepush   0x0001b9    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    setbit   0x000104    program     static Z:\home\dell\frost\frosteepromproject\target.asm
@@ -173,19 +173,19 @@ Linker Map File - Created Sat Jan 04 23:49:33 2020
           _hllkrna04_0009   0x00021b    program     static Z:\home\dell\frost\frosteepromproject\target.asm
           _hllkrna04_000B   0x00021d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                    hloego   0x000221    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      mul   0x00022d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-          _hllkrna00_0007   0x000234    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-               readeeprom   0x000237    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                       eq   0x000240    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                  printch   0x000248    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-          _hllkrna03_0005   0x00024d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                     andu   0x00024f    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      oru   0x000254    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                      add   0x000259    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                    negti   0x00025e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                  dispose   0x000261    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                    kpush   0x000263    program     static Z:\home\dell\frost\frosteepromproject\target.asm
-                     kpop   0x000265    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+               readeeprom   0x00022d    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      mul   0x000237    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+          _hllkrna00_0007   0x00023e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                       eq   0x000241    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                  printch   0x000249    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+          _hllkrna03_0005   0x00024e    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                     andu   0x000250    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      oru   0x000255    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                      add   0x00025a    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                    negti   0x00025f    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                  dispose   0x000262    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                    kpush   0x000264    program     static Z:\home\dell\frost\frosteepromproject\target.asm
+                     kpop   0x000266    program     static Z:\home\dell\frost\frosteepromproject\target.asm
                     stack   0x000020       data     static Z:\home\dell\frost\frosteepromproject\target.asm
                softstack0   0x000070       data     static Z:\home\dell\frost\frosteepromproject\target.asm
                softstack1   0x000071       data     static Z:\home\dell\frost\frosteepromproject\target.asm

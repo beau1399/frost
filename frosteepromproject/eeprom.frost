@@ -9,7 +9,7 @@ frost9600baud
 .clearbit[sckp @baudcon] > baudcon
 /.clearbit[sckp @baudctl] > baudctl
 
- .writeeeprom[44 140]
+ .writeeeprom[44 222]
  .printch['W'] .printch['R'] .printch['O'] .printch['T'] .printch['E'] .printch[13] .printch[10]
  .readit[]
 
