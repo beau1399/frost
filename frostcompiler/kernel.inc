@@ -218,6 +218,5 @@ WRITEEEPROM macro
  movwf	EECON2
  bsf	EECON1, WR
  bsf	INTCON, GIE
- sleep
  bcf	EECON1, WREN
 endm
