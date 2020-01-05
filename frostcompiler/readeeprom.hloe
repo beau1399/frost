@@ -1,0 +1,8 @@
+ GLOBAL readeeprom
+ 
+readeepromhloe CODE
+  
+readeeprom:
+ READEEPROM
+return
+
