@@ -1,21 +1,19 @@
-.oru[ 112 .andu[ 247 @osccon]] > osccon
+.oru[112 @osccon] > osccon
 
 
 
+  207 > spbrg
+  0 > spbrgh
+  .clearbit[sync @txsta] > txsta
+  .clearbit[cren @rcsta] > rcsta
   .setbit[cren @rcsta] > rcsta
-  .setbit[ brgh @txsta] > txsta
-  .setbit[brg16 @baudcon] > baudcon
-  64 > spbrg
-  3 > spbrgh
-  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
-  .setbit[sckp @baudcon] > baudcon
   .setbit[spen @rcsta] > rcsta
-  .clearbit[5 @trisb] > trisb   
-  .clearbit[5 @anselb] > anselb    
-  .clearbit[1 @anselb] > anselb    
-  .setbit[txcksel @apfcon1] > apfcon1 .clearbit[sckp @baudcon] > baudcon
-
-
+  .setbit[txen .clearbit[tx9 .setbit[brgh @txsta]]] > txsta
+  .setbit[brg16 .setbit[sckp @baudctl]] > baudctl
+  0 > anselh
+  0 > ansel
+  .clearbit[rcie .clearbit[txie @pie1]] > pie1 .clearbit[sckp @baudctl] > baudctl
+ .printch['O'] .printch['K']
  .writeeeprom[44 222]
  .printch['W'] .printch['R'] .printch['O'] .printch['T'] .printch['E'] .printch[13] .printch[10]
  .readit[]
