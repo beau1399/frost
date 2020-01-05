@@ -1,0 +1,20 @@
+calls printch,printu,getbit,clearbit,setbit,writeeeprom,readeeprom
+
+insert clock
+
+frost9600baud
+
+/One of the two lines below will be necessary to use MAX-232
+// (the other one won't compile... baudcon is for newer CPUs)
+.clearbit[sckp @baudcon] > baudcon
+/.clearbit[sckp @baudctl] > baudctl
+
+ .writeeeprom[44 140]
+ .printch['W'] .printch['R'] .printch['O'] .printch['T'] .printch['E'] .printch[13] .printch[10]
+ .readit[]
+
+d .readit is
+ .printu[.readeeprom[44]]
+ .printch[13] .printch[10]
+ .readit[]
+;
