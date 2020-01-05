@@ -98,4 +98,36 @@ mmnme:
 mmnme#v(2): 
  ;retlw K, retlw K, etc. go here
  endm
- 
+
+READEEPROM macro
+ banksel EEADR
+ POP
+ movwf	EEADR
+ banksel EECON1
+ bcf EECON1, EEPGD
+ bsf EECON1, RD
+ banksel EEDAT
+ movf EEDAT, W
+ PUSH
+endm
+
+WRITEEEPROM macro
+ banksel EEADRL
+ POP
+ movwf	EEDATL
+ POP
+ movwf	EEADRL
+ bcf EECON1, CFGS
+ bcf EECON1, EEPGD
+ bsf EECON1, WREN
+ bcf	INTCON, GIE
+ movlw	55h
+ movwf	EECON2
+ movlw	0AAh
+ movwf	EECON2
+ bsf	EECON1, WR
+ bsf	INTCON, GIE
+ bcf	EECON1, WREN
+ btfsc	EECON1, WR
+ GOTO	$-2
+endm
