@@ -17,8 +17,10 @@ macro maxiy is 150.0 end macro
 macro miniy is 150.0 end macro
 
 macro networkretries is 5 end macro
-macro write-i2c is 210 end macro
-macro read-i2c is 211 end macro
+macro write-i2c is 208 end macro /Address pin grounded
+macro read-i2c is 209 end macro
+/macro write-i2c is 210 end macro /Address pin voltage high
+/macro read-i2c is 211 end macro
 macro power-mgt-register is 107 end macro
 macro config-register is 26 end macro
 macro accel-start-reg is 59 end macro
