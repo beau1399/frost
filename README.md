@@ -67,7 +67,6 @@ This will create a "pk2cmd" subfolder within the folder from which you ran the c
 
 ```
 $ cd pk2cmd
-$ cd pk2cmd
 $ make
 ```
 You will next need to make another addition to ~/.bashrc, e.g.:
