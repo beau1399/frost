@@ -1,0 +1,16 @@
+insert clock
+
+frost9600baud
+
+/One of these will be necess. for hardware
+/ that uses a MAX-232. (The other won't
+/ compile.)
+.clearbit[sckp @baudcon] > baudcon
+/.clearbit[sckp @baudctl] > baudctl
+
+.dofunc[]
+
+d .dofunc is
+ .printch[.getch[]] 
+ .dofunc[] 
+;

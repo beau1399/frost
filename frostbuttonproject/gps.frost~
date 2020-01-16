@@ -1,0 +1,56 @@
+calls andb,geu
+
+insert clock
+altstack is 80
+/stack is 80
+
+frost9600baud
+
+var stor,isgll
+
+/One of these will be necess. for hardware
+/ that uses a MAX-232. (The other won't
+/ compile.)
+.clearbit[sckp @baudcon] > baudcon
+
+0>isgll
+.mainloop[]
+
+d .mainloop is
+ .dofunc[]
+ .mainloop[]
+;
+
+d .dofunc 0 0 is
+ .receive[0 .getch[] 1]
+;
+
+macro readchar is
+ .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]]
+end macro
+
+d .receive * is
+ if .eq[.parm[1] ','],
+
+    if .geu[@isgll 2],
+
+/The 1 below is to force a real call vs. tail recursion.
+/ We need to actually return here once required units have been read so that
+/ we can fall through to bottom and do a real return to the caller of receive.
+       .add[-1 @isgll]>isgll  readchar 1 , 
+
+     if .eq[@isgll 1],
+         0>isgll .purge[],
+
+      if .andb[ .eq[.parm[2] 'L']  .eq[.parm[3] 'L'] ],
+          4>isgll  ,,
+    ,,
+ , readchar,
+;
+
+d .purge * is
+ if .eq[.parm[0] 0],
+    .printch[13].printch[10],
+    .printch[.parm[.parm[0]]] .add[-1] .purge[]
+ ,
+;

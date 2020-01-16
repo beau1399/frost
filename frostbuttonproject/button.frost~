@@ -1,0 +1,27 @@
+var light
+
+event 1 is
+ .clearbit[1 @porta] > porta
+;
+
+event b is
+ /if @light,0>light
+ .setbit[1 @porta] > porta /,1>light .clearbit[3 @portb] > portb,
+/ .clearbit[0 @porta] > porta
+ 0 > iocbf
+; 
+
+/// main() ////////////////////////////////////////////////////////////////
+insert clock
+.setbit[wpuen @option_reg] > option_reg
+.setbit[gie .setbit[iocie @intcon]] > intcon
+16 > iocbp
+16 > trisb
+0 > anselb
+16 > wpub
+
+0 > trisa
+0 > ansela
+2 > porta
+insert slowtimer
+insert starttimer
