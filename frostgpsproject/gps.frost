@@ -39,7 +39,12 @@ event 1 is
   .printf[@lonsubmin @lonsubminb]
   .printch[13].printch[10]
   ,,
+  .clearbit[1 @porta] > porta /Turn OFF light
 ;
+
+event b is
+ .setbit[1 @porta] > porta /Turn ON light
+; 
 
 /// main() ////////////////////////////////////////////////////////////////
 
@@ -52,9 +57,29 @@ frost9600baud
 0 > isgll
 0 > scaler
 / Start the 6hz timer
+
+
+/ Global weak pull-up enabled... button will ground out B4
+/ 7 is "not WPUEN"... not sure of friendly name
+.clearbit[7 @option-reg] > option-reg 
+
+/ Interrupts on, Interrupt-on-Change on
+.setbit[gie .setbit[iocie @intcon]] > intcon
+
+16 > iocbp /Interrupt on B4 change
+16 > trisb /B4 is input
+0 > anselb /B all digital
+16 > wpub  /Pull B4 high
+
+0 > trisa  /A is output
+0 > ansela /A is digital
+
+
+
 insert slowtimer
 insert starttimer
-/0.0 > latsubminb > latsubmin
+
+
 .mainloop[]
 
 /// functions //////////////////////////////////////////////////////////////
@@ -73,6 +98,7 @@ macro readchar is
 end macro
 
 d .receive * is
+/ 8 > portb
  if .eq[.parm[1] ','],  
 
 ////////////// COMMA HANDLER ////

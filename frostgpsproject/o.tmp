@@ -1,18 +1,31 @@
 event 1 is
  .add[1 @scaler] > scaler
- if .eq[20 @scaler],
-  0 >scaler
+ if .andb[ @fix .eq[20 @scaler]],
+  0 > scaler
   .printf[@latdeg @latdegb]
   .printch[' ']
   .printf[@latmin @latminb]
   .printch[' ']
   .printf[@latsubmin @latsubminb]
   .printch[13].printch[10]
+  .printf[@londeg @londegb]
+  .printch[' ']
+  .printf[@lonmin @lonminb]
+  .printch[' ']
+  .printf[@lonsubmin @lonsubminb]
+  .printch[13].printch[10]
   ,,
+  .clearbit[1 @porta] > porta 
 ;
 
+event b is
+ .setbit[1 @porta] > porta 
+; 
 
 
+
+0 > filtervalid
+0 > fix
 .oru[ 112 .andu[ 247 @osccon]] > osccon
 
 
@@ -31,6 +44,25 @@ event 1 is
 0 > isgll
 0 > scaler
 
+
+
+
+
+.clearbit[7 @option-reg] > option-reg 
+
+
+.setbit[gie .setbit[iocie @intcon]] > intcon
+
+16 > iocbp 
+16 > trisb 
+0 > anselb 
+16 > wpub  
+
+0 > trisa  
+0 > ansela 
+
+
+
 .clearbit[tmr1cs0 .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
 
 .setbit[tmr1ie @pie1] > pie1 
@@ -38,7 +70,8 @@ event 1 is
 .setbit[tmr1on @t1con] > t1con 
 .setbit[gie @intcon] > intcon 
 
-0.0 > latsubminb > latsubmin
+
+
 .mainloop[]
 
 
@@ -53,57 +86,103 @@ d .dofunc 0 0 is
 ;
 
 d .receive * is
- if .eq[.parm[1] ','],
 
-    if .geu[@isgll 2],
-
+ if .eq[.parm[1] ','],  
 
 
+     if .geu[@isgll 2],   
 
-       .add[-1 @isgll]>isgll  
+        
+        
+        
+        .add[-1 @isgll]>isgll  
+ .parm[0]>temp .dispose[] .receive[.getch[] .add[1 @temp]] 1 , 
 
- .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]] 1 , 
+        
+        if .eq[@isgll 1],
+               
+               0>isgll .purge[],
+               
+               if .andb[.eq[.parm[2] 'L']  .eq[.parm[3] 'L']],4>isgll,,,,,
 
-     if .eq[@isgll 1],
-         0>isgll .purge[],
-
-      if .andb[ .eq[.parm[2] 'L']  .eq[.parm[3] 'L'] ],
-          4>isgll  ,,
-    ,,
- , 
-
- .parm[0]>stor .dispose[] .receive[.getch[] .add[1 @stor]] ,
+ 
+ 
+ if .geu[.parm[0] 28], 0 > filtervalid, 
+ .parm[0]>temp .dispose[] .receive[.getch[] .add[1 @temp]] ,,  
 ;
 
 
-
-
-
-
-
-
 d .purge * is
- .addf[
+ if .eq[.parm[0] 27],
+
+  .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[26]]]
- ] > latdegb > latdeg
- .addf[
+   ] > latdegb > latdeg
+
+  .addf[
+  .addf[
+   .addf[0.0
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[14]]] ] ]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[13]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[12]]]
+   ] > londegb > londeg
+
+  .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[24]]]
- ] > latminb > latmin
+  ] > tempb > temp
 
- .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+  
+  
+  
+  if .eq[@temp @latmin],, 0 > filtervalid,
+  
+  @tempb > latminb
+  @temp > latmin
+
+  .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[10]]]
+  ] > tempb > temp
+
+  @tempb > lonminb
+  @temp > lonmin
+
+
+  .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]]
      .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[20]]]]]
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[19]]]]]
      .utof[.add[.mul[-1 '0'].parm[18]]]] 100000.0]
   > tempb > temp
+  if @filtervalid,
+    .addf[  
+     .mulf[0.5 @temp @tempb]
+     .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
+    
+    @tempb > latsubminb @temp > latsubmin ,
 
-  if .notb[.iszerof[@latsubmin @latsubminb]],
-   .addf[.mulf[0.5 @temp @tempb] .mulf[0.5 @latsubmin @latsubminb]]  >latsubminb >latsubmin,
-   @tempb > latsubminb @temp > latsubmin
-   ,
+
+ .divf[.addf[.addf[.addf[0.0 .addf[0.0 .addf[0.0
+     .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[8]]]]]
+     .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[7]]]]]
+     .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[6]]]]]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[5]]]]]
+     .utof[.add[.mul[-1 '0'].parm[4]]]] 100000.0]
+  > tempb > temp
+  if @filtervalid,
+    .addf[  
+     .mulf[0.5 @temp @tempb]
+     .mulf[0.5 @lonsubmin @lonsubminb]]  >lonsubminb >lonsubmin,
+    
+    @tempb > lonsubminb @temp > lonsubmin  1 > filtervalid 1 > fix,
+
+
+ , 
+ ,
 ;
