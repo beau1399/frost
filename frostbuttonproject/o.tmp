@@ -1,27 +1,31 @@
 event 1 is
- .clearbit[1 @porta] > porta
+ .clearbit[1 @porta] > porta 
 ;
 
 event b is
- 
  .setbit[1 @porta] > porta 
-
- 0 > iocbf
 ; 
 
 
 .oru[ 112 .andu[ 247 @osccon]] > osccon
 
-.clearbit[7 @option-reg] > option-reg 
-.setbit[gie .setbit[iocie @intcon]] > intcon
-16 > iocbp
-16 > trisb
-0 > anselb
-16 > wpub
 
-0 > trisa
-0 > ansela
-2 > porta
+
+
+.clearbit[7 @option-reg] > option-reg 
+
+
+.setbit[gie .setbit[iocie @intcon]] > intcon
+
+16 > iocbp 
+16 > trisb 
+0 > anselb 
+16 > wpub  
+
+0 > trisa  
+0 > ansela 
+
+
 .clearbit[tmr1cs0 .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
 
 .setbit[tmr1ie @pie1] > pie1 

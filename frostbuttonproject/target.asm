@@ -4,11 +4,6 @@
  __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
  __config  _CONFIG2,_PLLEN_ON & _STVREN_ON & _LVP_OFF
 
-hllv2light UDATA
-hlllightl RES .1
-
-#define light hlllightl
-
 
 
 Resetv code 0 
@@ -83,17 +78,6 @@ hllnotisr49:
  POP
  banksel PORTA
  movwf PORTA
- 
-
-
- movlw .0 
-
-   
- FAR_CALL ISR ,safepush
-
- POP
- banksel IOCBF
- movwf IOCBF
  
 
 
@@ -303,17 +287,6 @@ hlluserprog:
  POP
  banksel ANSELA
  movwf ANSELA
- 
-
-
- movlw .2 
-
-   
- FAR_CALL hlluserprog ,safepush
-
- POP
- banksel PORTA
- movwf PORTA
  
 
 
