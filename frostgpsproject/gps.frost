@@ -40,9 +40,11 @@ event 1 is
   .printch[13].printch[10]
   ,,
   .clearbit[1 @porta] > porta /Turn OFF light
+  16 > iocbp /Interrupt on B4 change back on
 ;
 
 event b is
+ 0 > iocbp /Interrupt on B4 change off for hysteresis
  .setbit[1 @porta] > porta /Turn ON light
 ; 
 
