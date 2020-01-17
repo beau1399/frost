@@ -9,7 +9,7 @@
 
 /// Directives ////////////////////////////////////////////////////////////
 
-calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeeprom,readeeprom
 
 altstack is 80
 
@@ -26,17 +26,17 @@ event 1 is
  .add[1 @scaler] > scaler
  if .andb[ @fix .eq[20 @scaler]],
   0 > scaler
-  .printf[@latdeg @latdegb]
+  .printf[.readeeprom[0] .readeeprom[1]]
   .printch[' ']
-  .printf[@latmin @latminb]
+  .printf[.readeeprom[2] .readeeprom[3]]
   .printch[' ']
-  .printf[@latsubmin @latsubminb]
+  .printf[.readeeprom[4] .readeeprom[5]]
   .printch[13].printch[10]
-  .printf[@londeg @londegb]
+  .printf[.readeeprom[6] .readeeprom[7]]
   .printch[' ']
-  .printf[@lonmin @lonminb]
+  .printf[.readeeprom[8] .readeeprom[9]]
   .printch[' ']
-  .printf[@lonsubmin @lonsubminb]
+  .printf[.readeeprom[10] .readeeprom[11]]
   .printch[13].printch[10]
   ,,
   .clearbit[1 @porta] > porta /Turn OFF light
@@ -46,6 +46,18 @@ event 1 is
 event b is
  0 > iocbp /Interrupt on B4 change off for hysteresis
  .setbit[1 @porta] > porta /Turn ON light
+ .writeeeprom[0 @latdeg]
+ .writeeeprom[1 @latdegb]
+ .writeeeprom[2 @latmin]
+ .writeeeprom[3 @latminb]
+ .writeeeprom[4 @latsubmin]
+ .writeeeprom[5 @latsubminb]
+ .writeeeprom[6 @londeg]
+ .writeeeprom[7 @londegb]
+ .writeeeprom[8 @lonmin]
+ .writeeeprom[9 @lonminb]
+ .writeeeprom[10 @lonsubmin]
+ .writeeeprom[11 @lonsubminb]
 ; 
 
 /// main() ////////////////////////////////////////////////////////////////
