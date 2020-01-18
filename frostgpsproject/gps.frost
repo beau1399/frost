@@ -133,6 +133,9 @@ d .receive * is
  
  /Didn't find comma this character
  if .geu[.parm[0] 28], 0 > filtervalid, readchar,,  /Just accumulate, unless GLL hasn't been timely
+
+ /If we are here we have amassed 28 characters w/o getting a position, and will
+ /  return and discard the accumulated stack.
 ;
 
 
@@ -205,8 +208,8 @@ if @filtervalid,
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor @latsubmin @latsubminb]]  , />latsubminb >latsubmin,
     /No continuous fix; don't smooth
-    @tempb /> latsubminb
-    @temp /> latsubmin
+    @temp /> latsubminb
+    @tempb /> latsubmin
     ,
 
 /.debugptru[]
@@ -223,16 +226,16 @@ if @filtervalid,
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor @lonsubmin @lonsubminb]] ,/ >lonsubminb >lonsubmin,
     /No continuous fix; don't smooth, but if we are here we now have a fix
-    @tempb /> lonsubminb
-    @temp /> lonsubmin
+    @temp /> lonsubminb
+    @tempb /> lonsubmin
     1 > filtervalid 1 > fix,
 
 /.debugptru[]
 
- .writeeeprom[.swapp[10]]
  .writeeeprom[.swapp[11]]
- .writeeeprom[.swapp[4]]
+ .writeeeprom[.swapp[10]]
  .writeeeprom[.swapp[5]]
+ .writeeeprom[.swapp[4]]
  .writeeeprom[.swapp[9]]
  .writeeeprom[.swapp[8]]
  .writeeeprom[.swapp[3]]
