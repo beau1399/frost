@@ -13,9 +13,7 @@ calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeepro
 
 altstack is 80
 
-var isgll,latdeg,latdegb,latmin,latminb,latsubmin,
-    latsubminb,scaler,temp,tempb,filtervalid,fix,
-    londeg,londegb,lonmin,lonminb,lonsubmin,lonsubminb
+var isgll,latmin,scaler,temp,tempb,filtervalid,fix
 
 macro filter-factor is 0.5 end macro
 macro one-minus-filter is 0.5 end macro
@@ -46,18 +44,7 @@ event 1 is
 event b is
  0 > iocbp /Interrupt on B4 change off for hysteresis
  .setbit[1 @porta] > porta /Turn ON light
- .writeeeprom[0 @latdeg]
- .writeeeprom[1 @latdegb]
- .writeeeprom[2 @latmin]
- .writeeeprom[3 @latminb]
- .writeeeprom[4 @latsubmin]
- .writeeeprom[5 @latsubminb]
- .writeeeprom[6 @londeg]
- .writeeeprom[7 @londegb]
- .writeeeprom[8 @lonmin]
- .writeeeprom[9 @lonminb]
- .writeeeprom[10 @lonsubmin]
- .writeeeprom[11 @lonsubminb]
+ /TODO
 ; 
 
 /// main() ////////////////////////////////////////////////////////////////
@@ -71,7 +58,6 @@ frost9600baud
 0 > isgll
 0 > scaler
 / Start the 6hz timer
-
 
 / Global weak pull-up enabled... button will ground out B4
 / 7 is "not WPUEN"... not sure of friendly name
@@ -88,11 +74,8 @@ frost9600baud
 0 > trisa  /A is output
 0 > ansela /A is digital
 
-
-
 insert slowtimer
 insert starttimer
-
 
 .mainloop[]
 
@@ -112,7 +95,6 @@ macro readchar is
 end macro
 
 d .receive * is
-/ 8 > portb
  if .eq[.parm[1] ','],  
 
 ////////////// COMMA HANDLER ////
@@ -138,7 +120,6 @@ d .receive * is
  /  return and discard the accumulated stack.
 ;
 
-
 d .swapp 2 2 is
  .parm[0] .parm[1]
 ;
@@ -146,51 +127,50 @@ d .swapp 2 2 is
 // GLL input processor /////////
 d .purge * is
  if .eq[.parm[0] 27],
-/.debugptru[] /188
 
+  / Push lat. degrees
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[27]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[26]]]
-   ] / > latdegb > latdeg
-/.debugptru[] /190
+   ] 
 
+  / Push long. degrees
   .addf[
   .addf[
    .addf[0.0
       .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[14]]] ] ]
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[13]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[12]]]
-   ] / > londegb > londeg
-/.debugptru[] /192
+   ]
 
+  / Get lat. minutes
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[25]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[24]]]
-  ] / > tempb > temp
+  ]  > tempb > temp
 
-  /Examine mantissa of minutes (middle of the three terms in
+  /Examine mantissa of lat. minutes (middle of the three terms in
   / order of significance) and bust smooting if there was a
   / change.
-  /if .eq[@temp @latmin],, 0 > filtervalid,
-   0 > filtervalid
-  
-/  @tempb  > latminb
-/  @temp  > latmin
-/.debugptru[] /194
+  if .eq[@temp @latmin],, 0 > filtervalid,
 
+  / Save to check for future minute changes, which should "bust" smoothing
+  / TODO really need to smooth LAT and LONG separately
+  @temp  > latmin 
+
+  / Push lat. minutes
+  @temp @tempb
+
+  / Push long. minutes
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[10]]]
-  ] / > tempb > temp
+  ]
 
-/  @tempb  > lonminb
-/  @temp  > lonmin
-
-/.debugptru[] /196
-
+  / Get lat. fractional minutes
   .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[22]]]]  ]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[21]]]]   ]
@@ -200,13 +180,11 @@ d .purge * is
      100000.0]
   > tempb > temp
 
-/.debugptru[] /196
-
-
-if @filtervalid,
+  / Maybe apply smooting to lat. fractional minutes
+  if @filtervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
-     .mulf[filter-factor @latsubmin @latsubminb]]  , />latsubminb >latsubmin,
+     .mulf[filter-factor .readeeprom[4] .readeeprom[5]]]  , />l
     /No continuous fix; don't smooth
     @temp /> latsubminb
     @tempb /> latsubmin
@@ -224,7 +202,7 @@ if @filtervalid,
   if @filtervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
-     .mulf[filter-factor @lonsubmin @lonsubminb]] ,/ >lonsubminb >lonsubmin,
+     .mulf[filter-factor .readeeprom[10] .readeeprom[11]]] ,/ >lonsubminb >lonsubmin,
     /No continuous fix; don't smooth, but if we are here we now have a fix
     @temp /> lonsubminb
     @tempb /> lonsubmin
