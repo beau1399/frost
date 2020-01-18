@@ -185,45 +185,43 @@ d .purge * is
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor .readeeprom[4] .readeeprom[5]]]  , />l
-    /No continuous fix; don't smooth
-    @temp /> latsubminb
-    @tempb /> latsubmin
-    ,
+    /No continuous fix; don't smooth, just push latest values
+    @temp @tempb,
 
-/.debugptru[]
-
- .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
+  / Get long. fractional minutes
+  .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[8]]]]]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[7]]]]]
      .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[6]]]]]
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[5]]]]]
      .utof[.add[.mul[-1 '0'].parm[4]]]] 100000.0]
-  > tempb > temp
+   > tempb > temp
+
+  / Maybe smooth long. fractional minutes 
   if @filtervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
-     .mulf[filter-factor .readeeprom[10] .readeeprom[11]]] ,/ >lonsubminb >lonsubmin,
+     .mulf[filter-factor .readeeprom[10] .readeeprom[11]]] ,
     /No continuous fix; don't smooth, but if we are here we now have a fix
     @temp /> lonsubminb
     @tempb /> lonsubmin
     1 > filtervalid 1 > fix,
 
-/.debugptru[]
 
- .writeeeprom[.swapp[11]]
- .writeeeprom[.swapp[10]]
- .writeeeprom[.swapp[5]]
- .writeeeprom[.swapp[4]]
- .writeeeprom[.swapp[9]]
- .writeeeprom[.swapp[8]]
- .writeeeprom[.swapp[3]]
- .writeeeprom[.swapp[2]]
- .writeeeprom[.swapp[7]]
- .writeeeprom[.swapp[6]]
- .writeeeprom[.swapp[1]]
- .writeeeprom[.swapp[0]]
+  .writeeeprom[.swapp[11]]
+  .writeeeprom[.swapp[10]]
+  .writeeeprom[.swapp[5]]
+  .writeeeprom[.swapp[4]]
+  .writeeeprom[.swapp[9]]
+  .writeeeprom[.swapp[8]]
+  .writeeeprom[.swapp[3]]
+  .writeeeprom[.swapp[2]]
+  .writeeeprom[.swapp[7]]
+  .writeeeprom[.swapp[6]]
+  .writeeeprom[.swapp[1]]
+  .writeeeprom[.swapp[0]]
 
- , /If arg count is not correct (27), do nothing
+  , /If arg count is not correct (27), do nothing
  ,
 ;
 
