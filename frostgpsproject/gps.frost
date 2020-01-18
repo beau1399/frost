@@ -13,7 +13,7 @@ calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeepro
 
 altstack is 80
 
-var isgll,latmin,scaler,temp,tempb,filtervalid,fix
+var isgll,latmin,lonmin,scaler,temp,tempb,latfiltervalid,lonfiltervalid,fix
 
 macro filter-factor is 0.5 end macro
 macro one-minus-filter is 0.5 end macro
@@ -49,7 +49,7 @@ event b is
 
 /// main() ////////////////////////////////////////////////////////////////
 
-0 > filtervalid
+0 > latfiltervalid 0 > lonfiltervalid
 0 > fix
 insert clock
 frost9600baud
@@ -114,7 +114,7 @@ d .receive * is
 ////////////////////////////////
  
  /Didn't find comma this character
- if .geu[.parm[0] 28], 0 > filtervalid, readchar,,  /Just accumulate, unless GLL hasn't been timely
+ if .geu[.parm[0] 28], 0 > latfiltervalid 0 > lonfiltervalid, readchar,,  /Just accumulate, unless GLL hasn't been timely
 
  /If we are here we have amassed 28 characters w/o getting a position, and will
  /  return and discard the accumulated stack.
@@ -154,21 +154,31 @@ d .purge * is
   /Examine mantissa of lat. minutes (middle of the three terms in
   / order of significance) and bust smooting if there was a
   / change.
-  if .eq[@temp @latmin],, 0 > filtervalid,
+  if .eq[@temp @latmin],, 0 > latfiltervalid,
 
   / Save to check for future minute changes, which should "bust" smoothing
-  / TODO really need to smooth LAT and LONG separately
   @temp  > latmin 
 
   / Push lat. minutes
   @temp @tempb
 
-  / Push long. minutes
+  / Get long. minutes
   .addf[
    .addf[0.0
      .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
      .utof[.add[.mul[-1 '0'].parm[10]]]
-  ]
+  ] > tempb > temp
+
+  /Examine mantissa of lon. minutes (middle of the three terms in
+  / order of significance) and bust smoothing if there was a
+  / change.
+  if .eq[@temp @lonmin],, 0 > lonfiltervalid,
+
+  / Save to check for future minute changes, which should "bust" smoothing
+  @temp  > lonmin 
+
+  / Push long. minutes
+  @temp @tempb
 
   / Get lat. fractional minutes
   .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
@@ -181,7 +191,7 @@ d .purge * is
   > tempb > temp
 
   / Maybe apply smooting to lat. fractional minutes
-  if @filtervalid,
+  if @latfiltervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor .readeeprom[4] .readeeprom[5]]]  , />l
@@ -198,15 +208,14 @@ d .purge * is
    > tempb > temp
 
   / Maybe smooth long. fractional minutes 
-  if @filtervalid,
+  if @lonfiltervalid,
     .addf[  /Active fix available... smooth
      .mulf[one-minus-filter @temp @tempb]
      .mulf[filter-factor .readeeprom[10] .readeeprom[11]]] ,
-    /No continuous fix; don't smooth, but if we are here we now have a fix
-    @temp /> lonsubminb
-    @tempb /> lonsubmin
-    1 > filtervalid 1 > fix,
+    /No continuous fix; don't smooth
+    @temp @tempb,
 
+  1 > lonfiltervalid 1 > latfiltervalid 1 > fix
 
   .writeeeprom[.swapp[11]]
   .writeeeprom[.swapp[10]]
