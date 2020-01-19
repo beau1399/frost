@@ -339,7 +339,7 @@ void remove_comments(string &usercode,const string &tkn)
  usercode2="";
  while( usercode.find(token)>=0 && usercode.find(token)<usercode.length() )
  { 
-  if(usercode.find(token)&&usercode[usercode.find(token)-1]=='\'')
+  if(usercode.find(token)&&usercode[usercode.find(token)-1]=='\''&&usercode[usercode.find(token)+1]=='\'')
   { //Support character literals e.g. in .HLOE files; replace with special char.
    usercode=usercode.substr(0,usercode.find(token))+string(HLL_STRANGE_CHAR)+
    usercode.substr(usercode.find(token)+1);
