@@ -356,7 +356,7 @@ void remove_comments(string &usercode,const string &tkn)
  token=HLL_STRANGE_CHAR; //Support character literals
  while( usercode.find(token)>=0 && usercode.find(token)<usercode.length() )
  { 
-  usercode2=usercode.substr(0,usercode.find(token))+(";");
+  usercode2=usercode.substr(0,usercode.find(token))+tkn;
   usercode=usercode.substr(usercode.find(token)+1);
   usercode2.append(usercode);
   usercode=usercode2;
