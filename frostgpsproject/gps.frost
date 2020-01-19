@@ -13,7 +13,7 @@ calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeepro
 
 altstack is 80
 
-var isgll,latmin,lonmin,scaler,temp,tempb,latfiltervalid,lonfiltervalid,fix
+var isgll,latmin,lonmin,scaler,temp,tempb,latfiltervalid,lonfiltervalid,fix,ptr
 
 macro filter-factor is 0.5 end macro
 macro one-minus-filter is 0.5 end macro
@@ -25,16 +25,18 @@ event 1 is
  if .andb[ @fix .eq[20 @scaler]],
   0 > scaler
   .printf[.readeeprom[0] .readeeprom[1]]
-  .printch[' ']
+  .printch['+']  .printch['(']  .printch['(']
   .printf[.readeeprom[2] .readeeprom[3]]
-  .printch[' ']
+  .printch['+']
   .printf[.readeeprom[4] .readeeprom[5]]
+  .printch[')']  .printch['/']  .printch['6']  .printch['0']   .printch[')']   .printch['=']
   .printch[13].printch[10]
   .printf[.readeeprom[6] .readeeprom[7]]
-  .printch[' ']
+  .printch['+']  .printch['(']  .printch['(']
   .printf[.readeeprom[8] .readeeprom[9]]
-  .printch[' ']
+  .printch['+']
   .printf[.readeeprom[10] .readeeprom[11]]
+  .printch[')']  .printch['/']  .printch['6']  .printch['0']   .printch[')']   .printch['=']
   .printch[13].printch[10]
   ,,
   .clearbit[1 @porta] > porta /Turn OFF light
@@ -51,6 +53,7 @@ event b is
 
 0 > latfiltervalid 0 > lonfiltervalid
 0 > fix
+0 > ptr
 insert clock
 frost9600baud
 /For MAX-232. We are using a 5V-to-RS232 bridge so we don't need tricks to make serial work.
@@ -217,18 +220,19 @@ d .purge * is
 
   1 > lonfiltervalid 1 > latfiltervalid 1 > fix
 
-  .writeeeprom[.swapp[11]]
-  .writeeeprom[.swapp[10]]
-  .writeeeprom[.swapp[5]]
-  .writeeeprom[.swapp[4]]
-  .writeeeprom[.swapp[9]]
-  .writeeeprom[.swapp[8]]
-  .writeeeprom[.swapp[3]]
-  .writeeeprom[.swapp[2]]
-  .writeeeprom[.swapp[7]]
-  .writeeeprom[.swapp[6]]
-  .writeeeprom[.swapp[1]]
-  .writeeeprom[.swapp[0]]
+/  if .eq[1 0],
+   .writeeeprom[.swapp[.add[@ptr 11]]]
+   .writeeeprom[.swapp[.add[@ptr 10]]]
+   .writeeeprom[.swapp[.add[@ptr 5]]]
+   .writeeeprom[.swapp[.add[@ptr 4]]]
+   .writeeeprom[.swapp[.add[@ptr 9]]]
+   .writeeeprom[.swapp[.add[@ptr 8]]]
+   .writeeeprom[.swapp[.add[@ptr 3]]]
+   .writeeeprom[.swapp[.add[@ptr 2]]]
+   .writeeeprom[.swapp[.add[@ptr 7]]]
+   .writeeeprom[.swapp[.add[@ptr 6]]]
+   .writeeeprom[.swapp[.add[@ptr 1]]]
+   .writeeeprom[.swapp[.add[@ptr 0]]] /,,
 
   , /If arg count is not correct (27), do nothing
  ,
