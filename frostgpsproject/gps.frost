@@ -120,7 +120,7 @@ d .receive * is
  if .geu[.parm[0] 28], 0 > latfiltervalid 0 > lonfiltervalid, readchar,,  /Just accumulate, unless GLL hasn't been timely
 
  /If we are here we have amassed 28 characters w/o getting a position, and will
- /  return and discard the accumulated stack.
+ /  return and discard the accumulated stack. IS THIS TRUE - COUNTEREXAMPLE IS 'ORDINARY' NON-GLL COMMA?
 ;
 
 d .swapp 2 2 is
