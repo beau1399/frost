@@ -238,21 +238,21 @@ d .purge * is
 
   1 > lonfiltervalid 1 > latfiltervalid 1 > fix
 
+/   .writeeeprom[.swapp[.add[@ptr 11]]]
+/  ...
+/   .writeeeprom[.swapp[.add[@ptr 0]]] /,,
+
 /  if .eq[1 0],
-   .writeeeprom[.swapp[.add[@ptr 11]]]
-   .writeeeprom[.swapp[.add[@ptr 10]]]
-   .writeeeprom[.swapp[.add[@ptr 9]]]
-   .writeeeprom[.swapp[.add[@ptr 8]]]
-   .writeeeprom[.swapp[.add[@ptr 7]]]
-   .writeeeprom[.swapp[.add[@ptr 6]]]
-   .writeeeprom[.swapp[.add[@ptr 5]]]
-   .writeeeprom[.swapp[.add[@ptr 4]]]
-   .writeeeprom[.swapp[.add[@ptr 3]]]
-   .writeeeprom[.swapp[.add[@ptr 2]]]
-   .writeeeprom[.swapp[.add[@ptr 1]]]
-   .writeeeprom[.swapp[.add[@ptr 0]]] /,,
+   pos2rom(11)
+/,,
 
   , /If arg count is not correct (27), do nothing
  ,
 ;
 
+macro pos2rom is 
+ .writeeeprom[.swapp[.add[@ptr $0]]]
+ when! $0 0
+  pos2rom ($0-)
+ end!
+end macro  
