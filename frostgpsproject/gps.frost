@@ -138,14 +138,6 @@ d .purge * is
      .utof[.add[.mul[-1 '0'].parm[26]]]
    ] 
 
-  / Push long. degrees
-  .addf[
-  .addf[
-   .addf[0.0
-      .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[14]]] ] ]
-     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[13]]] ] ]
-     .utof[.add[.mul[-1 '0'].parm[12]]]
-   ]
 
   / Get lat. minutes
   .addf[
@@ -165,23 +157,9 @@ d .purge * is
   / Push lat. minutes
   @temp @tempb
 
-  / Get long. minutes
-  .addf[
-   .addf[0.0
-     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
-     .utof[.add[.mul[-1 '0'].parm[10]]]
-  ] > tempb > temp
 
-  /Examine mantissa of lon. minutes (middle of the three terms in
-  / order of significance) and bust smoothing if there was a
-  / change.
-  if .eq[@temp @lonmin],, 0 > lonfiltervalid,
 
-  / Save to check for future minute changes, which should "bust" smoothing
-  @temp  > lonmin 
 
-  / Push long. minutes
-  @temp @tempb
 
   / Get lat. fractional minutes
   .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
@@ -201,7 +179,47 @@ d .purge * is
     /No continuous fix; don't smooth, just push latest values
     @temp @tempb,
 
-  / Get long. fractional minutes
+
+
+
+  / Push long. degrees
+  .addf[
+  .addf[
+   .addf[0.0
+      .mulf[100.0 .utof[.add[.mul[-1 '0'].parm[14]]] ] ]
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[13]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[12]]]
+   ]
+
+
+
+
+
+
+
+
+
+
+  / Get long. minutes
+  .addf[
+   .addf[0.0
+     .mulf[10.0 .utof[.add[.mul[-1 '0'].parm[11]]] ] ]
+     .utof[.add[.mul[-1 '0'].parm[10]]]
+  ] > tempb > temp
+
+  /Examine mantissa of lon. minutes (middle of the three terms in
+  / order of significance) and bust smoothing if there was a
+  / change.
+  if .eq[@temp @lonmin],, 0 > lonfiltervalid,
+
+  / Save to check for future minute changes, which should "bust" smoothing
+  @temp  > lonmin 
+
+  / Push long. minutes
+  @temp @tempb
+
+
+/ Get long. fractional minutes
   .divf[.addf[.addf[.addf[ .addf[ .addf[0.0
      .mulf[10000.0 .utof[.add[.mul[-1 '0'].parm[8]]]]]
      .mulf[1000.0 .utof[.add[.mul[-1 '0'].parm[7]]]]]
@@ -223,14 +241,14 @@ d .purge * is
 /  if .eq[1 0],
    .writeeeprom[.swapp[.add[@ptr 11]]]
    .writeeeprom[.swapp[.add[@ptr 10]]]
-   .writeeeprom[.swapp[.add[@ptr 5]]]
-   .writeeeprom[.swapp[.add[@ptr 4]]]
    .writeeeprom[.swapp[.add[@ptr 9]]]
    .writeeeprom[.swapp[.add[@ptr 8]]]
-   .writeeeprom[.swapp[.add[@ptr 3]]]
-   .writeeeprom[.swapp[.add[@ptr 2]]]
    .writeeeprom[.swapp[.add[@ptr 7]]]
    .writeeeprom[.swapp[.add[@ptr 6]]]
+   .writeeeprom[.swapp[.add[@ptr 5]]]
+   .writeeeprom[.swapp[.add[@ptr 4]]]
+   .writeeeprom[.swapp[.add[@ptr 3]]]
+   .writeeeprom[.swapp[.add[@ptr 2]]]
    .writeeeprom[.swapp[.add[@ptr 1]]]
    .writeeeprom[.swapp[.add[@ptr 0]]] /,,
 
