@@ -1,0 +1,13 @@
+;
+; Copies the value atop the stack
+;
+
+ GLOBAL copytop
+
+cp44top CODE 
+
+copytop:
+POP
+PUSH
+PUSH
+return

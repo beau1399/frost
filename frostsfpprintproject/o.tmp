@@ -1,0 +1,84 @@
+event 1 is
+.printdf[1234567.89]
+.printdf[0.01234]
+;
+
+.oru[ 112 .andu[ 247 @osccon]] > osccon
+
+
+  .setbit[cren @rcsta] > rcsta
+  .setbit[ brgh @txsta] > txsta
+  .setbit[brg16 @baudcon] > baudcon
+  68 > spbrg
+  0 > spbrgh
+  .clearbit[tx9 .setbit[txen .clearbit[sync @txsta]]] > txsta
+  
+  .setbit[spen @rcsta] > rcsta
+  .clearbit[5 @trisb] > trisb   
+  .clearbit[5 @anselb] > anselb    
+  .clearbit[1 @anselb] > anselb    
+  .setbit[txcksel @apfcon1] > apfcon1 .clearbit[tmr1cs0 .clearbit[tmr1ge .setbit[t1ckps1 .setbit[t1ckps0 .clearbit[not-t1sync .clearbit[t1oscen @t1con]]]]]] > t1con
+
+.setbit[tmr1ie @pie1] > pie1 
+.setbit[peie @intcon] > intcon 
+.setbit[tmr1on @t1con] > t1con 
+.setbit[gie @intcon] > intcon 
+
+
+d .printdf 2 0 is
+.printch[' '] .printch[' '] .printch[' '] .printch[' ']
+
+
+
+
+1000000.0 > prettye > prettym
+
+.divf[.parm[1].parm[0] @prettym @prettye]
+.copyf[]
+.printch[.add[.ftou[] '0']]
+.addf[.parm[1].parm[0] .mulf[.utof[.ftou[.parm[-1] .parm[-2]]] .mulf[-1.0 @prettym @prettye]]]  
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printch['.']
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+
+;
+
+d .printdigretrest 2 2 is
+.divf[@prettym @prettye 10.0] > prettye > prettym
+.copyf[]
+if .iszerof[.copyf[]],.printch['0'],
+
+.divf[.copyf[] @prettym @prettye]
+.ftou[]
+.copytop[]
+.add['0']
+.printch[]
+,
+.utof[]
+.mulf[.mulf[-1.0 @prettym @prettye]]
+ .addf[]
+;

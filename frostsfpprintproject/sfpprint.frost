@@ -1,0 +1,79 @@
+/
+/ TODO
+/  Doc KSTACK better
+/  Add copytop to official docs / git
+/  What are fastmodu etc.?
+/  lh parms - wtf is it?
+
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeeprom,readeeprom,debugptru,ftou,add,printch,copyf,copytop
+
+altstack is 80
+
+event 1 is
+.printdf[1234567.89]
+.printdf[0.01234]
+;
+
+insert clock
+frost115200baud
+insert slowtimer
+insert starttimer
+
+var prettym, prettye
+d .printdf 2 0 is
+.printch[' '] .printch[' '] .printch[' '] .printch[' ']
+
+/////////////////////////////WORKS2//////////////////////
+
+/Tracks what place in our decimal number we are building
+1000000.0 > prettye > prettym
+
+.divf[parmf(0) @prettym @prettye]
+.copyf[]
+.printch[.add[.ftou[] '0']]
+.addf[parmf(0) .mulf[.utof[.ftou[.parm[-1] .parm[-2]]] .mulf[-1.0 @prettym @prettye]]]  /Remainder after 1000000s digit
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printch['.']
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+.printdigretrest[]
+
+
+;
+
+d .printdigretrest 2 2 is
+.divf[@prettym @prettye 10.0] > prettye > prettym
+.copyf[]
+if .iszerof[.copyf[]],.printch['0'],
+/Non-zero next digit
+.divf[.copyf[] @prettym @prettye]
+.ftou[]
+.copytop[]
+.add['0']
+.printch[]
+,
+.utof[]
+.mulf[.mulf[-1.0 @prettym @prettye]]
+ .addf[]
+;

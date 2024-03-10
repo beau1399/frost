@@ -1,0 +1,41 @@
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeeprom,readeeprom,debugptru,ftou,add,printch
+
+altstack is 80
+
+
+event 1 is
+.printdf[4976.49]
+;
+
+insert clock
+frost115200baud
+
+insert slowtimer
+insert starttimer
+
+
+
+
+.clearbit[sckp @baudcon] > baudcon
+
+d .printdf 2 0 is
+.divf[parmf(0) 1000.0]
+/.parm[-1]
+/.parm[-2]
+/.printu[.ftou[]]
+/.printu[.ftou[]]
+
+/.printu[.ftou[]] /looks correct
+.printu[.add[48 .ftou[]]] /looks correct .ftou[]]]
+
+
+/.divf[parmf(0) 1000.0]
+/.parm[-1] .parm[-2]
+/.printu[.ftou[]]
+/.printch['0']
+/.mulf[.utof[.ftou[]] -1000.0]
+/.addf[parmf(0)]
+/.divf[100.0]
+/.printch[.add['0' .ftou[]]]
+
+;

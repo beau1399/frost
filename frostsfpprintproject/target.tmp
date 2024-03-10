@@ -1,0 +1,1022 @@
+
+#include "hloe.inc"
+
+ __config  _CONFIG1,_WDTE_OFF  & _BOREN_OFF & _FOSC_INTOSC & _PWRTE_OFF & _MCLRE_OFF & _CLKOUTEN_OFF & _IESO_OFF & _FCMEN_OFF
+ __config  _CONFIG2,_PLLEN_ON & _STVREN_ON & _LVP_OFF
+
+hllv2prettye UDATA
+hllprettyel RES .1
+
+#define prettye hllprettyel
+
+hllv2prettym UDATA
+hllprettyml RES .1
+
+#define prettym hllprettyml
+
+
+
+Resetv code 0 
+ bcf INTCON,GIE
+ pagesel hloego
+ goto hloego
+ 
+#ifdef HLLMULTITASK
+vectr code 4	 ;Device specific
+ISR:
+
+
+ PREEMPT
+#endif
+ banksel PIR1
+ btfss PIR1,TMR1IF
+ goto hllnotisr49	
+ bcf PIR1,TMR1IF
+
+
+ movlw .23
+ 
+
+
+
+   FAR_CALL ISR , safepush
+
+
+ movlw .20
+ 
+
+
+   FAR_CALL ISR , safepush
+
+
+ FAR_CALL ISR,printdf
+
+
+ movlw .74
+ 
+
+
+
+   FAR_CALL ISR , safepush
+
+
+ movlw .249
+ 
+
+
+   FAR_CALL ISR , safepush
+
+
+ FAR_CALL ISR,printdf
+
+
+hllnotisr49:
+
+
+
+
+
+
+
+
+#ifdef HLLMULTITASK
+ExitISR:    
+ 
+ RESUME
+ 
+ retfie
+#endif
+
+mainvars udata_shr	
+#ifdef HLLMULTITASK
+pbase res .1			; Used for functions w/ numbered pass/return, to clean up parms/push args
+pbaseisr res .1	
+#else
+pbase res .1
+#endif
+
+main code
+hloego:
+
+  clrf in_isr
+ 
+  movlw LOW (stack-1)		;Set up stack starting position based on literals det. by incremental linker
+  movwf FSR0L 
+  movlw HIGH (stack-1)
+  movwf FSR0H
+ 
+  
+ movlw LOW (alt_stack-1)
+ movwf FSR1L
+ movlw HIGH (alt_stack-1)
+ movwf FSR1H
+ 
+ 
+ clrf softstack0 
+ 
+ 
+ pagesel hlluserprog
+ goto hlluserprog
+
+hllupuser CODE
+hlluserprog: 
+ 
+
+ movlw .112 
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw .247 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel OSCCON
+   movfw OSCCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,andu
+
+
+ FAR_CALL hlluserprog,oru
+
+ POP
+ banksel OSCCON
+ movwf OSCCON
+ 
+
+
+ movlw CREN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw BRGH
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw BRG16
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel BAUDCON
+   movfw BAUDCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel BAUDCON
+ movwf BAUDCON
+ 
+
+
+ movlw .68 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel SPBRG
+ movwf SPBRG
+ 
+
+
+ movlw .0 
+
+   FAR_CALL hlluserprog , safepush
+
+ POP
+ banksel SPBRGH
+ movwf SPBRGH
+ 
+
+
+ movlw TX9
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw TXEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw SYNC
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel TXSTA
+   movfw TXSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TXSTA
+ movwf TXSTA
+ 
+
+
+ movlw SPEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel RCSTA
+   movfw RCSTA
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel RCSTA
+ movwf RCSTA
+ 
+
+
+ movlw .5 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel TRISB
+   movfw TRISB
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel TRISB
+ movwf TRISB
+ 
+
+
+ movlw .5 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw .1 
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel ANSELB
+   movfw ANSELB
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel ANSELB
+ movwf ANSELB
+ 
+
+
+ movlw TXCKSEL
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel APFCON1
+   movfw APFCON1
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel APFCON1
+ movwf APFCON1
+ 
+
+
+ movlw TMR1CS0
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw TMR1GE
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1CKPS1
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1CKPS0
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw NOT_T1SYNC
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ movlw T1OSCEN
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,setbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+
+ FAR_CALL hlluserprog,clearbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw TMR1IE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel PIE1
+   movfw PIE1
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel PIE1
+ movwf PIE1
+ 
+
+
+ movlw PEIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+
+ movlw TMR1ON
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel T1CON
+   movfw T1CON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel T1CON
+ movwf T1CON
+ 
+
+
+ movlw GIE
+
+
+   FAR_CALL hlluserprog , safepush
+
+   banksel INTCON
+   movfw INTCON
+   
+   
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL hlluserprog,setbit
+
+ POP
+ banksel INTCON
+ movwf INTCON
+ 
+
+    
+hllprogend:
+ goto hllprogend
+ 
+
+hllt450 CODE
+printdf:
+
+ movf FSR0L,w
+ 
+
+ FAR_CALL printdf , kpush
+
+ ; char ' '
+
+
+ movlw .32
+
+
+   FAR_CALL hlluserprog , safepush
+
+
+ FAR_CALL printdf,printch
+
+ ; char ' '
+
+
+ movlw .32
+
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,printch
+
+ ; char ' '
+
+
+ movlw .32
+
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,printch
+
+ ; char ' '
+
+
+ movlw .32
+
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,printch
+
+
+ movlw .116
+ 
+
+
+
+   FAR_CALL printdf , safepush
+
+
+ movlw .19
+ 
+
+
+   FAR_CALL printdf , safepush
+
+ POP
+ banksel prettye
+ movwf prettye
+ 
+
+ POP
+ banksel prettym
+ movwf prettym
+ 
+
+
+ movlw .1
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+
+ movlw .0
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+   banksel prettym
+   movfw prettym
+   
+   
+
+   FAR_CALL printdf , safepush
+
+   banksel prettye
+   movfw prettye
+   
+   
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,divf
+
+
+ FAR_CALL printdf,copyf
+
+
+ FAR_CALL printdf,ftou
+
+ ; char '0'
+
+
+ movlw .48
+
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,add
+
+
+ FAR_CALL printdf,printch
+
+
+ movlw .1
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+
+ movlw .0
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+
+ movlw -.1
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+
+ movlw -.2
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,parm
+
+
+ FAR_CALL printdf,ftou
+
+
+ FAR_CALL printdf,utof
+
+
+ movlw .128
+ 
+
+
+
+   FAR_CALL printdf , safepush
+
+
+ movlw .0
+ 
+
+
+   FAR_CALL printdf , safepush
+
+   banksel prettym
+   movfw prettym
+   
+   
+
+   FAR_CALL printdf , safepush
+
+   banksel prettye
+   movfw prettye
+   
+   
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,mulf
+
+
+ FAR_CALL printdf,mulf
+
+
+ FAR_CALL printdf,addf
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+ ; char '.'
+
+
+ movlw .46
+
+
+   FAR_CALL printdf , safepush
+
+
+ FAR_CALL printdf,printch
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,printdigretrest
+
+
+ FAR_CALL printdf,kpop
+; LOAD POINTER
+
+ movwf FSR0L
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ return
+ 
+
+hllt453 CODE
+printdigretrest:
+
+ movf FSR0L,w
+ 
+
+ FAR_CALL printdigretrest , kpush
+
+   banksel prettym
+   movfw prettym
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+   banksel prettye
+   movfw prettye
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+
+ movlw .32
+ 
+
+
+
+   FAR_CALL printdigretrest , safepush
+
+
+ movlw .3
+ 
+
+
+   FAR_CALL printdigretrest , safepush
+
+
+ FAR_CALL printdigretrest,divf
+
+ POP
+ banksel prettye
+ movwf prettye
+ 
+
+ POP
+ banksel prettym
+ movwf prettym
+ 
+
+
+ FAR_CALL printdigretrest,copyf
+
+
+ FAR_CALL printdigretrest,copyf
+
+
+ FAR_CALL printdigretrest,iszerof
+
+ POP
+ xorlw .0
+ btfsc STATUS,Z
+ goto hlllb51J1 
+ 
+ ; char '0'
+
+
+ movlw .48
+
+
+   FAR_CALL printdigretrest , safepush
+
+
+ FAR_CALL printdigretrest,printch
+
+ 
+ goto hlllb51J2
+ 
+
+hlllb51J1:
+
+
+ FAR_CALL printdigretrest,copyf
+
+   banksel prettym
+   movfw prettym
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+   banksel prettye
+   movfw prettye
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+
+ FAR_CALL printdigretrest,divf
+
+
+ FAR_CALL printdigretrest,ftou
+
+
+ FAR_CALL printdigretrest,copytop
+
+ ; char '0'
+
+
+ movlw .48
+
+
+   FAR_CALL printdigretrest , safepush
+
+
+ FAR_CALL printdigretrest,add
+
+
+ FAR_CALL printdigretrest,printch
+
+
+hlllb51J2:
+
+
+ FAR_CALL printdigretrest,utof
+
+
+ movlw .128
+ 
+
+
+
+   FAR_CALL printdigretrest , safepush
+
+
+ movlw .0
+ 
+
+
+   FAR_CALL printdigretrest , safepush
+
+   banksel prettym
+   movfw prettym
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+   banksel prettye
+   movfw prettye
+   
+   
+
+   FAR_CALL printdigretrest , safepush
+
+
+ FAR_CALL printdigretrest,mulf
+
+
+ FAR_CALL printdigretrest,mulf
+
+
+ FAR_CALL printdigretrest,addf
+
+
+ FAR_CALL printdigretrest,kpop
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movwf pbase+1 ;in_isr... the "in isr" clause comes first in all of these macros. This
+ goto $+2      ; is because isr execution is preemptive, and returns only at the 
+ movwf pbase   ; completion of all triggered routines. So, it can starve out the main
+#else          ; thread, and speeding up isr execution helps this problem. In most of
+ movwf pbase   ; these macros, in-isr execution takes just 4 instruction cycles.
+#endif 
+
+
+ POP
+ FAR_CALL printdigretrest , kpush
+ 
+
+ POP
+ FAR_CALL printdigretrest , kpush
+ 
+#ifdef HLLMULTITASK 
+ movf in_isr,f ;In shared RAM, no need for BANKSEL
+ btfsc STATUS,Z
+ goto $+3
+ movf pbase+1,w			;in_isr
+ goto $+2
+ movf pbase,w	;not in_isr
+#else
+ movf pbase,w	
+#endif  
+
+ ; LOAD POINTER
+
+ movwf FSR0L
+ 
+
+ DISCARD
+
+
+ DISCARD
+
+
+ FAR_CALL printdigretrest , kpop
+
+
+ FAR_CALL printdigretrest , safepush
+ 
+
+ FAR_CALL printdigretrest , kpop
+
+
+ FAR_CALL printdigretrest , safepush
+ 
+
+ return
+ 
