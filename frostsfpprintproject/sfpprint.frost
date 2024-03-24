@@ -4,14 +4,17 @@
 /  Add copytop to official docs / git
 /  What are fastmodu etc.?
 /  lh parms - wtf is it?
+/  setparm - implem and doc
+/  doc new board w/ rs232 max support
+/  make sure all projects still build esp. pwm robot on 16f690
 
-calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeeprom,readeeprom,debugptru,ftou,add,printch,copyf,copytop
-
+calls andb,geu,utof,addf,printf,printu,mulf,divf,iszerof,notb,iszerof,writeeeprom,readeeprom,debugptru,ftou,add,printch,copyf,copytop,decparm,dispose,eq
+/////////////////////////////////WORKS////
 altstack is 80
 
 event 1 is
-.printdf[10 1234567.89]
-.printdf[10 0.01234]
+/.printdf[10 1234567.89]
+.printdf[10 3.141592654]
 ;
 
 insert clock
@@ -37,26 +40,51 @@ d .printdf 3 0 is
 
 ;
 
+macro counter is .parm[6] end macro
+
 d .prettyloop * is
+/.debugptru[]  / EACH PRETTYLOOP CALL IS "LEAKING" A STACK POSITION AND ULTIMATELY IT IS CRASHING A (CLOSE TO CORRECT) PROGRAM
+/.decparm[6]
+/.printch['?']
+/.printch['?']
+/.printch['?']
+/.printu[.parm[6]]
+/.printch['$']
+/.printch['$']
+/.printch['$']
 printdigretrest
-if .notb[@iter],, .add[@iter -1] > iter
+if .notb[.parm[6]],, .decparm[6]
 .prettyloop[]
 ,
 ;
 
 macro printdigretrest is
-.divf[@prettym @prettye 10.0] > prettye > prettym
-.copyf[]
-.divf[.copyf[] @prettym @prettye]
+.divf[@prettym @prettye 10.0] > prettye > prettym /0
+if .eq[.parm[6] 4],.printch['.'],,
 
-if .iszerof[.copyf[]],.printch['0'],
-/Non-zero next digit
-.ftou[]
-.copytop[]
-.add['0']
-.printch[]
+/.copyf[] /+2
+.divf[.copyf[] @prettym @prettye] /+2
+
+if .iszerof[.copyf[]],
+.printch['0']  /+2 net
+.dispose[] .dispose[]
 ,
-.utof[]
-.mulf[.mulf[-1.0 @prettym @prettye]]
-.addf[]
+/Non-zero next digit
+.ftou[]            /-1
+.copytop[]         /+1
+.add['0']          /-1
+.printch[]         /-1 ... +2 net
+
+
+.utof[]          /+1
+/.debugptru[]
+.mulf[.mulf[-1.0 @prettym @prettye]]  / 0
+/.debugptru[]
+.addf[]     /-2
+
+,
+
+/stabilizes but not right
+/.dispose[]
+/.dispose[]
 end macro

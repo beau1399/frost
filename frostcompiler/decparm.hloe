@@ -1,0 +1,52 @@
+GLOBAL decparm
+
+#define sstack0 softstack0 
+#define sstack1 softstack1 
+#define sstack2 softstack2 
+
+dparmcore macro 
+movwf sstack2 ;sstack2 now contains base ptr, which has been popped off top of kernel stack
+movfw HLFSR ;save user stack ptr
+movwf sstack0 ;sstack0 contains ptr to top of user stack when setparm was called
+movfw HLINDF ;get offset
+;Incorporate offset into working user stack pointer 
+subwf sstack2,w
+movwf HLFSR 
+
+; decrement there
+decf HLINDF,f
+
+;Fix HLFSR then push ret. val
+; (initial decrement is b/c decparm is a "1 0" function i.e. it eats an arg)
+decf sstack0,f
+;decf sstack0,f
+movfw sstack0
+movwf HLFSR ;restore user stack ptr...
+;Put base ptr back
+movfw sstack2
+pagesel kpush
+goto kpush ;Allow it to return as in tail recursion... no need for a macro or func call 
+endm
+
+
+hllkrnz94 CODE  
+decparm:
+KPOP ;base ptr in softstack2.. using macro so as not to add an extra level of call depth
+
+#ifdef HLLMULTITASK 
+movf in_isr,f ;In shared RAM, no need for BANKSEL
+btfss STATUS,Z
+goto dparm4
+dparmcore
+#undefine sstack0 
+#undefine sstack1
+#undefine sstack2 
+#define sstack0 softstack0+1
+#define sstack1 softstack1+1
+#define sstack2 softstack2+1
+dparm4:
+#endif 
+dparmcore
+#undefine sstack0 
+#undefine sstack1
+#undefine sstack2 
