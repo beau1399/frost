@@ -1,0 +1,59 @@
+GLOBAL setparm
+
+#define sstack0 softstack0 
+#define sstack1 softstack1 
+#define sstack2 softstack2 
+
+sqarmcore macro 
+movwf sstack2 ;sstack2 now contains base ptr, which has been popped off top of kernel stack
+movfw HLFSR ;save user stack ptr
+movwf sstack0 ;sstack0 contains ptr to top of user stack when setparm was called
+
+; TODO get the value to be assigned, i.e. .parm[0], into sstack1
+movfw HLINDF ;get offset
+movwf sstack1
+
+decf HLFSR,f ;move the pointer past the rvalue, since this is setparm and not parm or decparm
+movfw HLINDF ;get offset
+;Incorporate offset into working user stack pointer 
+subwf sstack2,w
+movwf HLFSR 
+
+;get the value to be assigned from sstack1 into W
+movfw sstack1
+;execute the assignment
+movwf HLINDF
+
+;Fix HLFSR then push ret. val
+; (decrements are b/c decparm is a "2 0" function i.e. it eats an arg)
+decf sstack0,f
+decf sstack0,f
+movfw sstack0
+movwf HLFSR ;restore user stack ptr...
+;Put base ptr back
+movfw sstack2
+pagesel kpush
+goto kpush ;Allow it to return as in tail recursion... no need for a macro or func call 
+endm
+
+hllkrq394 CODE  
+setparm:
+KPOP ;base ptr in softstack2.. using macro so as not to add an extra level of call depth
+
+#ifdef HLLMULTITASK 
+movf in_isr,f ;In shared RAM, no need for BANKSEL
+btfss STATUS,Z
+goto sqarm4
+sqarmcore
+#undefine sstack0 
+#undefine sstack1
+#undefine sstack2 
+#define sstack0 softstack0+1
+#define sstack1 softstack1+1
+#define sstack2 softstack2+1
+sqarm4:
+#endif 
+sqarmcore
+#undefine sstack0 
+#undefine sstack1
+#undefine sstack2 
