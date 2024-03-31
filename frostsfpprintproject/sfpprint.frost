@@ -4,7 +4,7 @@
 /  Add copytop to official docs / git
 /  What are fastmodu etc.?
 /  lh parms - wtf is it?
-/  setparm - implem and doc
+/  decparm - doc
 /  doc new board w/ rs232 max support
 /  make sure all projects still build esp. pwm robot on 16f690
 
@@ -15,6 +15,7 @@ altstack is 80
 event 1 is
 /.printdf[10 1234567.89]
 .printdf[10 3.141592654]
+.printdf[10 180000.0]
 ;
 
 insert clock
@@ -22,7 +23,7 @@ frost115200baud
 insert slowtimer
 insert starttimer
 
-var prettym, prettye, iter
+var prettym, prettye
 d .printdf 3 0 is
 .printch[' '] .printch[' '] .printch[' '] .printch[' ']
 
@@ -34,7 +35,6 @@ d .printdf 3 0 is
 .copyf[]
 .printch[.add[.ftou[] '0']]
 .addf[parmf(0) .mulf[.utof[.ftou[.parm[-1] .parm[-2]]] .mulf[-1.0 @prettym @prettye]]]  /Remainder after 1000000s digit
-10 > iter
 .prettyloop[]
 
 
